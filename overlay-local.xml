@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
+<repositories xmlns="" version="1.0">
+    <repo quality="experimental" status="official">
+        <name>raia-gentoo</name>
+        <description>Raia Gentoo, a Gentoo overlay by Raiazome, et al.</description>
+        <homepage>http://raiazome.com</homepage>
+        <owner type="person">
+            <name>leycec</name>
+            <email>leycec@gmail.com</email>
+        </owner>
+        <source type="git">file:///home/leycec/bash/raia-gentoo</source>
+    </repo>
+</repositories>
