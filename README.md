@@ -3,11 +3,11 @@ raiagent
 
 RaiaGent, a Gentoo overlay by Raiazome, et al.
 
-# SYNOPSIS
+## SYNOPSIS
 
 Well-documented ebuilds en-route to the Sunrise overlay and a Portage near you.
 
-# TODO
+## TODO
 
 * Nicolas Pinto's sekyfsr overlay has a broadly useful "README.md"; see:
   https://github.com/npinto/sekyfsr-gentoo-overlay
