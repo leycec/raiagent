@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+#FIXME: This ebuild currently deprecated in favor of the CMake-based
+#"libsdl-9999.ebuild". Thanks to bug #1541 on the SDL bugzilla, autotools-based
+#SDL fails to compile. This ebuild will probably be jettisoned (at some point).
+#No reason to support two build systems, especially when one of them is autotools.
 EAPI=4
 inherit autotools-utils eutils flag-o-matic mercurial multilib toolchain-funcs
 
