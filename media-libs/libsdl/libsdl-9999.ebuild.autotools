@@ -3,7 +3,7 @@
 # $Header: $
 
 EAPI=4
-inherit cmake-utils eutils flag-o-matic mercurial multilib toolchain-funcs
+inherit autotools-utils eutils flag-o-matic mercurial multilib toolchain-funcs
 
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="http://www.libsdl.org"
@@ -13,7 +13,7 @@ LICENSE="ZLIB"
 SLOT="2"
 KEYWORDS="~amd64"
 
-#FIXME: Add "test".
+#FIXME: Add "test" to IUSE.
 # SDL 1.2 ebuilds prohibited unsafe CFLAGS unless "custom-flags" was enabled.
 # This appears to have been overly judicious, as the query "How does one build
 # an optimized SDL library?" at
@@ -21,10 +21,10 @@ KEYWORDS="~amd64"
 # suggests. SDL supports at least a modicum of extreme optimization. If users
 # enable unsafe CFLAGS, SDL breaking is the least of their concerns.
 IUSE="
-+audio +video joystick threads static-libs
++audio +video joystick static-libs threads
 3dnow altivec mmx sse sse2
 alsa fusionsound nas oss pulseaudio
-X xcursor xinerama xinput xrandr xrender xscreensaver xv
+X xcursor xinerama xinput xrandr +xrender xscreensaver xv
 aqua directfb gles opengl tslib 
 "
 
@@ -68,75 +68,82 @@ DEPEND="${RDEPEND}
 	xscreensaver? ( x11-proto/scrnsaverproto )
 "
 
-CMAKE_MIN_VERSION=2.6  # ...if "CMakeLists.txt" can be believed.
+PATCHES=(
+	"${FILESDIR}/${PV}-sdl2-config.in.patch"
+ 	"${FILESDIR}/${PV}-ac_check_define.m4.patch"
+)
+
+# Live sources require regeneration of "configure" from "configure.in".
+AUTOTOOLS_AUTORECONF=1
+
+# SDL supplies no "Makefile.am". Disable "automake" use.
+WANT_AUTOMAKE='none'
+
+# SDL supplies an m4 directory. (Praise be to the Nordic gods.)
+AT_M4DIR="acinclude"
 
 src_unpack() {
 	[[ -d "${EHG_STORE_DIR}/${PN}" ]] ||
 		einfo 'Cloning may take up to several minutes on slow connections.'
 	mercurial_src_unpack
-}
 
-src_prepare() {
-	epatch     "${FILESDIR}/${PV}-sdl2-config.in.patch"
-  	epatch -p1 "${FILESDIR}/${PV}-cmake_20120827.patch"
+	# eaclocal() fails to identify the "aclocal.m4" SDL ships as pre-generated
+	# and hence requiring regeneration. Force the issue by deleting it.
+ 	rm "${S}/aclocal.m4"
 }
 
 src_configure() {
 	# DirectFB can link against SDL, triggering a dependency loop. Link against
 	# DirectFB only if it isn't broken. (See issue #61592.)
-	local use_enable_directfb="-DVIDEO_DIRECTFB=ON"
+	local enable_directfb="--disable-video-directfb"
 	if use directfb; then
 		echo 'int main(){}' > directfb-test.c
 		$(tc-getCC) directfb-test.c -ldirectfb 2>/dev/null \
-			&& use_enable_directfb="-DVIDEO_DIRECTFB=OFF" \
+			&& enable_directfb="--enable-video-directfb" \
 			|| ewarn "Disabling DirectFB, since \"libdirectfb.so\" is broken."
 		rm directfb-test.c
 	fi
 
-	#FIXME: "CMakeLists" supports Xvm rather than Xv and doesn't support XRender
-	#at all. Probably bugs. Report.
-
-	# Required by cmake-utils_src_configure().
-	mycmakeargs=(
+	# Required by autotools-utils_src_configure(), which handles "static-libs".
+	local myeconfargs=(
 		# Avoid hard-coding RPATH entries into dynamically linked SDL libraries.
-		-DRPATH=NO
-		# Disable obsolete and/or inapplicable libraries.
-		-DARTS=NO
-		-DESD=NO
-		${use_enable_directfb}
-		$(cmake-utils_use_enable audio    SDL_AUDIO)
-		$(cmake-utils_use_enable video    SDL_VIDEO)
-		$(cmake-utils_use_enable joystick SDL_JOYSTICK)
-		$(cmake-utils_use_enable threads  SDL_THREADS)
-		$(cmake-utils_use_enable static-libs SDL_STATIC)
-		$(cmake-utils_use_enable 3dnow)
-		$(cmake-utils_use_enable altivec)
-		$(cmake-utils_use_enable mmx)
-		$(cmake-utils_use_enable sse)
-		$(cmake-utils_use_enable sse SSEMATH)
-		$(cmake-utils_use_enable sse2)
-		$(cmake-utils_use_enable alsa)
-		$(cmake-utils_use_enable fusionsound)
-		$(cmake-utils_use_enable nas)
-		$(cmake-utils_use_enable oss)
-		$(cmake-utils_use_enable pulseaudio)
-		$(cmake-utils_use_enable tslib INPUT_TSLIB)
-		$(cmake-utils_use_enable X            VIDEO_X11)
-		$(cmake-utils_use_enable xcursor      VIDEO_X11_XCURSOR)
-		$(cmake-utils_use_enable xinerama     VIDEO_X11_XINERAMA)
-		$(cmake-utils_use_enable xinput       VIDEO_X11_XINPUT)
-		$(cmake-utils_use_enable xrandr       VIDEO_X11_XRANDR)
-		$(cmake-utils_use_enable xscreensaver VIDEO_X11_XSCRNSAVER)
-		$(cmake-utils_use_enable aqua   VIDEO_COCOA)
-		$(cmake-utils_use_enable gles   VIDEO_OPENGLES)
-		$(cmake-utils_use_enable opengl VIDEO_OPENGL)
+		--disable-rpath
+		# Avoid the obsolete aRts and ESD and inapplicable DirectX libraries.
+		--disable-arts
+		--disable-esd
+ 		${enable_directfb}
+		$(use_enable audio)
+		$(use_enable joystick)
+		$(use_enable threads)
+		$(use_enable video)
+		$(use_enable 3dnow)
+		$(use_enable altivec)
+		$(use_enable mmx)
+		$(use_enable sse)
+		$(use_enable sse ssemath)
+		$(use_enable sse2)
+		$(use_enable alsa)
+		$(use_enable fusionsound)
+		$(use_enable nas)
+		$(use_enable oss)
+		$(use_enable pulseaudio)
+		$(use_with   X x)
+		$(use_enable X            video-x11)
+		$(use_enable xinerama     video-x11-xinerama)
+		$(use_enable xrandr       video-x11-xrandr)
+		$(use_enable xscreensaver video-x11-scrnsaver)
+		$(use_enable aqua     video-cocoa)
+		$(use_enable gles     video-opengles)
+		$(use_enable opengl   video-opengl)
+		$(use_enable tslib input-tslib)
 	)
 
-	cmake-utils_src_configure
+	# Vicariously calls econf().
+	autotools-utils_src_configure
 }
 
 src_install() {
-	# cmake-utils_src_install() installs all docs, except...
-	cmake-utils_src_install
+	# Let autotools-utils_src_install() install all docs, except...
+	autotools-utils_src_install
 	dodoc WhatsNew
 }
