@@ -1,0 +1,8 @@
+# ====================[ .gitignore                         ]====================
+#
+# --------------------( SYNOPSIS                           )--------------------
+# Avoid committing all paths matching the following glob expressions.
+
+# ....................{ TEMPORARIES                        }....................
+*~
+*.sw?
