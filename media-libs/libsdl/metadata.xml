@@ -34,6 +34,6 @@ Pike, Pliant, Python, Ruby, Smalltalk, and Tcl.
 		<flag name="tslib">Enable tslib touchscreen device support</flag>
 		<flag name="xcursor">Enable Xcursor cursor-loading support</flag>
 		<flag name="xinput">Enable Xinput touchscreen device and multiple mouse support</flag>
-		<flag name="xrender">Enable Xrender transparency support</flag>
+		<flag name="xrender">Enable Xrender texture and transparency support (recommended)</flag>
 	</use>
 </pkgmetadata>

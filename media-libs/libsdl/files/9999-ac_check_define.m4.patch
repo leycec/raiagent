@@ -1,0 +1,10 @@
+Allow "aclocal" to find the "AC_CHECK_DEFINE" macro.
+
+--- acinclude/ac_check_define.m4	2012-08-27 05:46:04.069091921 -0500
++++ acinclude/ac_check_define.m4.new	2012-08-27 18:18:06.526548991 -0500
+@@ -1,4 +1,4 @@
+-define(AC_CHECK_DEFINE,[dnl
++AC_DEFUN([AC_CHECK_DEFINE],[dnl
+   AC_CACHE_CHECK(for $1 in $2, ac_cv_define_$1,
+     AC_EGREP_CPP([YES_IS_DEFINED], [
+ #include <$2>
