@@ -3,6 +3,11 @@
 # $Header: $
 
 EAPI=4
+
+# SDL 2.0 officially distributes only an autotools-based build. Due to numerous
+# core blockers in the development of an autotools-based ebuild, we've adopted a
+# semi-official CMake patch primed for inclusion in SDL 2.1. See the patch for
+# further details.
 inherit cmake-utils eutils flag-o-matic mercurial multilib toolchain-funcs
 
 DESCRIPTION="Simple Direct Media Layer"
@@ -21,32 +26,32 @@ KEYWORDS="~amd64"
 # suggests. SDL supports at least a modicum of extreme optimization. If users
 # enable unsafe CFLAGS, SDL breaking is the least of their concerns.
 IUSE="
-+audio +video joystick threads static-libs
+joystick threads static-libs
 3dnow altivec mmx sse sse2
 alsa fusionsound nas oss pulseaudio
-X xcursor xinerama xinput xrandr xrender xscreensaver xv
-aqua directfb gles opengl tslib 
+X xcursor xinerama +xinput +xrandr xscreensaver xvidmode
+aqua directfb gles opengl tslib
 "
 
-#FIXME: Replace "gles" deps with "virtual/opengles" after hitting Portage.
+#FIXME: Replace "gles" deps with "virtual/opengles", after hitting Portage.
 RDEPEND="
-	X? (
-		x11-libs/libX11
-		x11-libs/libXext
-		x11-libs/libXt
-	)
 	nas? (
 		media-libs/nas
 		x11-libs/libX11
 		x11-libs/libXext
 		x11-libs/libXt
 	)
+	X? (
+		x11-libs/libX11
+		x11-libs/libXext
+		x11-libs/libXt
+		x11-libs/libXrender
+	)
 	xcursor?  ( x11-libs/libXcursor )
 	xinerama? ( x11-libs/libXinerama )
 	xinput?   ( x11-libs/libXi )
 	xrandr?   ( x11-libs/libXrandr )
-	xrender?  ( x11-libs/libXrender )
-	xv?       (	x11-libs/libXv )
+	xvidmode? (	x11-libs/libXxf86vm )
 	xscreensaver? ( x11-libs/libXScrnSaver )
 	alsa? ( media-libs/alsa-lib )
 	fusionsound? ( >=media-libs/FusionSound-1.1.1 )
@@ -57,14 +62,20 @@ RDEPEND="
 	tslib? ( x11-libs/tslib )
 "
 DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	X?   ( x11-proto/xextproto x11-proto/xproto )
-	nas? ( x11-proto/xextproto x11-proto/xproto )
+	nas? (
+		x11-proto/xextproto
+		x11-proto/xproto
+	)
+	X? (
+		x11-proto/xextproto
+		x11-proto/xproto
+		x11-proto/renderproto
+	)
 	xinerama? ( x11-proto/xineramaproto )
 	xinput?   ( x11-proto/inputproto )
 	xrandr?   ( x11-proto/randrproto )
-	xrender?  ( x11-proto/renderproto )
-	xv?       ( x11-proto/videoproto )
+	xrandr?   ( x11-proto/randrproto )
+	xvidmode? ( x11-proto/xf86vidmodeproto )
 	xscreensaver? ( x11-proto/scrnsaverproto )
 "
 
@@ -78,12 +89,12 @@ src_unpack() {
 
 src_prepare() {
 	epatch     "${FILESDIR}/${PV}-sdl2-config.in.patch"
-  	epatch -p1 "${FILESDIR}/${PV}-cmake_20120827.patch"
+	epatch -p1 "${FILESDIR}/${PV}-cmake_20120827.patch"
 }
 
 src_configure() {
 	# DirectFB can link against SDL, triggering a dependency loop. Link against
-	# DirectFB only if it isn't broken. (See issue #61592.)
+	# DirectFB only if it isn't currently being installed. (See issue #61592.)
 	local use_enable_directfb="-DVIDEO_DIRECTFB=ON"
 	if use directfb; then
 		echo 'int main(){}' > directfb-test.c
@@ -93,9 +104,6 @@ src_configure() {
 		rm directfb-test.c
 	fi
 
-	#FIXME: "CMakeLists" supports Xvm rather than Xv and doesn't support XRender
-	#at all. Probably bugs. Report.
-
 	# Required by cmake-utils_src_configure().
 	mycmakeargs=(
 		# Avoid hard-coding RPATH entries into dynamically linked SDL libraries.
@@ -104,10 +112,8 @@ src_configure() {
 		-DARTS=NO
 		-DESD=NO
 		${use_enable_directfb}
-		$(cmake-utils_use_enable audio    SDL_AUDIO)
-		$(cmake-utils_use_enable video    SDL_VIDEO)
-		$(cmake-utils_use_enable joystick SDL_JOYSTICK)
-		$(cmake-utils_use_enable threads  SDL_THREADS)
+		$(cmake-utils_use_enable joystick    SDL_JOYSTICK)
+		$(cmake-utils_use_enable threads     SDL_THREADS)
 		$(cmake-utils_use_enable static-libs SDL_STATIC)
 		$(cmake-utils_use_enable 3dnow)
 		$(cmake-utils_use_enable altivec)
@@ -127,6 +133,7 @@ src_configure() {
 		$(cmake-utils_use_enable xinput       VIDEO_X11_XINPUT)
 		$(cmake-utils_use_enable xrandr       VIDEO_X11_XRANDR)
 		$(cmake-utils_use_enable xscreensaver VIDEO_X11_XSCRNSAVER)
+		$(cmake-utils_use_enable xvidmode     VIDEO_X11_XVM)
 		$(cmake-utils_use_enable aqua   VIDEO_COCOA)
 		$(cmake-utils_use_enable gles   VIDEO_OPENGLES)
 		$(cmake-utils_use_enable opengl VIDEO_OPENGL)

@@ -2,8 +2,8 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer>
-		<name>leycec</name>
 		<email>leycec@gmail.com</email>
+		<name>leycec</name>
 	</maintainer>
 	<longdescription>
 Simple DirectMedia Layer is a cross-platform multimedia library designed 
@@ -30,10 +30,11 @@ Pike, Pliant, Python, Ruby, Smalltalk, and Tcl.
 		<!--flag name="directx">Adds support for Windows DirectX audio and video</flag-->
 		<flag name="fusionsound">Enable FusionSound audio subsystem support</flag>
 		<flag name="gles">Enable OpenGL ES support</flag>
-		<flag name="html">Install HTML documentation</flag>
 		<flag name="tslib">Enable tslib touchscreen device support</flag>
 		<flag name="xcursor">Enable Xcursor cursor-loading support</flag>
-		<flag name="xinput">Enable Xinput touchscreen device and multiple mouse support</flag>
-		<flag name="xrender">Enable Xrender texture and transparency support (recommended)</flag>
+		<flag name="xinput">Enable xinput touchscreen device and multiple mouse support (recommended)</flag>
+		<!--flag name="xrender">Enable XRender texture and transparency support (recommended)</flag-->
+		<flag name="xrandr">Enable XRandR resolution switcher support (recommended)</flag>
+		<flag name="xvidmode">Enable XVidMode resolution switcher support (not recommended)</flag>
 	</use>
 </pkgmetadata>

@@ -1,3 +1,7 @@
+Markus von Appen's semi-official CMake patch, currently maintained at:
+
+  http://forums.libsdl.org/viewtopic.php?t=8383
+
 diff -r 724e1fba7933 CMakeLists.txt
 --- /dev/null	Thu Jan 01 00:00:00 1970 +0000
 +++ b/CMakeLists.txt	Mon Aug 27 18:56:31 2012 +0200
