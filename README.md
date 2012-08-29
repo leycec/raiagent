@@ -1,13 +1,18 @@
 raiagent
 ===========
 
-RaiaGent, a Gentoo overlay by Raiazome, et al.
+_RaiaGent_ :: a frumious Gentoo overlay from Raiazome et al.
 
-## SYNOPSIS
+## Synopsis
 
-Well-documented ebuilds en-route to the Sunrise overlay and a Portage near you.
+Well-documented ebuilds en-route to a bandersnatch near you.
 
-## TODO
+## Usage
 
-* Nicolas Pinto's sekyfsr overlay has a broadly useful "README.md"; see:
-  https://github.com/npinto/sekyfsr-gentoo-overlay
+* Install `layman`, the Gentoo overlay manager.
+<code><pre><code>emerge layman
+    echo 'source /var/lib/layman/make.conf' >> /etc/make.conf</code></pre></code>
+* Add the `raiagent` overlay.
+<code><pre><code>layman -o https://raw.github.com/leycec/raiagent/master/overlay.xml -f -a raiagent</code></pre></code>
+* Retrieve the added overlay.
+<code><pre><code>layman -S</code></pre></code>
