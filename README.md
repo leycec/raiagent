@@ -12,7 +12,7 @@ Well-documented ebuilds en-route to a bandersnatch near you.
 #### Install `layman`, the Gentoo overlay manager.
 
     emerge layman
-    echo 'source /var/lib/layman/make.conf' >> /etc/make.conf</code></pre></code>
+    echo 'source /var/lib/layman/make.conf' >> /etc/make.conf
 
 #### Add the `raiagent` overlay.
 
