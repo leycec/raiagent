@@ -145,5 +145,7 @@ src_configure() {
 src_install() {
 	# cmake-utils_src_install() installs all docs, except...
 	cmake-utils_src_install
-	dodoc WhatsNew
+	for docfile in README* TODO BUGS CREDITS WhatsNew; do
+		dodoc "${docfile}"
+	done
 }
