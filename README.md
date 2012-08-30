@@ -18,6 +18,6 @@ Well-documented ebuilds en-route to a bandersnatch near you.
 
     layman -o https://raw.github.com/leycec/raiagent/master/overlay.xml -f -a raiagent
 
-#### Retrieve the added overlay.
+#### Add all `raiagent` ebuilds.
 
     layman -S
