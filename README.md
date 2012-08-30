@@ -1,7 +1,7 @@
 raiagent
 ===========
 
-_RaiaGent_ :: the frumious Gentoo overlay from Raiazome and fellows.
+_RaiaGent_ :: the frumious Gentoo overlay from Raiazome, et al.
 
 ## Synopsis
 
