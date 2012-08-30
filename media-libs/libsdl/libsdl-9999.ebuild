@@ -26,7 +26,7 @@ KEYWORDS="~amd64 ~x86"
 # suggests. SDL supports at least a modicum of extreme optimization. If users
 # enable unsafe CFLAGS, SDL breaking is the least of their concerns.
 IUSE="
-joystick threads static-libs
+joystick +threads static-libs
 3dnow altivec mmx sse sse2
 alsa fusionsound nas oss pulseaudio
 X xcursor xinerama xinput xrandr xscreensaver xvidmode
