@@ -12,7 +12,7 @@ EHG_REPO_URI="http://hg.libsdl.org/SDL_ttf"
 
 LICENSE="ZLIB"
 SLOT="2"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
 IUSE="static-libs X"
@@ -28,9 +28,9 @@ S="${WORKDIR}/${MY_P}"
 
 src_configure() {
 	local myeconfargs=(
- 		--disable-imageio 
- 		$(use_enable static-libs static) 
- 		$(use_enable X x) 
+		--disable-imageio
+		$(use_enable static-libs static)
+		$(use_enable X x)
 	)
 
 	# See "sdl-image-9999.ebuild" for discussion.
@@ -38,7 +38,7 @@ src_configure() {
 }
 
 src_install() {
- 	default
+	default
 	dobin .libs/showfont
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all

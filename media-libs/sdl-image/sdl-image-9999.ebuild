@@ -12,7 +12,7 @@ EHG_REPO_URI="http://hg.libsdl.org/SDL_image"
 
 LICENSE="ZLIB"
 SLOT="2"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
 IUSE="
@@ -35,14 +35,14 @@ S="${WORKDIR}/${MY_P}"
 src_configure() {
 	local myeconfargs=(
 		# Avoid the OS X-specific ImageIO library.
- 		--disable-imageio 
- 		$(use_enable static-libs static) 
- 		$(use_enable gif) 
- 		$(use_enable jpeg jpg) 
- 		$(use_enable tiff tif) 
- 		$(use_enable png) 
- 		$(use_enable webp) 
- 		$(use_enable xpm)
+		--disable-imageio
+		$(use_enable static-libs static)
+		$(use_enable gif)
+		$(use_enable jpeg jpg)
+		$(use_enable tiff tif)
+		$(use_enable png)
+		$(use_enable webp)
+		$(use_enable xpm)
 	)
 
 	# SDL_image 2.0 ships with a demonstrably horrible "configure" script. By
@@ -59,11 +59,11 @@ src_configure() {
 	#
 	# Since "true" always succeeds with zero exit status, this forces sanity.
 	# SDL, I am not happy with you.
- 	MISSING=true econf "${myeconfargs[@]}"
+	MISSING=true econf "${myeconfargs[@]}"
 }
 
 src_install() {
- 	default
+	default
 	dobin .libs/showimage
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all

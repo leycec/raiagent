@@ -9,8 +9,8 @@
             <name>leycec</name>
             <email>leycec@gmail.com</email>
         </owner>
-        <source type="git">git://github.com/leycec/raia-gentoo.git</source>
-        <source type="git">https://github.com/leycec/raia-gentoo.git</source>
-        <feed>https://github.com/leycec/raia-gentoo/commits/master.atom</feed>
+        <source type="git">git://github.com/leycec/raiagent.git</source>
+        <source type="git">https://github.com/leycec/raiagent.git</source>
+        <feed>https://github.com/leycec/raiagent/commits/master.atom</feed>
     </repo>
 </repositories>

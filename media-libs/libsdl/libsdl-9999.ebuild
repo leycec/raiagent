@@ -16,7 +16,7 @@ EHG_REPO_URI="http://hg.libsdl.org/SDL"
 
 LICENSE="ZLIB"
 SLOT="2"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
 # SDL 1.2 ebuilds prohibited unsafe CFLAGS unless "custom-flags" was enabled.
