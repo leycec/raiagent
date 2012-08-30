@@ -20,12 +20,7 @@ SRC_URI="
 
 LICENSE="GPL-3"
 SLOT="0"
-
-# Unfortunately, beta 42 currently suffers extreme instability issues under
-# Linux. For all the tedious details, see:
-#
-#   http://forums.te4.org/viewtopic.php?f=42&t=34598&p=136576
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 IUSE="+music"
 
