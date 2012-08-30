@@ -29,7 +29,7 @@ IUSE="
 joystick threads static-libs
 3dnow altivec mmx sse sse2
 alsa fusionsound nas oss pulseaudio
-X xcursor xinerama +xinput +xrandr xscreensaver xvidmode
+X xcursor xinerama xinput xrandr xscreensaver xvidmode
 aqua directfb gles opengl tslib
 "
 
@@ -51,7 +51,7 @@ RDEPEND="
 	xinerama? ( x11-libs/libXinerama )
 	xinput?   ( x11-libs/libXi )
 	xrandr?   ( x11-libs/libXrandr )
-	xvidmode? (	x11-libs/libXxf86vm )
+	xvidmode? ( x11-libs/libXxf86vm )
 	xscreensaver? ( x11-libs/libXScrnSaver )
 	alsa? ( media-libs/alsa-lib )
 	fusionsound? ( >=media-libs/FusionSound-1.1.1 )
