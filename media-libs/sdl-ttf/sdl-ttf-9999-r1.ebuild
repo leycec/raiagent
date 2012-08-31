@@ -15,7 +15,7 @@ SLOT="2"
 KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
-IUSE="static-libs X"
+IUSE="showfont static-libs X"
 
 RDEPEND="
 	media-libs/libsdl:2
@@ -39,7 +39,7 @@ src_configure() {
 
 src_install() {
 	default
-	dobin .libs/showfont
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all
+	use showfont && dobin .libs/showfont
 }

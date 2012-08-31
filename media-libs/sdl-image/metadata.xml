@@ -14,6 +14,7 @@ WEBP, XCF, XPM, XV.
 		<doc lang="en">http://www.libsdl.org/projects/SDL_image/docs/index.html</doc>
 	</upstream>
 	<use>
+		<flag name="showimage">Install the "showimage" test command</flag>
 		<flag name="webp">Enable WEBP image format support</flag>
 	</use>
 </pkgmetadata>

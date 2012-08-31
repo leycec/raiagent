@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
 IUSE="
-static-libs
+showimage static-libs
 gif jpeg png tiff webp xpm
 "
 
@@ -64,7 +64,7 @@ src_configure() {
 
 src_install() {
 	default
-	dobin .libs/showimage
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all
+	use showimage && dobin .libs/showimage
 }
