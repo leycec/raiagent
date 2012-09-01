@@ -52,7 +52,7 @@ src_configure() {
 	#
 	# On running "make", "Makefile" then attempts to run the expansion of
 	# "$(AUTOCONF)". Since the system is unlikely to have autoconf-1.0, the
-	# "missing" script naturally fails with non-zero exit status. To sidestep 
+	# "missing" script naturally fails with non-zero exit status. To sidestep
 	# this insanity, force "configure" to instead set globals resembling:
 	#
 	#   AUTOCONF = true --run autoconf-1.10
@@ -66,5 +66,7 @@ src_install() {
 	default
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all
-	use showimage && dobin .libs/showimage
+
+	# Prevent SDL 2.0's "showimage" from colliding with SDL 1.2's "showimage".
+	use showimage && newbin '.libs/showimage' "showimage-${SLOT}"
 }

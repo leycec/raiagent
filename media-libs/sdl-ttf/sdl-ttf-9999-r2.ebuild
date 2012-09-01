@@ -41,5 +41,7 @@ src_install() {
 	default
 	dodoc CHANGES README
 	use static-libs || prune_libtool_files --all
-	use showfont && dobin .libs/showfont
+
+	# Prevent SDL 2.0's "showfont" from colliding with SDL 1.2's "showfont".
+	use showfont && newbin '.libs/showfont' "showfont-${SLOT}"
 }

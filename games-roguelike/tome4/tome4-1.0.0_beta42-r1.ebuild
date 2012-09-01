@@ -46,9 +46,9 @@ RDEPEND="
 	media-libs/libpng
 	media-libs/libvorbis
 	media-libs/openal
-	media-libs/libsdl:2
-	media-libs/sdl-image:2
-	media-libs/sdl-ttf:2
+	media-libs/libsdl:2[X]
+	media-libs/sdl-image:2[png]
+	media-libs/sdl-ttf:2[X]
 	virtual/libc
 "
 DEPEND="${RDEPEND}
