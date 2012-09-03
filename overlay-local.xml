@@ -2,7 +2,7 @@
 <!DOCTYPE repositories SYSTEM "/dtd/repositories.dtd">
 <repositories xmlns="" version="1.0">
     <repo quality="experimental" status="official">
-        <name>raiagent</name>
+        <name>raiagent-local</name>
         <description>RaiaGent, a Gentoo overlay by Raiazome, et al.</description>
         <homepage>http://raiazome.com</homepage>
         <owner type="person">

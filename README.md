@@ -16,5 +16,5 @@ Well-documented ebuilds en-route to a bandersnatch near you.
 
 #### Add the `raiagent` overlay.
 
-    layman -o https://raw.github.com/leycec/raiagent/master/overlay.xml -f -a raiagent
+    layman -a layman
     layman -S
