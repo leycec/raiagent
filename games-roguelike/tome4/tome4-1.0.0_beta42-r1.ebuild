@@ -22,6 +22,8 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
+#FIXME: We should probably port beta 41 changes here, but I'm not sure anyone
+#particularly cares. Until they complain, we remain...lazy!
 IUSE="+music"
 
 #FIXME: ToME4 bundles *EVERYTHING* except SDL 2.0. While convenient, this does
@@ -123,61 +125,3 @@ cd "${tome4_home}"
 EOF
 	dobin tome4
 }
-
-#FIXME: Great post on te4 forums concerning building recent versions:
-#
-#  http://forums.te4.org/viewtopic.php?p=114539#p114539
-#
-#Probably the best resource as of yet. It looks like one of the keys is sedding
-#LuA files bundled with the source. Oh, and here's another one:
-#
-#  http://forums.te4.org/viewtopic.php?f=36&t=28096
-#
-#O.K.; so, it looks like ToME4 probably won't build. At least, no one seems to
-#have got a recent build working. Actually, "greycat" has. Bless his helpful
-#commentary! This may just be possible.
-
-#inherit cmake-utils eutils flag-o-matic multilib toolchain-funcs
-# Embedding of USE flags in "SRC_URI" is effectively useless under EAPI 4.
-# Ideally, we want to permit the user to customize which distfile to retrieve
-# via the "music" USE flag, like so:
-#
-#   SRC_URI="
-#	   music? ( ${HOMEPAGE}/dl/t-engine/${MY_P}.tar.bz2 )
-#	  !music? ( ${HOMEPAGE}/dl/t-engine/${MY_P}-nomusic.tar.bz2 )"
-#   IUSE="music"
-#
-# Naturally, that doesn't work. So, we currently force music on everyone.
-	# Since
-	# these expansions always follow expansions of ${CPPFLAGS} and themselves
-	# are always followed by hardcoded CPPFLAGS, eliminate both with one fell
-	# swoop by forcing CFLAGS 
-	# truncating all text following expansions of ${CPPFLAGS}. Also,
-	# let Portage decide whether to strip binaries by excising "-s".
-#	sed -e 's~\($(CPPFLAGS)\).*~\1~' \
-
-#-e 'CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)'
-#-e 's~CPPFLAGS\s*+=~\1~' \
-#-e 's~$(ARCH) ~~' \
-#SRC_URI="${HOMEPAGE}/dl/t-engine/${MY_P}.tar.bz2"
-#SRC_URI="http://te4.org/dl/t-engine/${MY_P}.tar.bz2"
-#SRC_URI="http://te4.org/dl/t-engine/t-engine4-src-1.0.0beta42.tar.bz2"
-#RESTRICT="mirror"
-#IUSE=""
-#RESTRICT="mirror"
-#	dev-lang/lua
-#	media-libs/freetype:2
-#	media-libs/libogg
-#	media-libs/libvorbis
-#	media-libs/mesa
-#	media-libs/smpeg
-#	media-libs/tiff
-#	virtual/jpeg
-#	media-libs/sdl-gfx
-#	media-libs/sdl-mixer
-#	media-libs/sdl-net
-#	media-libs/libmikmod
-
-#src_compile() {
-#	    emake
-#}

@@ -18,6 +18,7 @@ Take part in an epic fantasy adventure like no other, engaging both your imagina
 		<bugs-to>http://forums.te4.org/viewforum.php?f=42</bugs-to>
 	</upstream>
 	<use>
-		<flag name="music">Add in-game music</flag>
+		<flag name="jit">Enable Lua JIT support (recommended)</flag>
+		<flag name="music">Enable in-game music</flag>
 	</use>
 </pkgmetadata>

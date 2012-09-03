@@ -4,7 +4,7 @@
 
 EAPI=4
 
-inherit eutils multilib
+inherit eutils multilib pax-utils
 
 # ToME4 uses oddball version specifiers. Portage permits only strict version
 # specifiers. The result is a classical clusterf... well, you get the idea.
@@ -21,7 +21,7 @@ SRC_URI="
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+music"
+IUSE="+jit +music"
 
 #FIXME: ToME4 bundles *EVERYTHING* except SDL 2.0. While convenient, this does
 #substantially complicate a Gentoo-centric build process. Let's take it one
@@ -55,18 +55,25 @@ src_prepare() {
 
 	# ToME4 uses a hand-rolled Lua-based build system. As expected, it's rather
 	# inflexible and requires sed-driven patches. Order is significant, here.
-	sed -e "s~/usr/lib32~${ROOT}/$(get_abi_LIBDIR x86)~" \
-		-e "s~/usr/include~${ROOT}/usr/include~" \
-	    -e "s~/opt/SDL-2.0~${ROOT}/usr~" \
+	sed -e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~" \
+		-e "s~/usr/include~${EPREFIX}/usr/include~" \
+	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~" \
 	    -i 'premake4.lua'
-	sed -e "s~/opt/SDL-2.0/lib/~${ROOT}/$(get_libdir)~" \
+	sed -e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~" \
 	    -i 'build/te4core.lua'
 }
 
 src_configure() {
-	# Generate the "Makefile".
-	einfo 'Running "premake4 gmake"...'
-	premake4 gmake || die '"premake4 gmake" failed'
+	# Options to be passed to "premake4".
+    local premake_options=()
+	if use jit
+	then premake_options+=( --lua=jit2 )
+	else premake_options+=( --lua=default )
+	fi
+
+	# Generate a "Makefile" with "premake4".
+	einfo "Running \"premake4 ${premake_options[@]} gmake\"..."
+	premake4 "${premake_options[@]}" gmake || die '"premake4 gmake" failed'
 
 	# "premake4" attempts to force expansion of environment variable ${ARCH}
 	# into "gcc" calls. Since Gentoo already sets ${ARCH} (e.g., to "amd64") and
@@ -100,12 +107,17 @@ src_install() {
 	dodoc CONTRIBUTING COPYING-TILES CREDITS
 
 	# Oddly, "premake4" generates no "install" Makefile target. Do so by hand.
-	local tome4_home="${ROOT}/usr/share/tome4"
+	local tome4_home="${EROOT}/usr/share/tome4"
 	insinto "${tome4_home}"
 	doins -r bootstrap
 	doins -r game
 	exeinto "${tome4_home}"
 	doexe t-engine
+
+	# If enabling a Lua JIT interpreter, disable MPROTECT under PaX-hardened
+	# kernels. (All Lua JIT interpreters execute in-memory code and hence cause
+	# "Segmentation fault" errors under MPROTECT.)
+	use jit && pax-mark m "${ED}/${tome4_home}/t-engine"
 
 	# The "t-engine" executable expects to be executed from "${tome4_home}".
 	# Install "tome4", a Bourne shell script enforcing this.
@@ -116,61 +128,3 @@ cd "${tome4_home}"
 EOF
 	dobin tome4
 }
-
-#FIXME: Great post on te4 forums concerning building recent versions:
-#
-#  http://forums.te4.org/viewtopic.php?p=114539#p114539
-#
-#Probably the best resource as of yet. It looks like one of the keys is sedding
-#LuA files bundled with the source. Oh, and here's another one:
-#
-#  http://forums.te4.org/viewtopic.php?f=36&t=28096
-#
-#O.K.; so, it looks like ToME4 probably won't build. At least, no one seems to
-#have got a recent build working. Actually, "greycat" has. Bless his helpful
-#commentary! This may just be possible.
-
-#inherit cmake-utils eutils flag-o-matic multilib toolchain-funcs
-# Embedding of USE flags in "SRC_URI" is effectively useless under EAPI 4.
-# Ideally, we want to permit the user to customize which distfile to retrieve
-# via the "music" USE flag, like so:
-#
-#   SRC_URI="
-#	   music? ( ${HOMEPAGE}/dl/t-engine/${MY_P}.tar.bz2 )
-#	  !music? ( ${HOMEPAGE}/dl/t-engine/${MY_P}-nomusic.tar.bz2 )"
-#   IUSE="music"
-#
-# Naturally, that doesn't work. So, we currently force music on everyone.
-	# Since
-	# these expansions always follow expansions of ${CPPFLAGS} and themselves
-	# are always followed by hardcoded CPPFLAGS, eliminate both with one fell
-	# swoop by forcing CFLAGS 
-	# truncating all text following expansions of ${CPPFLAGS}. Also,
-	# let Portage decide whether to strip binaries by excising "-s".
-#	sed -e 's~\($(CPPFLAGS)\).*~\1~' \
-
-#-e 'CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)'
-#-e 's~CPPFLAGS\s*+=~\1~' \
-#-e 's~$(ARCH) ~~' \
-#SRC_URI="${HOMEPAGE}/dl/t-engine/${MY_P}.tar.bz2"
-#SRC_URI="http://te4.org/dl/t-engine/${MY_P}.tar.bz2"
-#SRC_URI="http://te4.org/dl/t-engine/t-engine4-src-1.0.0beta42.tar.bz2"
-#RESTRICT="mirror"
-#IUSE=""
-#RESTRICT="mirror"
-#	dev-lang/lua
-#	media-libs/freetype:2
-#	media-libs/libogg
-#	media-libs/libvorbis
-#	media-libs/mesa
-#	media-libs/smpeg
-#	media-libs/tiff
-#	virtual/jpeg
-#	media-libs/sdl-gfx
-#	media-libs/sdl-mixer
-#	media-libs/sdl-net
-#	media-libs/libmikmod
-
-#src_compile() {
-#	    emake
-#}
