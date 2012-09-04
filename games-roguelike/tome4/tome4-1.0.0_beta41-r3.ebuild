@@ -39,7 +39,7 @@ RDEPEND="
 	media-libs/libpng
 	media-libs/libvorbis
 	media-libs/openal
-	media-libs/libsdl:2[X]
+	media-libs/libsdl:2[X,opengl]
 	media-libs/sdl-image:2[png]
 	media-libs/sdl-ttf:2[X]
 	virtual/libc
@@ -114,10 +114,14 @@ src_install() {
 	exeinto "${tome4_home}"
 	doexe t-engine
 
+	#FIXME: Ideally, "pax-mark m" should be prefixed with "use jit &&".
+	#Disabling Lua JIT should permit PaX-hardened MPROTECT restrictions. It
+	#doesn't, and it's not entirely clear why. Globally disable such
+	#restrictions for now, until we get a better handle on what ToME4 is doing.
 	# If enabling a Lua JIT interpreter, disable MPROTECT under PaX-hardened
 	# kernels. (All Lua JIT interpreters execute in-memory code and hence cause
 	# "Segmentation fault" errors under MPROTECT.)
-	use jit && pax-mark m "${ED}/${tome4_home}/t-engine"
+	pax-mark m "${ED}/${tome4_home}/t-engine"
 
 	# The "t-engine" executable expects to be executed from "${tome4_home}".
 	# Install "tome4", a Bourne shell script enforcing this.
