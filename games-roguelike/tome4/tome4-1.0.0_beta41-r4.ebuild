@@ -4,13 +4,17 @@
 
 EAPI=4
 
-inherit eutils multilib pax-utils
+#FIXME: Replicate to the SDL ebuilds.
+# Enforce Bash strictness.
+set -e
+
+# List "games" last, as suggested by the "Gentoo Games Ebuild HOWTO."
+inherit eutils multilib pax-utils games
 
 # ToME4 uses oddball version specifiers. Portage permits only strict version
 # specifiers. The result is a classical clusterf... well, you get the idea.
 MY_PN="t-engine4"
 MY_P="${MY_PN}-src-${PV/_/}"
-
 DESCRIPTION="Topdown tactical RPG roguelike game and game engine"
 HOMEPAGE="http://te4.org"
 SRC_URI="
@@ -56,16 +60,17 @@ src_prepare() {
 	# ToME4 uses a hand-rolled Lua-based build system. As expected, it's rather
 	# inflexible and requires sed-driven patches. Order is significant, here.
 	sed -e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~" \
-		-e "s~/usr/include~${EPREFIX}/usr/include~" \
+	    -e "s~/usr/include~${EPREFIX}/usr/include~" \
 	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~" \
 	    -i 'premake4.lua'
+#		-i 'premake4.lua' || die 'sed "premake4.lua" failed'
 	sed -e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~" \
 	    -i 'build/te4core.lua'
 }
 
 src_configure() {
 	# Options to be passed to "premake4".
-    local premake_options=()
+	local premake_options=()
 	if use jit
 	then premake_options+=( --lua=jit2 )
 	else premake_options+=( --lua=default )
@@ -73,7 +78,8 @@ src_configure() {
 
 	# Generate a "Makefile" with "premake4".
 	einfo "Running \"premake4 ${premake_options[@]} gmake\"..."
-	premake4 "${premake_options[@]}" gmake || die '"premake4 gmake" failed'
+	premake4 "${premake_options[@]}" gmake
+#	premake4 "${premake_options[@]}" gmake || die '"premake4 gmake" failed'
 
 	# "premake4" attempts to force expansion of environment variable ${ARCH}
 	# into "gcc" calls. Since Gentoo already sets ${ARCH} (e.g., to "amd64") and
@@ -101,18 +107,13 @@ src_compile() {
 	# Though "premake4" documentation insists it defaults to release builds,
 	# ToME4 defaults to debug builds. Enforce sanity.
 	config='release' emake
+#	emake
 }
 
+# Oddly, "premake4" generates no "install" Makefile target. Do so by hand.
 src_install() {
-	dodoc CONTRIBUTING COPYING-TILES CREDITS
-
-	# Oddly, "premake4" generates no "install" Makefile target. Do so by hand.
-	local tome4_home="${EROOT}/usr/share/tome4"
-	insinto "${tome4_home}"
-	doins -r bootstrap
-	doins -r game
-	exeinto "${tome4_home}"
-	doexe t-engine
+	# Directory to install ToME4 to.
+	local tome4_home="${GAMES_PREFIX}/${PN}"
 
 	#FIXME: Ideally, "pax-mark m" should be prefixed with "use jit &&".
 	#Disabling Lua JIT should permit PaX-hardened MPROTECT restrictions. It
@@ -121,14 +122,22 @@ src_install() {
 	# If enabling a Lua JIT interpreter, disable MPROTECT under PaX-hardened
 	# kernels. (All Lua JIT interpreters execute in-memory code and hence cause
 	# "Segmentation fault" errors under MPROTECT.)
-	pax-mark m "${ED}/${tome4_home}/t-engine"
+	pax-mark m t-engine
 
-	# The "t-engine" executable expects to be executed from "${tome4_home}".
-	# Install "tome4", a Bourne shell script enforcing this.
-	cat <<EOF > tome4
-#!/bin/sh
-cd "${tome4_home}"
-./t-engine
-EOF
-	dobin tome4
+	# The "t-engine" executable expects to be executed from its home directory.
+	# Unfortunately, this does not seem to be readily patchable.
+	games_make_wrapper "${PN}" ./t-engine "${tome4_home}"
+
+	# Install documentation.
+	dodoc CONTRIBUTING COPYING-TILES CREDITS
+
+	# Install ToME4.
+	insinto "${tome4_home}"
+	doins -r bootstrap
+	doins -r game
+	exeinto "${tome4_home}"
+	doexe t-engine
+
+	# Force games-specific user and group permissions.
+	prepgamesdirs
 }
