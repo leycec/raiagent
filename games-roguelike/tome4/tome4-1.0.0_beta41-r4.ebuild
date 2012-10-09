@@ -138,6 +138,6 @@ src_install() {
 	exeinto "${tome4_home}"
 	doexe t-engine
 
-	# Force games-specific user and group permissions.
+	# Force game-specific user and group permissions.
 	prepgamesdirs
 }

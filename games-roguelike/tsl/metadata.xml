@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>The Slimy Lichmummy (TSL) is an adventure game by Ulf Åström, similar in style to the classic "Rogue".
+
+You play the role of an adventurer exploring a bleak and hostile world. Battle peculiar beasts and overcome sinister traps. Improve your character by replacing body parts with machinery. This is no ordinary "fantasy" setting. Everyone loses, everyone dies.
+
+TSL has quick gameplay and high replay value. Each game is randomly generated and has different levels, item and monster placement. Turn-based gameplay gives you ample time to think about each move. There is more than one way to deal with each situation. There is no need to "grind" and "level up" - only player skill counts. You start each game with the accumulated knowledge of previous sessions.
+
+TSL is not easy and forgiving - it is actively trying to kill you and requires great skill to outsmart. Death is permanent: when you die, there is no way to bring a character back. While this might sound discouraging at first, the appeal lies in the trial and error, discovery itself. Even death tries to be fair and educational: every time you die, you will know what killed you and learn not to do that again. Eventually you will master the rules.
+
+TSL has a delicious grayscale interface (using Allegro for graphics or curses for textmode).
+</longdescription>
+	<use>
+		<flag name="allegro">Build Allegro-driven GUI</flag>
+		<flag name="ncurses">Build ncurses-driven CLI</flag>
+	</use>
+</pkgmetadata>

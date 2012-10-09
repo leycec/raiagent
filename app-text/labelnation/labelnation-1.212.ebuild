@@ -1,18 +1,19 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
-
 EAPI=4
+
+# Enforce Bash scrictness.
+set -e
 
 # While the installed "labelnation" script requires only Python 2.x, the
 # installed "csv_to_ln" script requires at least Python 2.3. Since
 # "python.eclass" fails with error for less than Python 2.5, use that instead.
 PYTHON_DEPEND="2:2.5"
 
-# "labelnation" installs only stand-alone scripts.
+# "labelnation" installs only Python 2.x-specific stand-alone scripts.
 SUPPORT_PYTHON_ABIS=
-#Python 2.x-specific
-#RESTRICT_PYTHON_ABIS="3.*"
+RESTRICT_PYTHON_ABIS="3.*"
 
 inherit python
 
@@ -34,9 +35,9 @@ src_prepare() {
 }
 
 src_install() {
-	# "labelnation" provides no makefiles, so this is it.
- 	dobin csv_to_ln labelnation
- 	dodoc README
- 	docinto examples
- 	dodoc examples/*
+	# "labelnation" bundles no makefiles, so this is it.
+	dobin csv_to_ln labelnation
+	dodoc README
+	docinto examples
+	dodoc examples/*
 }
