@@ -94,6 +94,8 @@ src_configure() {
 	# C++ compiler flags). This is rarely safe. Forbid all such issues by
 	# appending only sane ToME4-specific flags (e.g., "-MMD") onto ${CFLAGS} and
 	# ${CPPFLAGS}. Arguably, one or all such issues constitute ToME4 bugs.
+	#
+	# Also, avoid implicitly stripping debug symbols from binaries.
 	sed -e 's~\(CFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
 		-e 's~\(CXXFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
 		-e 's~\(LDFLAGS\s*+=\) -s~\1~' \

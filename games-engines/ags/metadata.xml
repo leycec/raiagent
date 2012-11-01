@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>This version of Adventure Game Studio (AGS) contains changes from the version published by Chris Jones. The run-time engine was ported to Android, iOS, Linux, Mac OS X and PSP and a refactoring effort is under way. A detailed documentation of the changes is provided in the form of the git log of this git repository.
+</longdescription>
+	<use>
+		<flag name="midi">Enable MIDI music with Eric A. Welsh's GUS patch set</flag>
+	</use>
+</pkgmetadata>
