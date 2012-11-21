@@ -40,13 +40,13 @@ IUSE="+jit +music"
 # ("virtual/libc" provides the "libdl", "libpthread", and "libm" libraries.)
 RDEPEND="
 	media-libs/glew
-	media-libs/libpng-1.5.10
 	media-libs/libsdl:2[X,opengl]
 	media-libs/libvorbis
 	media-libs/openal
 	media-libs/sdl-image:2[png]
 	media-libs/sdl-ttf:2[X]
 	virtual/libc
+	>=media-libs/libpng-1.5.10
 "
 DEPEND="${RDEPEND}
 	>=dev-util/premake-4.3
