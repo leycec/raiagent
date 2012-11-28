@@ -1,8 +1,10 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
+EAPI=5
 
-EAPI=4
+# Enable Bash strictness.
+set -e
 
 # SDL 2.0 officially distributes only an autotools-based build. Due to numerous
 # core blockers in the development of an autotools-based ebuild, we've adopted a
@@ -79,7 +81,7 @@ DEPEND="${RDEPEND}
 	xscreensaver? ( x11-proto/scrnsaverproto )
 "
 
-CMAKE_MIN_VERSION=2.6  # ...if "CMakeLists.txt" can be believed.
+CMAKE_MIN_VERSION=2.6  # ...if "CMakeLists.txt" is to be believed.
 
 src_unpack() {
 	[[ -d "${EHG_STORE_DIR}/${PN}" ]] ||
@@ -87,56 +89,66 @@ src_unpack() {
 	mercurial_src_unpack
 }
 
+#FIXME: SDL2's current "CMakeLists.txt" file leaks LDFLAGS into pkg-config
+#files, as confirmed by a QA notice. The offending line appears to be:
+#
+#    target_link_libraries(SDL2 ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
+#
+#Since target_link_libraries() is a core CMake function, it's unclear whether
+#we can patch around this on our end. I'm surprised I haven't seen similar
+#complaints from other CMake-dependent ebuilds, and thus suspect the issue *IS*
+#our fault. Somehow, anyway...
 src_prepare() {
-	epatch     "${FILESDIR}/${PV}-sdl2-config.in.patch"
-	epatch -p1 "${FILESDIR}/${PV}-cmake_20120827.patch"
+	epatch "${FILESDIR}/${PV}-sdl2-config.in.patch"
 }
 
 src_configure() {
 	# DirectFB can link against SDL, triggering a dependency loop. Link against
 	# DirectFB only if it isn't currently being installed. (See issue #61592.)
-	local use_enable_directfb="-DVIDEO_DIRECTFB=ON"
+	local use_directfb="-DVIDEO_DIRECTFB=ON"
 	if use directfb; then
 		echo 'int main(){}' > directfb-test.c
 		$(tc-getCC) directfb-test.c -ldirectfb 2>/dev/null \
-			&& use_enable_directfb="-DVIDEO_DIRECTFB=OFF" \
+			&& use_directfb="-DVIDEO_DIRECTFB=OFF" \
 			|| ewarn "Disabling DirectFB, since \"libdirectfb.so\" is broken."
 		rm directfb-test.c
 	fi
 
 	# Required by cmake-utils_src_configure().
 	mycmakeargs=(
+		# Disable assertion tests.
+		-DASSERTIONS=disabled
 		# Avoid hard-coding RPATH entries into dynamically linked SDL libraries.
 		-DRPATH=NO
 		# Disable obsolete and/or inapplicable libraries.
 		-DARTS=NO
 		-DESD=NO
-		${use_enable_directfb}
-		$(cmake-utils_use_enable joystick    SDL_JOYSTICK)
-		$(cmake-utils_use_enable threads     SDL_THREADS)
-		$(cmake-utils_use_enable static-libs SDL_STATIC)
-		$(cmake-utils_use_enable 3dnow)
-		$(cmake-utils_use_enable altivec)
-		$(cmake-utils_use_enable mmx)
-		$(cmake-utils_use_enable sse)
-		$(cmake-utils_use_enable sse SSEMATH)
-		$(cmake-utils_use_enable sse2)
-		$(cmake-utils_use_enable alsa)
-		$(cmake-utils_use_enable fusionsound)
-		$(cmake-utils_use_enable nas)
-		$(cmake-utils_use_enable oss)
-		$(cmake-utils_use_enable pulseaudio)
-		$(cmake-utils_use_enable tslib INPUT_TSLIB)
-		$(cmake-utils_use_enable X            VIDEO_X11)
-		$(cmake-utils_use_enable xcursor      VIDEO_X11_XCURSOR)
-		$(cmake-utils_use_enable xinerama     VIDEO_X11_XINERAMA)
-		$(cmake-utils_use_enable xinput       VIDEO_X11_XINPUT)
-		$(cmake-utils_use_enable xrandr       VIDEO_X11_XRANDR)
-		$(cmake-utils_use_enable xscreensaver VIDEO_X11_XSCRNSAVER)
-		$(cmake-utils_use_enable xvidmode     VIDEO_X11_XVM)
-		$(cmake-utils_use_enable aqua   VIDEO_COCOA)
-		$(cmake-utils_use_enable gles   VIDEO_OPENGLES)
-		$(cmake-utils_use_enable opengl VIDEO_OPENGL)
+		${use_directfb}
+		$(cmake-utils_use static-libs SDL_STATIC)
+		$(cmake-utils_use joystick    SDL_JOYSTICK)
+		$(cmake-utils_use threads     SDL_THREADS)
+		$(cmake-utils_use 3dnow)
+		$(cmake-utils_use altivec)
+		$(cmake-utils_use mmx)
+		$(cmake-utils_use sse)
+		$(cmake-utils_use sse SSEMATH)
+		$(cmake-utils_use sse2)
+		$(cmake-utils_use alsa)
+		$(cmake-utils_use fusionsound)
+		$(cmake-utils_use nas)
+		$(cmake-utils_use oss)
+		$(cmake-utils_use pulseaudio)
+		$(cmake-utils_use tslib INPUT_TSLIB)
+		$(cmake-utils_use X            VIDEO_X11)
+		$(cmake-utils_use xcursor      VIDEO_X11_XCURSOR)
+		$(cmake-utils_use xinerama     VIDEO_X11_XINERAMA)
+		$(cmake-utils_use xinput       VIDEO_X11_XINPUT)
+		$(cmake-utils_use xrandr       VIDEO_X11_XRANDR)
+		$(cmake-utils_use xscreensaver VIDEO_X11_XSCRNSAVER)
+		$(cmake-utils_use xvidmode     VIDEO_X11_XVM)
+		$(cmake-utils_use aqua   VIDEO_COCOA)
+		$(cmake-utils_use gles   VIDEO_OPENGLES)
+		$(cmake-utils_use opengl VIDEO_OPENGL)
 	)
 
 	cmake-utils_src_configure

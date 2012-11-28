@@ -1,8 +1,11 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
+EAPI=5
 
-EAPI=4
+# Enable Bash strictness.
+set -e
+
 inherit eutils mercurial
 
 MY_P="SDL_image-${PV}"
@@ -11,20 +14,20 @@ HOMEPAGE="http://www.libsdl.org/projects/SDL_image"
 EHG_REPO_URI="http://hg.libsdl.org/SDL_image"
 
 LICENSE="ZLIB"
-SLOT="2"
+SLOT="2/0.8.5"
 KEYWORDS="~amd64 ~x86"
 
 #FIXME: Add "test".
 IUSE="
 showimage static-libs
-gif jpeg png tiff webp xpm
+bmp gif jpeg pnm png tiff tga webp xcf xpm
 "
 
 RDEPEND="
 	media-libs/libsdl:2
 	>=sys-libs/zlib-1.2.5
-	png? ( >=media-libs/libpng-1.5.7 )
 	jpeg? ( virtual/jpeg )
+	png?  ( >=media-libs/libpng-1.5.7 )
 	tiff? ( >=media-libs/tiff-4.0.0 )
 	webp? ( >=media-libs/libwebp-0.1.3 )
 "
@@ -37,11 +40,15 @@ src_configure() {
 		# Avoid the OS X-specific ImageIO library.
 		--disable-imageio
 		$(use_enable static-libs static)
+		$(use_enable bmp)
 		$(use_enable gif)
 		$(use_enable jpeg jpg)
-		$(use_enable tiff tif)
+		$(use_enable pnm)
 		$(use_enable png)
+		$(use_enable tga)
+		$(use_enable tiff tif)
 		$(use_enable webp)
+		$(use_enable xcf)
 		$(use_enable xpm)
 	)
 

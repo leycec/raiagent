@@ -14,7 +14,12 @@ WEBP, XCF, XPM, XV.
 		<doc lang="en">http://www.libsdl.org/projects/SDL_image/docs/index.html</doc>
 	</upstream>
 	<use>
+		<flag name="bmp">Enable BMP image format support</flag>
+		<flag name="pic">Enable PIC on x86</flag>
+		<flag name="pnm">Enable PNM image format support</flag>
 		<flag name="showimage">Install the "showimage" test command</flag>
+		<flag name="tga">Enable TGA image format support</flag>
 		<flag name="webp">Enable WEBP image format support</flag>
+		<flag name="xcf">Enable XCF image format support</flag>
 	</use>
 </pkgmetadata>
