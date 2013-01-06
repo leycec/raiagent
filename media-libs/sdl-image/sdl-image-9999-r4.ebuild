@@ -24,7 +24,7 @@ bmp gif jpeg pnm png tiff tga webp xcf xpm
 "
 
 RDEPEND="
-	media-libs/libsdl:2
+	media-libs/libsdl:2=
 	>=sys-libs/zlib-1.2.5
 	jpeg? ( virtual/jpeg )
 	png?  ( >=media-libs/libpng-1.5.7 )
@@ -37,7 +37,7 @@ S="${WORKDIR}/${MY_P}"
 
 src_configure() {
 	local myeconfargs=(
-		# Avoid the OS X-specific ImageIO library.
+		# Disable support for OS X's ImageIO library.
 		--disable-imageio
 		$(use_enable static-libs static)
 		$(use_enable bmp)
@@ -75,5 +75,5 @@ src_install() {
 	use static-libs || prune_libtool_files --all
 
 	# Prevent SDL 2.0's "showimage" from colliding with SDL 1.2's "showimage".
-	use showimage && newbin '.libs/showimage' "showimage-${SLOT}"
+	use showimage && newbin '.libs/showimage' "showimage-2"
 }

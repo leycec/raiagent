@@ -21,7 +21,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="showfont static-libs X"
 
 RDEPEND="
-	media-libs/libsdl:2
+	media-libs/libsdl:2=
 	>=media-libs/freetype-2.3
 	X? ( x11-libs/libXt )
 "
@@ -45,5 +45,5 @@ src_install() {
 	use static-libs || prune_libtool_files --all
 
 	# Prevent SDL 2.0's "showfont" from colliding with SDL 1.2's "showfont".
-	use showfont && newbin '.libs/showfont' "showfont-${SLOT}"
+	use showfont && newbin '.libs/showfont' "showfont-2"
 }
