@@ -6,10 +6,9 @@ EAPI=5
 # Enable Bash strictness.
 set -e
 
-# SDL 2.0 officially distributes only an autotools-based build. Due to numerous
-# core blockers in the development of an autotools-based ebuild, we've adopted a
-# semi-official CMake patch primed for inclusion in SDL 2.1. See the patch for
-# further details.
+# SDL 2.0 officially distributes both autotools- and CMake-based builds. Due to
+# all the usual autotools problems, the former essentially doesn't work. The
+# latter, however, does. CMake it is!
 inherit cmake-utils eutils flag-o-matic mercurial multilib toolchain-funcs
 
 DESCRIPTION="Simple Direct Media Layer"
@@ -28,11 +27,31 @@ KEYWORDS="~amd64 ~x86"
 # suggests. SDL supports at least a modicum of extreme optimization. If users
 # enable unsafe CFLAGS, SDL breaking is the least of their concerns.
 IUSE="
-joystick +threads static-libs
++audio feedback joystick +threads static-libs +video
 3dnow altivec mmx sse sse2
 alsa fusionsound nas oss pulseaudio
 X xcursor xinerama xinput xrandr xscreensaver xvidmode
 aqua directfb gles opengl tslib
+"
+REQUIRED_USE="
+	feedback? ( joystick )
+	alsa?        ( audio )
+	fusionsound? ( audio )
+	nas?         ( audio )
+	oss?         ( audio )
+	pulseaudio?  ( audio )
+	aqua?     ( video )
+	directfb? ( video )
+	gles?     ( video )
+	opengl?   ( video )
+	tslib?    ( video )
+	X?        ( video )
+	xcursor?      ( X )
+	xinerama?     ( X )
+	xinput?       ( X )
+	xrandr?       ( X )
+	xscreensaver? ( X )
+	xvidmode?     ( X )
 "
 
 #FIXME: Replace "gles" deps with "virtual/opengles", after hitting Portage.
@@ -90,7 +109,7 @@ src_unpack() {
 }
 
 #FIXME: SDL2's current "CMakeLists.txt" file leaks LDFLAGS into pkg-config
-#files, as confirmed by a QA notice. The offending line appears to be:
+#files, as confirmed by a QA notice. The offending CMake line appears to be:
 #
 #    target_link_libraries(SDL2 ${EXTRA_LIBS} ${EXTRA_LDFLAGS})
 #
@@ -125,8 +144,13 @@ src_configure() {
 		-DESD=NO
 		${use_directfb}
 		$(cmake-utils_use static-libs SDL_STATIC)
+		$(cmake-utils_use audio       SDL_AUDIO)
+		$(cmake-utils_use feedback    SDL_HAPTIC)
 		$(cmake-utils_use joystick    SDL_JOYSTICK)
-		$(cmake-utils_use threads     SDL_THREADS)
+		$(cmake-utils_use video       SDL_VIDEO)
+		$(cmake-utils_use threads SDL_THREADS)
+		$(cmake-utils_use threads PTHREADS)
+		$(cmake-utils_use threads PTHREADS_SEM)
 		$(cmake-utils_use 3dnow)
 		$(cmake-utils_use altivec)
 		$(cmake-utils_use mmx)
