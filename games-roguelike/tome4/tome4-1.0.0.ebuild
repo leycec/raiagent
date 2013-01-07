@@ -51,11 +51,11 @@ S="${WORKDIR}/${MY_P}"
 src_prepare() {
 	# ToME4 uses a hand-rolled Lua-based build system. As expected, it's rather
 	# inflexible and requires sed-driven patches. Order is significant, here.
-	sed -e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~" \
-	    -e "s~/usr/include~${EPREFIX}/usr/include~" \
-	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~" \
+	sed -e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~"\
+	    -e "s~/usr/include~${EPREFIX}/usr/include~"\
+	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~"\
 	    -i 'premake4.lua'
-	sed -e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~" \
+	sed -e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~"\
 	    -i 'build/te4core.lua'
 }
 
@@ -86,13 +86,13 @@ src_configure() {
 	# ${CPPFLAGS}. Arguably, one or all such issues constitute ToME4 bugs.
 	#
 	# Also, avoid implicitly stripping debug symbols from binaries.
-	sed -e 's~\(CFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
-		-e 's~\(CXXFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
-		-e 's~\(LDFLAGS\s*+=\) -s~\1~' \
+	sed -e 's~\(CFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~'\
+		-e 's~\(CXXFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~'\
+		-e 's~\(LDFLAGS\s*+=\) -s~\1~'\
 		-i build/*.make
 
 	# The declaration of "LINKCMD" in "TEngine.make" attempts to expand ${ARCH}.
-	sed -ie 's~$(ARCH) ~~' build/TEngine.make
+	sed -e 's~$(ARCH) ~~' -i build/TEngine.make
 }
 
 src_compile() {

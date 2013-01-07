@@ -31,7 +31,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	# Inject user $CFLAGS into the TSL shell scripts.
-	sed -ie 's~^\(gcc.*\)\\$~\1 '"${CFLAGS}"' \\~' *.sh
+	sed -e 's~^\(gcc.*\)\\$~\1 '"${CFLAGS}"' \\~' -i *.sh
 }
 
 # Technically, we should be running "nbuild.php" to rebuild TSL shell scripts on

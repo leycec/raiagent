@@ -6,7 +6,7 @@ EAPI=5
 # Enable Bash strictness.
 set -e
 
-inherit eutils mercurial
+inherit autotools eutils mercurial
 
 MY_P="SDL_image-${PV}"
 DESCRIPTION="Image file loading library"
@@ -34,6 +34,24 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${MY_P}"
+
+src_prepare() {
+	# SDL_image specifically requires libpng 1.5, but attempts to compile
+	# against *ANY* libpng -- even if libpng 1.5 is not currently slotted to
+	# "libpng.so". Patch "configure" to specifically require libpng 1.5. While
+	# it's usually preferable to patch "configure.in" instead, most SDL
+	# autotools-based scripts are fundamentally, nonsensically broken. Calling
+	# eautoreconf() here with the following globally defined variables *SHOULD*
+	# produce a working "aclocal.m4" file with corresponding scripts:
+	#
+	#   AM_OPTS='--foreign --include-deps'
+    #   AT_M4DIR='acinclude'
+	#
+	# Naturally, it doesn't, failing with the usual
+	# "libtool: version mismatch error". I hate you, autotools. Since SDL itself
+	# has since moved to CMake, this really isn't worth fixing. Hack it for now.
+	sed -e 's~libpng~libpng15~' -i configure
+}
 
 src_configure() {
 	local myeconfargs=(
