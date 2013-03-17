@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Grognak's Mod Manager, or GMM for short, is a program designed to make it easy to install multiple FTL mods at the same time. No longer do you have to pack and unpack files or swap out each mod you want to use one at a time.
+	</longdescription>
+</pkgmetadata>

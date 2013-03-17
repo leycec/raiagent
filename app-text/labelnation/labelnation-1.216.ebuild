@@ -11,7 +11,7 @@ set -e
 # fails when passed less than "python2_5", don't.
 PYTHON_COMPAT=( python2_{5,6,7} )
 
-inherit python-r1
+inherit python-single-r1
 
 DESCRIPTION="Command-line label-printing program"
 HOMEPAGE="http://www.red-bean.com/labelnation"

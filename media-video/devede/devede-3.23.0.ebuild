@@ -21,7 +21,7 @@ IUSE="+ffmpeg"
 
 #FIXME: Verify dependencies with "dpkg -I" on the newest DeVeDe DEB file.
 RDEPEND="
-    dev-python/dbus-python
+	dev-python/dbus-python
 	dev-python/pycairo
 	dev-python/pygobject:2
 	>=dev-python/pygtk-2.16

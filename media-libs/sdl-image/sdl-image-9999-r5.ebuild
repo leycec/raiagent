@@ -6,7 +6,7 @@ EAPI=5
 # Enable Bash strictness.
 set -e
 
-inherit autotools eutils mercurial
+inherit eutils mercurial
 
 MY_P="SDL_image-${PV}"
 DESCRIPTION="Image file loading library"
