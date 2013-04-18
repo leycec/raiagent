@@ -81,7 +81,7 @@ EOF
 	# access to its state paths and eclass "game" provides no such access,
 	# ensure this ourselves.
 	prepgamesdirs
- 	fperms -R g+w "${GMM_STATE_DIR}"
+	fperms -R g+w "${GMM_STATE_DIR}"
 }
 
 pkg_postinst() {
