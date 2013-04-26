@@ -1,4 +1,4 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 EAPI=5
@@ -15,7 +15,7 @@ PYTHON_REQ_USE="tk"
 # While GMM has released official versions, such releases are only downloadable
 # from Mediafire. Technically, we could get such releases via the "plowshares"
 # utility. Sadly, Gentoo has yet to provide a "plowshares" eclass. For now,
-# directly accessing the github repository will have to suffice.
+# directly accessing the GitHub repository will have to suffice.
 inherit python-single-r1 games git-2
 
 DESCRIPTION="Grognak's Mod Manager, a \"Faster than Light\" (FTL) mod manager"

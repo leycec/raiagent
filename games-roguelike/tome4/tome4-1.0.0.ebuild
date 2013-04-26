@@ -1,4 +1,4 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 EAPI=5
@@ -110,6 +110,7 @@ src_install() {
 	#Disabling Lua JIT should permit PaX-hardened MPROTECT restrictions. It
 	#doesn't, and it's not entirely clear why. Globally disable such
 	#restrictions for now, until we get a better handle on what ToME4 is doing.
+
 	# If enabling a Lua JIT interpreter, disable MPROTECT under PaX-hardened
 	# kernels. (All Lua JIT interpreters execute in-memory code and hence cause
 	# "Segmentation fault" errors under MPROTECT.)
