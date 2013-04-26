@@ -7,7 +7,6 @@ EAPI=5
 set -e
 
 # List "games" last, as suggested by the "Gentoo Games Ebuild HOWTO."
-#inherit eutils multilib games
 inherit games git-2
 
 # Cataclysm: DDA has yet to release source tarballs. GitHub suffices, instead.
@@ -28,8 +27,6 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	sys-devel/gcc[cxx]
 "
-
-#S="${WORKDIR}/${MY_P}"
 
 # Cataclysm: DDA makefiles are surprisingly Gentoo-friendly, requiring only
 # light stripping of flags.
@@ -60,4 +57,9 @@ src_install() {
 
 	# Force game-specific user and group permissions.
 	prepgamesdirs
+
+	# Since playing Cataclysm: DDA requires write access to its home directory,
+	# forcefully grant such access to users in group "games". This is (clearly)
+	# non-ideal, but there's not much we can do about that... at the moment.
+	fperms -R g+w "${cataclysm_home}"
 }
