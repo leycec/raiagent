@@ -10,3 +10,6 @@
 #
 #   http://forums.te4.org/viewtopic.php?f=42&t=34598&p=136576
 =games-roguelike/tome4-1.0.0_beta42*
+
+# The Cataclysm: DDA repository is famously active. And famously unstable.
+=games-roguelike/cataclysm-dda-9999
