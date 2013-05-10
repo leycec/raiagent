@@ -11,5 +11,9 @@
 #   http://forums.te4.org/viewtopic.php?f=42&t=34598&p=136576
 =games-roguelike/tome4-1.0.0_beta42*
 
+# ....................{ UNSTABLE                           }....................
+# Overlay "gamerlay" now provides a tarball-based SDL2 build. "Bravissimo!"
+~media-libs/libsdl-9999
+
 # The Cataclysm: DDA repository is famously active. And famously unstable.
-=games-roguelike/cataclysm-dda-9999
+~games-roguelike/cataclysm-dda-9999
