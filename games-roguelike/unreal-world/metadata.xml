@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>UnReal World, or UrW, is a unique graphical roguelike RPG taking place in the Far North long, long ago. It brings you a realistic game world rich with historical atmosphere in which northern folklore, knowledge and way of life play an important part. The atmosphere and game features are highly original and compelling. The world of the game is based on the ancient Finland in the late Iron Age.
+
+As a member of one of the nine different cultures you'll enter a very realistic and enchanting game world:
+
+- find excitement in surviving everyday life and the quest for success in the harsh ancient wilderness
+- play freely or complete various game tasks in a huge randomly generated world
+- skill-based system including dozens of skills from COOKERY to HIDEWORKING
+- keep in touch with the indigenous spirit world and the supernatural guardians of nature
+- packed with intuitive graphics and pictures, original music and sounds
+
+..there are infinite ways to play the game:
+
+as a fisherman, a hermit searching for the peace, a brave adventurer, a rough hunter, a trapper or a tradesman etc. Everything is up to you.
+</longdescription>
+	<upstream>
+		<doc lang="en">http://unrealworld.wikia.com/wiki/Unreal_World_Wiki</doc>
+		<bugs-to>http://z3.invisionfree.com/UrW_forum/index.php?showforum=4</bugs-to>
+	</upstream>
+</pkgmetadata>

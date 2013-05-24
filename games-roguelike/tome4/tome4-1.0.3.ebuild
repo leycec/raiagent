@@ -15,6 +15,7 @@ MY_PN="t-engine4"
 MY_PV="${PV/_/}"
 MY_PV="${MY_PV/rc/RC}"
 MY_P="${MY_PN}-src-${MY_PV}"
+
 DESCRIPTION="Topdown tactical RPG roguelike game and game engine"
 HOMEPAGE="http://te4.org"
 SRC_URI="
