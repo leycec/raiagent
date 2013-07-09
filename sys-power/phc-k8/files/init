@@ -1,0 +1,23 @@
+#!/sbin/runscript
+# Copyright 1999-2010 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+depend() {
+    # start() writes to the "/proc" pseudo-filesystem.
+	need localmount
+}
+
+start() {
+    # If "/etc/conf.d/phc-k8" has uncommented ${PHC_K8_VIDS}, revolt *ALL* CPUs.
+    if [ -n  "${PHC_K8_VIDS}" ]; then
+	    ebegin "Revolting processors to new voltage IDs \"${PHC_K8_VIDS}\""
+
+        local filename
+        for   filename in /sys/devices/system/cpu/cpu*/cpufreq/phc_vids; do
+            echo "${PHC_K8_VIDS}" > "${filename}"
+        done
+
+        eend
+    fi
+}
