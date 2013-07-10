@@ -8,6 +8,8 @@ set -e
 
 inherit linux-info linux-mod
 
+# The most recent version of "phc-k8" is typically available from:
+#     http://www.linux-phc.org/forum/viewtopic.php?f=13&t=38
 DESCRIPTION="Processor Hardware Control for AMD K8 CPUs"
 HOMEPAGE="http://www.linux-phc.org"
 SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=143 -> ${P}.tar.gz"
@@ -19,11 +21,16 @@ IUSE=""
 
 S="${WORKDIR}/${PN}_v${PV/_beta/b}"
 
-# Basename of the module to be built.
+# Basename of the module to be built with mandatory suffix "()".
 MODULE_NAMES="phc-k8()"
 
 # Makefile target to be executed, cleanly building such module.
 BUILD_TARGETS="all"
+
+# If nonempty, this ebuild is being upgraded from a prior version; else, this
+# ebuild is being installed anew. pkg_preinst() sets this boolean on behalf of
+# pkg_postinst(), below.
+IS_UPGRADING_PHC_K8=""
 
 pkg_setup() {
 	linux-mod_pkg_setup
@@ -62,4 +69,28 @@ src_install() {
 	dodoc Changelog README
 	newconfd "${FILESDIR}/conf" "${PN}"
 	newinitd "${FILESDIR}/init" "${PN}"
+}
+
+pkg_preinst() {
+	linux-mod_pkg_postinst
+
+	# If upgrading "phc-k8" from a prior version, set the corresponding boolean.
+	# Since has_version() cannot be called from pkg_postinst() for the same
+	# ebuild as is being installed, this is the next best thing.
+	if has_version sys-power/phc-k8; then
+		IS_UPGRADING_PHC_K8=1
+	fi
+}
+
+pkg_postinst() {
+	linux-mod_pkg_postinst
+
+	# If installing rather than merely upgrading "phc-k8", print a slew of
+	# recommended post-installation instructions.
+	if [ -z "${IS_UPGRADING_PHC_K8}" ]; then
+		elog "After determining the highest stable vids (i.e., lowest stable voltages)"
+		elog "supported under your system, configure \"${ROOT}etc/conf.d/${PN}\""
+		elog "accordingly and add \"${PN}\" to the boot runlevel: e.g.,"
+		elog "    rc-update add ${PN} boot"
+	fi
 }

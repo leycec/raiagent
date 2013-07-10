@@ -21,3 +21,18 @@ start() {
         eend
     fi
 }
+
+stop() {
+    # If "/etc/conf.d/phc-k8" has uncommented ${PHC_K8_VIDS}, *ALL* CPUs were
+    # revolted by start(). In such case, revert back to the default vids here.
+    if [ -n  "${PHC_K8_VIDS}" ]; then
+        ebegin "Reverting processors to default voltage IDs"
+
+        local dirname
+        for   dirname in /sys/devices/system/cpu/cpu*/cpufreq; do
+            cat "${dirname}/phc_default_vids" > "${dirname}/phc_vids"
+        done
+
+        eend
+    fi
+}
