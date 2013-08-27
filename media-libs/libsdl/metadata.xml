@@ -29,11 +29,13 @@ Pike, Pliant, Python, Ruby, Smalltalk, and Tcl.
 	<use>
 		<!--flag name="directx">Adds support for Windows DirectX audio and video</flag-->
 		<flag name="audio">Support audio devices (strongly recommended!)</flag>
-		<flag name="audio">Support video devices (strongly recommended!)</flag>
+		<flag name="video">Support video devices (strongly recommended!)</flag>
 		<flag name="feedback">Support tactile feedback (e.g., vibration) devices</flag>
 		<flag name="joystick">Support joystick devices</flag>
 		<flag name="fusionsound">Enable FusionSound audio support</flag>
 		<flag name="gles">Enable OpenGL ES video support</flag>
+		<flag name="openglhq">Enable Opengl-HQ video support</flag>
+		<flag name="ps3">Build the PS3 video driver</flag>
 		<flag name="tslib">Enable tslib-based touchscreen device support</flag>
 		<flag name="xcursor">Enable Xcursor-based cursor theme support</flag>
 		<flag name="xinput">Enable xinput-based touchscreen and multiple input device support (recommended)</flag>

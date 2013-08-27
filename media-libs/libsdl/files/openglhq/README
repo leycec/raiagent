@@ -1,0 +1,335 @@
+OpenGL-HQ for SDL
+=================
+
+This readme documents version 2012-10-19 of OpenGL-HQ, if you got
+a later version there's a slim chance I forgot to update this :)
+The current version and screenshots can be downloaded from
+http://www.syntax-k.de/projekte/sdl-opengl-hq/
+
+OpenGL-HQ is a video "driver" for SDL that uses your graphics hardware
+to scale the output to any size you want. It was originally written for
+2D games/emulators like dosbox, scummvm or exult.
+
+WARNING: This is beta quality software. While it works nicely for me
+and several other people, expect bugs to be present. If something
+doesn't work, first check for a new version. Please mail me if you
+encounter anything that's not yet listed in the README.
+
+Features:
+ - uses your hardware to get fast scaling
+ - scales any 2D SDL program
+ - scales with any scaling factor, even fractional ones
+ - switches back to the native driver if an app tries to use OpenGL
+ - portable
+ - configurable like SDL
+ - see the screenshots at the URL above, really
+
+Requirements:
+ - a Radeon 9600, GeForce 5700 or higher with current driver;
+   OpenGL extension ARB_fragment_program must be hardware
+   accelerated, EXT_framebuffer_object is recommended
+   -- Note: Since 2012, the fragment programs may no longer be
+            compatible with an acutal 9600. In case of problems
+            use an older version of  *_pass3.fp
+ - OpenGL-support for your OS in SDL (which means Windows,
+   Linux/X11 or MacOS X)
+
+Limitations:
+ - may show bad performance with programs that already provide
+   high-resolution output or with high-quality driver settings
+   (Radeon 9600-9800 class chips are driven at their limits)
+ - might not work with FSAA enabled
+ - MacOS X untested (but should work)
+ - it has become very unlikely, but it is still possible that desktop
+   resolution is not autodetected correctly; use SDL_OPENGLHQ_FULLRES
+   in that case
+ - untested on non-x86 processors/non-mainstream graphics cards,
+   notably embedded/mobile platforms
+
+Bugs unlikely to be fixed, or of unknown origin:
+ - ATI's Triple-Buffering feature interferes with some apps; if you see
+   lockups or similar, try setting SDL_OPENGLHQ_DOUBLEBUF as shown below
+   -- needs to be confirmed against current drivers
+
+Bugs to be fixed:
+
+none known
+
+If you see any problems, CHECK THE TROUBLESHOOTING SECTION BELOW.
+If your problem is not solved there, please write as detailed as you can:
+Tell me what you did (exactly!), what you expected to happen, what
+happened instead, and include screen shots of the problem. Include any
+relevant config files as well (dosbox.conf for dosxbox, for example).
+
+
+
+
+How to use (Quickstart)
+=======================
+
+This is a MS Windows quickstart guide. Other systems adjust as needed.
+
+1) Copy SDL.DLL into the application's directory, overwriting the shipped
+   version
+
+2) Create a batch file (using Notepad) with these contents:
+
+set SDL_VIDEODRIVER=openglhq
+set SDL_OPENGLHQ_WINRES=800x600
+<name of your application>.exe
+
+3) Save the file as <name of your application>.bat in the same directory
+   as the EXE file is
+
+4) Double-click this batch file to start the application; Create a shortcut
+   or adjust existing shortcuts to use this batch file
+
+
+
+
+Configuration
+=============
+
+Configuration is done via environment variables (just like the rest of SDL). It
+is recommended to set these options in a batch file (see previous section). 
+
+SDL_VIDEODRIVER - set it to openglhq to use OpenGL-HQ
+SDL_OPENGLHQ_WINRES
+SDL_OPENGLHQ_FULLRES - set to a resolution like "960x720" to set the windowed/
+		       fullscreen size in all windowed/fullscreen modes; you may
+		       add a bit depth as in "960x720-16"; alternatively, you can
+		       specify a fixed scaling factor (like "2.5")
+		       default: windowed: "1", fullscreen: your desktop resolution
+SDL_OPENGLHQ_VIDEODRIVER - set to the name of your SDL video device (the one you'd
+			   normally use for SDL_VIDEODRIVER)
+SDL_OPENGLHQ_DOUBLEBUF - override application's choice of doublebuffering; if set
+               to 1, doublebuffering is always on, if set to 0, doublebuffering
+               is always off; if unset, the application's choice is respected
+SDL_OPENGLHQ_STATIC 
+SDL_OPENGLHQ_DYNAMIC - two parameters which tweak the HQ calculation; the defaults
+		       (static 10, dynamic 33) are fine in most cases; to optimize
+		       rendering, play with these values (static 0-255, dynamic 0-100)
+SDL_OPENGLHQ_SHOWFPS - print average FPS to the console every ten seconds; this
+                     only counts frames actually rendered. See FAQ below.
+SDL_OPENGLHQ_DATA - a directory with data files for OpenGL-HQ; You can use this
+                    to load your own fragment programs or edge detect table.
+                    Currently, you will have to read the source code for details.
+
+You must set SDL_VIDEODRIVER to get any effect at all. If you want windowed
+applications to be scaled, set SDL_OPENGLHQ_WINRES. Everything else is usually not
+neccessary, the settings are autodetected.
+
+If you want to set options for ALL SDL apps, you can do so:
+
+Windows: Control Panel -> System Properties -> Advanced -> Environment Variables
+Unix-like systems: add "export <name of evironment var>=<value>" to ~/.profile
+
+
+Performance
+===========
+
+To put it short: Absolutely great.
+
+On hardware barely meeting the minimal requirements, running a demanding
+protected-mode high-resolution SVGA program in DOSBox with frameskip 0 and
+scaling by a factor of 2, performance drops by just 20%.  At frameskip 4,
+performance difference is at 5-10%.
+
+At VGA resolution scaling by 4, the difference is reduced even more:
+12% performance loss at frameskip 0. Software scaling is far worse: Normal2x
+costs about 20%, advmame2x is at 25%, hq2x (not my optimized version, but the
+slower HiEnd3D version) about 40%.
+
+Above measurements done on a single-core Athlon 3700+. On a dual-core processor,
+there is no noticeable speed impact, since OpenGL-HQ uses a second core if
+available.
+
+
+Troubleshooting
+===============
+
+Q: Something doesn't work or looks weird.
+
+A: Check that you are running the latest official video drivers. It has not been
+   tested with hacked drivers, and old drivers are known to fail.
+
+Q: DosBox crashes.
+
+A: DosBox has bad error handling at video initialization. Until that's fixed,
+   a crash most probably means your hardware doesn't support OpenGL-HQ.
+
+Q: DosBox locks up when trying to go fullscreen
+
+A: ATI driver issue. Set "fulldouble=false" in your dosbox.conf, or set 
+   SDL_OPENGLHQ_DOUBLEBUF
+
+Q: Performance is terrible!
+
+A: You've probably set forced vsync-waiting in Catalsyst Control Center and your
+   app wants double buffering (like "fulldouble=true" in DosBox). On a Radeon
+   9600-9800 class chip, that's simply too much at higher resolutions. These
+   first fully programmable chips are used to their limits, so that's barely
+   surprising.
+
+Q: It works partly, but some video modes look exactly like before.
+Q: Output looks much worse than in your screenshots, blurry and not sharp at all.
+Q: WTF? I did everything as shown, and nothing changed?
+
+A: Disable all software scaling in your program. Many emulators default to some
+   kind of scaling, but OpenglHQ can only work with x1 (no) scaling. Moreover,
+   if the program's output is larger than the selected window size, the output
+   is scaled down using traditional bilinear filtering.
+
+Q: My mouse is slow! How can I speed it up?
+A: This should mostly be fixed in the last release, but your backend video driver
+   might change acceleration setting when grabbing the mouse. At least the x11
+   driver does that, and you can configure it using environment variables.
+
+Q: I only get 8 FPS! What crap is this software?
+A: The screen is not continuously rendered like in native 3D programs. If the
+   emulator/emulated program only updates the screen 8 times per second,
+   OpenGL-HQ will show just 8 FPS. If you want to test how fast OpenGL-HQ can
+   go on your machine, use a program that does frequent screen updates.
+
+For more help, contact me at info@syntax-k.de.
+
+Please DO NOT mail Sam Lantinga or the SDL team about this, they aren't involved in this
+in any way at all.
+
+
+
+Developer info
+==============
+
+If you are an application developer, you can use the "putenv" (POSIX) / "_putenv"
+(MSVC) call to change these settings from within your program. For example, if you
+want to enable openglhq, just use:
+
+  putenv("SDL_VIDEODRIVER=openglhq");
+
+Of course, to be a fair player, you'd want to save the old value of SDL_VIDEODRIVER
+first and set SDL_OPENGLHQ_VIDEODRIVER to that value, like this:
+
+void EnableOpenglHQ()
+{
+  static char entry[1024], *oldentry;
+  oldentry = getenv("SDL_VIDEODRIVER");
+  if (oldentry != NULL) {
+	strcpy(entry, "SDL_OPENGLHQ_VIDEODRIVER=");
+	strcat(entry, oldentry);
+	putenv(entry);
+  }
+  putenv("SDL_VIDEODRIVER=openglhq");
+}
+
+void DisableOpenglHQ()
+{
+  static char entry[1024], *oldentry;
+  oldentry = getenv("SDL_OPENGLHQ_VIDEODRIVER");
+  if (oldentry != NULL) {
+	strcpy(entry, "SDL_VIDEODRIVER=");
+	strcat(entry, oldentry);
+	putenv(entry);
+  } else {
+	putenv("SDL_VIDEODRIVER");
+  }
+}
+
+Do the same for other configuration variables. One exception is SDL_OPENGLHQ_DOUBLEBUF,
+this is intended for users only - developers should use the SDL_DOUBLEBUF flag as usual.
+
+I've included a DosBox patch for those that want to enable openglhq in
+dosbox.conf. It applies to a fairly old version of DOSBox, so you may want to
+use the DOSBox build from http://ykhwong.x-y.net/ instead, which is kept up to
+date and includes OpenGL-HQ support.
+
+
+
+
+How to compile
+==============
+
+This assumes you know how to compile C programs under a GNUish environment
+(Linux, MingW, MacOS X with extra GNU tools). If you never used "cvs", "patch"
+or "make" before, try to get a guide on these topics first. [some helpful soul
+please send me a link]
+
+First, get and extract a copy of the SDL-1.2.15 sources. Other versions have not
+been tested.
+
+Then, move the directory "openglhq" (the one this README is in) below src/video
+
+Then, patch SDL and create needed data files. cd into the SDL directory and run
+
+make -C src/video/openglhq
+
+Watch closely for errors! If you see any, check that you have a recent autoconf
+and automake installed, and that you are indeed using a clean source tree of
+SDL.
+
+Now run configuration:
+
+./configure
+
+Check that it found your OpenGL libraries and headers. If it doesn't, this code
+is automatically disabled. Check "./configure --help" to see how to tell SDL the
+location of your GL libraries and headers.
+
+Finally, compile and install:
+
+make && make install
+
+The resulting library should be a drop-in replacement for your existing
+libSDL.so/SDL.DLL. It should be binary compatible, meaning that none of the apps
+using it must be recompiled.
+
+
+
+
+License
+=======
+
+	SDL OpenGL-HQ - Simple DirectMedia Layer high quality hardware scaling
+        Copyright (C) 2005, 2006, 2012 Jörg Walter <info@syntax-k.de>
+
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Library General Public
+	License as published by the Free Software Foundation; either
+	version 2 of the License, or (at your option) any later version.
+
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Library General Public License for more details.
+
+	You should have received a copy of the GNU Library General Public
+	License along with this library; if not, write to the Free
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+The SDL patch uses code published on the SDL mailing list in January 2005 for
+desktop resolution autodetect.
+
+Credits
+=======
+
+Many thanks to all VOGONS users who assited in testing and providing windows
+builds. Even more thanks to gulikoza from the VOGONS forums for porting the code
+to EXT_framebuffer_object.
+
+
+History
+=======
+
+2012-10-19  fix 15-bit mode; it never worked, which shows how rarely it is used
+2012-10-17  (b) fix problems with odd video mode widths
+2012-10-17  fix/improve math precision for modern screen resolutions, fix
+            partial screen update bug in (default) fast mode, add optional
+            FPS output
+2006-12-15  fix a subtle mouse movemement bug mainly observable in fullscreen
+            apps, improve API compatibility, reduce needless pixel copying,
+			working MacOS X support
+2006-11-22  fix 16-bit video modes on ATI cards, improve compilation sequence,
+            improve rendering accuracy and speed by reducing complexity
+2006-11-21  use EXT_framebuffer_object extension for rendering, fix threading
+            issues, improve performance, port to SDL-1.2, make 64-bit-clean
+

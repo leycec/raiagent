@@ -13,7 +13,7 @@
 
 # ....................{ UNSTABLE                           }....................
 # Overlay "gamerlay" now provides a tarball-based SDL2 build. "Bravissimo!"
-~media-libs/libsdl-9999
+~media-libs/libsdl-2.0.9999
 
 # The Cataclysm: DDA repository is famously active. And famously unstable.
 ~games-roguelike/cataclysm-dda-9999
