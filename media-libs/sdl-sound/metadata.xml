@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+SDL_sound is a library that handles the decoding of several popular sound file formats, such as .WAV and .MP3. It is meant to make the programmer's sound playback tasks simpler. The programmer gives SDL_sound a filename, or feeds it data directly from one of many sources, and then reads the decoded waveform data back at her leisure. If resource constraints are a concern, SDL_sound can process sound data in programmer-specified blocks. Alternately, SDL_sound can decode a whole sound file and hand back a single pointer to the whole waveform. SDL_sound can also handle sample rate, audio format, and channel conversion on-the-fly and behind-the-scenes, if the programmer desires. 
+</longdescription>
+	<upstream>
+		<doc lang="en">https://icculus.org/SDL_sound/docs/html</doc>
+	</upstream>
+	<use>
+		<flag name="midi">Enable MIDI audio file support</flag>
+		<flag name="mp3">Enable MP3 audio file support via "mpg123"</flag>
+		<flag name="physfs">Enable archive extraction support via physfs (recommended)</flag>
+		<flag name="wav">Enable WAV audio file support</flag>
+	</use>
+</pkgmetadata>
