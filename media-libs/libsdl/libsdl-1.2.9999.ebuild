@@ -9,6 +9,10 @@
 EAPI=5
 inherit autotools flag-o-matic mercurial multilib toolchain-funcs eutils
 
+#FIXME: The OpenGL-HQ should be dynamically downloaded and hence specified as a
+#SRC_URI rather than statically bundled under "files/". This probably means
+#we'll need to implement a custom src_unpack() function, but it'll be worth it.
+
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="http://www.libsdl.org/"
 #>>>>>>>
@@ -54,7 +58,9 @@ RDEPEND="audio? ( >=media-libs/audiofile-0.1.9 )
 	ppc64? ( ps3? ( sys-libs/libspe2 ) )
 	tslib? ( x11-libs/tslib )
 	pulseaudio? ( media-sound/pulseaudio )"
-DEPEND="${RDEPEND}
+#>>>>>>>
+DEPEND+="
+	${RDEPEND}
 	nas? (
 		x11-proto/xextproto
 		x11-proto/xproto
@@ -64,6 +70,7 @@ DEPEND="${RDEPEND}
 		x11-proto/xproto
 	)
 	x86? ( || ( >=dev-lang/yasm-0.6.0 >=dev-lang/nasm-0.98.39-r3 ) )"
+#<<<<<<<
 
 S=${WORKDIR}/SDL-${PV}
 

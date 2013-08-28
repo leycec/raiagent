@@ -18,7 +18,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="flac midi mikmod modplug mp3 mpeg physfs speex static-libs vorbis wav"
 
-RDEPEND="
+RDEPEND+="
 	>=media-libs/libsdl-1.2
 	flac?    ( media-libs/flac )
 	mikmod?  ( >=media-libs/libmikmod-3.1.9 )
@@ -27,7 +27,8 @@ RDEPEND="
 	physfs?  ( dev-games/physfs )
 	speex?   ( media-libs/speex media-libs/libogg )
 	vorbis?  ( >=media-libs/libvorbis-1.0_beta4 )"
-DEPEND="${RDEPEND}
+DEPEND+="
+	${RDEPEND}
 	virtual/pkgconfig"
 
 S="${WORKDIR}/${MY_P}"
