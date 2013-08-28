@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+OpenGLide is a Glide to OpenGL wrapper. It emulates a Voodoo board so you can run old Windows Glide games by translating Glide calls into OpenGL.
+</longdescription>
+</pkgmetadata>
