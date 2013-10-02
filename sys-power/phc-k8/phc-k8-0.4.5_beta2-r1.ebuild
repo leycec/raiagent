@@ -32,6 +32,16 @@ BUILD_TARGETS="all"
 # pkg_postinst(), below.
 IS_UPGRADING_PHC_K8=""
 
+#FIXME: If "portage" does *NOT* have permissions to read
+#"/usr/src/linux/include/generated/utsrelease.h", the "phc-k8" Makefile
+#typically fails with:
+#
+#  "Makefile:25: *** Kernel version not found, maybe you need to install
+#   appropriate kernel-headers or run make with KERNELSRC parameter, e.g.: make
+#   KERNELSRC=/usr/src/linux.  Stop."
+#
+#Uninformative error messages must go. To correct this, verify such file to be
+#readable if such file exists.
 pkg_setup() {
 	linux-mod_pkg_setup
 
