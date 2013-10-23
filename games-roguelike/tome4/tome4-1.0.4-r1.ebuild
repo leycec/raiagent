@@ -37,11 +37,11 @@ IUSE="+jit +music"
 RDEPEND="
 	media-libs/glew:=
 	media-libs/libpng:0=
-	media-libs/libsdl:2=[X,opengl,video]
+	media-libs/libsdl2:=[X,opengl,video]
 	media-libs/libvorbis:=
 	media-libs/openal:=
-	media-libs/sdl-image:2=[png]
-	media-libs/sdl-ttf:2=[X]
+	media-libs/sdl2-image:=[png]
+	media-libs/sdl2-ttf:=[X]
 	virtual/libc
 "
 DEPEND="${RDEPEND}
