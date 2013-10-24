@@ -1,0 +1,17 @@
+Eliminate segfaults induced by compiling ToME4 with optimization levels higher
+than -O0, largely thanks to the following ArchLinux archive:
+https://aur.archlinux.org/packages/to/tome4/tome4.tar.gz
+
+diff -aur -r orig/src/fov/fov.c patched/src/fov/fov.c
+--- orig/src/fov/fov.c	2013-04-21 16:16:59.000000000 +0200
++++ patched/src/fov/fov.c	2013-08-04 21:26:33.867059000 +0200
+@@ -578,6 +578,9 @@
+ #define GET_BUFFER(target, buffer_data, len)                                                      \
+     /* hurray, no branching, modulus, or malloc! */                                               \
+     buffer_data->index = (buffer_data->index + buffer_data->prev_len) & (FOV_BUFFER_SIZE - 1);    \
++    if (buffer_data->index+len >= FOV_BUFFER_SIZE) {                                              \
++        buffer_data->index = 0;                                                                   \
++    }                                                                                             \
+     buffer_data->prev_len = len;                                                                  \
+     target = buffer_data->buffer + buffer_data->index;
+ 

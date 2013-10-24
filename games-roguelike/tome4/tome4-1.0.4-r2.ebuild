@@ -9,8 +9,6 @@ set -e
 # List "games" last, as suggested by the "Gentoo Games Ebuild HOWTO."
 inherit eutils multilib pax-utils games
 
-# ToME4 uses oddball version specifiers. Portage permits only strict version
-# specifiers. The result is a classical clusterf... well, you get the idea.
 MY_PN="t-engine4"
 MY_PV="${PV/_/}"
 MY_PV="${MY_PV/rc/RC}"
@@ -23,7 +21,7 @@ SRC_URI="
 	!music? ( ${HOMEPAGE}/dl/t-engine/${MY_P}-nomusic.tar.bz2 )
 "
 
-LICENSE="GPL-3"
+LICENSE="GPL-3 shockbolt-tileset Apache-2.0 BitstreamVera"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+jit +music"
@@ -34,6 +32,8 @@ IUSE="+jit +music"
 # ToME4 bundles additional dependencies with its source tarball (e.g., "bzip2"),
 # usually patched in a ToME4-specific manner and hence *NOT* safely replaceable
 # with system-wide dependencies. For safety, avoid molesting such dependencies.
+#
+# Thanks to Gentoo developer hasufell for improved dependencies.
 RDEPEND="
 	media-libs/glew:=
 	media-libs/libpng:0=
@@ -42,36 +42,38 @@ RDEPEND="
 	media-libs/openal:=
 	media-libs/sdl2-image:=[png]
 	media-libs/sdl2-ttf:=[X]
+	virtual/glu
 	virtual/libc
+	virtual/opengl
 "
 DEPEND="${RDEPEND}
-	>=dev-util/premake-4.3
+	>=dev-util/premake-4.3:4
 "
 
 S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
+	epatch "${FILESDIR}/1.0.4-optimization.patch"
+
 	# ToME4 uses a hand-rolled Lua-based build system. As expected, it's rather
 	# inflexible and requires sed-driven patches. Order is significant, here.
-	sed -e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~"\
-	    -e "s~/usr/include~${EPREFIX}/usr/include~"\
-	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~"\
-	    -i 'premake4.lua'
-	sed -e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~"\
-	    -i 'build/te4core.lua'
+	sed -i \
+		-e "s~/usr/lib32~${EPREFIX}/$(get_abi_LIBDIR x86)~" \
+	    -e "s~/usr/include~${EPREFIX}/usr/include~" \
+	    -e "s~/opt/SDL-2.0~${EPREFIX}/usr~" \
+	    'premake4.lua'
+	sed -i \
+		-e "s~/opt/SDL-2.0/lib/~${EPREFIX}/$(get_libdir)~" \
+	    'build/te4core.lua'
 }
 
 src_configure() {
 	# Options to be passed to "premake4".
-	local premake_options=()
-	if use jit
-	then premake_options+=( --lua=jit2 )
-	else premake_options+=( --lua=default )
-	fi
+	local premake_options="--lua=$(usex jit "jit2" "default")"
 
 	# Generate a "Makefile" with "premake4".
-	einfo "Running \"premake4 ${premake_options[@]} gmake\"..."
-	premake4 "${premake_options[@]}" gmake
+	einfo "Running \"premake4 ${premake_options} gmake\"..."
+	premake4 ${premake_options} gmake
 
 	# "premake4" attempts to force expansion of environment variable ${ARCH}
 	# into "gcc" calls. Since Gentoo already sets ${ARCH} (e.g., to "amd64") and
@@ -88,23 +90,31 @@ src_configure() {
 	# ${CPPFLAGS}. Arguably, one or all such issues constitute ToME4 bugs.
 	#
 	# Also avoid implicitly stripping debug symbols from binaries.
-	sed -e 's~\(CFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~'\
-		-e 's~\(CXXFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~'\
-		-e 's~\(LDFLAGS\s*+=\) -s~\1~'\
-		-e 's~$(ARCH) ~~'\
-		-i build/*.make
+	sed -i \
+		-e 's~\(CFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
+		-e 's~\(CXXFLAGS\s*+= \).*~\1-MMD -MP $(DEFINES) $(INCLUDES)~' \
+		-e '/LDFLAGS/s~-s~~' \
+		-e 's~$(ARCH) ~~' \
+		build/*.make
+
+	# Respect ${LDFLAGS}. Thanks to Gentoo developer hasufell, again.
+    sed -i \
+		-e 's~^[ \t]*LINKCMD.*$~LINKCMD = $(CC) $(CFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(LDFLAGS) $(LIBS)~' \
+        build/{buildvm,minilua,TEngine}.make
 }
 
 src_compile() {
 	# Though "premake4" documentation insists it defaults to release builds,
 	# ToME4 defaults to debug builds. Enforce sanity.
-	config='release' emake
+	#
+	# Prohibit parallel make, currently known to be broken.
+	config='release' emake -j1 verbose=1
 }
 
 # Oddly, "premake4" generates no "install" Makefile target. Do so by hand.
 src_install() {
 	# Directory to install ToME4 to.
-	local tome4_home="${GAMES_PREFIX}/${PN}"
+	local tome4_home="${GAMES_DATADIR}/${PN}"
 
 	#FIXME: Ideally, "pax-mark m" should be prefixed with "use jit &&".
 	#Disabling Lua JIT should permit PaX-hardened MPROTECT restrictions. It
@@ -121,12 +131,11 @@ src_install() {
 	games_make_wrapper "${PN}" ./t-engine "${tome4_home}"
 
 	# Install documentation.
-	dodoc CONTRIBUTING COPYING-TILES CREDITS
+	dodoc CONTRIBUTING CREDITS
 
 	# Install ToME4.
 	insinto "${tome4_home}"
-	doins -r bootstrap
-	doins -r game
+	doins -r bootstrap game
 	exeinto "${tome4_home}"
 	doexe t-engine
 
