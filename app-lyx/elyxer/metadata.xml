@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+eLyXer (pronounced elixir) is a LyX to HTML converter. While there are a ton of
+such projects all over the web, eLyXer has a clear focus on flexibility and
+elegant output.
+
+LyX is a wonderful text editor which produces beautiful PDF files. Internally it
+exports documents to LaTeX, and from there to PDF. Sadly there is not an
+equivalent “export to HTML” option… Until now! With eLyXer you can convert your
+master’s thesis, learned article, fascinating novel or love letter to a web page
+that you can then share, publish on the web or import into other text editors.
+	</longdescription>
+	<upstream>
+		<doc lang="en">http://alexfernandez.github.io/elyxer/userguide.html</doc>
+		<bugs-to>https://savannah.nongnu.org/bugs/?func=additem&amp;group=elyxer</bugs-to>
+	</upstream>
+</pkgmetadata>
