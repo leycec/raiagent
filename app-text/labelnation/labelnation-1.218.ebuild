@@ -31,6 +31,6 @@ src_install() {
 	docinto examples
 	dodoc examples/*
 
-	# "labelnation" assumes "python" to be Python 2.x.
-	python_replicate_script "${D}/usr/bin/labelnation"
+	# "labelnation" assumes "python" to be Python 2.x. Correct this.
+	python_fix_shebang "${ED}/usr/bin/labelnation"
 }
