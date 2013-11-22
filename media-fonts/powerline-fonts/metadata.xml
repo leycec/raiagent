@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Pre-patched and adjusted fonts for usage with the new Powerline plugin.
+</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/Lokaltog/powerline-fonts/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="anonymouspro">Install Powerline-patched Anonymous Pro fonts</flag>
+		<flag name="dejavusansmono">Install Powerline-patched DejaVu Sans Mono fonts</flag>
+		<flag name="droidsansmono">Install Powerline-patched Droid Sans Mono fonts</flag>
+		<flag name="inconsolata">Install Powerline-patched Inconsolata fonts</flag>
+		<flag name="inconsolatadz">Install Powerline-patched Inconsolata-dz fonts</flag>
+		<flag name="liberationmono">Install Powerline-patched Liberation Mono fonts</flag>
+		<flag name="meslo">Install Powerline-patched Meslo fonts</flag>
+		<flag name="sourcecodepro">Install Powerline-patched Source Code Pro fonts</flag>
+		<flag name="terminus_pcf">Install Powerline-patched Terminus fonts in PCF format</flag>
+		<flag name="ubuntumono">Install Powerline-patched Ubuntu Mono fonts</flag>
+	</use>
+</pkgmetadata>
