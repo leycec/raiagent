@@ -25,6 +25,8 @@ EGIT_REPO_URI="git://github.com/Grognak/Grognaks-Mod-Manager.git"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+IUSE=""
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}"
