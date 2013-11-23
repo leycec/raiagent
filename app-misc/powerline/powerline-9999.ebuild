@@ -136,44 +136,44 @@ src_install() {
 	insinto /etc/xdg/powerline
 	doins -r powerline/config_files/*
 
-#	unset DOCS
-#	use doc && dohtml -r docs_output/*
-#	unset DOCS
-#	DOCS=( README.rst )
+	# Prevent distutils-r1_src_install() from installing non-Python files.
+	find "${POWERLINE_SRC_DIR}" -type f -not -name '*.py' -delete
+
 	use doc && HTML_DOCS=( docs_output/. )
 	distutils-r1_src_install
-
-	# 
-#	/usr/share/doc/${P}/__init__.py*
 }
 
 pkg_postinst() {
-	if use awesome; then
-		elog 'To enable Powerline under awesome, add the following lines to your'
-		elog '"~/.config/awesome/rc.lua" (assuming you originally copied such file from'
-		elog '"/etc/xdg/awesome/rc.lua"):'
-		elog '    require("powerline")'
-		elog '    right_layout:add(powerline_widget)'
-		elog ''
-	fi
+	# If this package is being installed for the first time rather than
+	# upgraded, print post-installation messages.
+	if ! has_version ${CATEGORY}/${PN}; then
+		if use awesome; then
+			elog 'To enable Powerline under awesome, add the following lines to your'
+			elog '"~/.config/awesome/rc.lua" (assuming you originally copied such file from'
+			elog '"/etc/xdg/awesome/rc.lua"):'
+			elog '    require("powerline")'
+			elog '    right_layout:add(powerline_widget)'
+			elog ''
+		fi
 
-	if use bash; then
-		elog 'To enable Powerline under bash, add the following line to either your "~/.bashrc"'
-		elog 'or "~/.profile"':
-		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/bash/powerline.sh"
-		elog ''
-	fi
+		if use bash; then
+			elog 'To enable Powerline under bash, add the following line to either your "~/.bashrc"'
+			elog 'or "~/.profile"':
+			elog "    source ${EROOT}${POWERLINE_TRG_DIR}/bash/powerline.sh"
+			elog ''
+		fi
 
-	if use tmux; then
-		elog 'To enable Powerline under tmux, add the following line to your "~/.tmux.conf":'
-		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
-		elog ''
-	fi
+		if use tmux; then
+			elog 'To enable Powerline under tmux, add the following line to your "~/.tmux.conf":'
+			elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
+			elog ''
+		fi
 
-	if use zsh; then
-		elog 'To enable Powerline under zsh, add the following line to your "~/.zshrc":'
-		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
-		elog ''
+		if use zsh; then
+			elog 'To enable Powerline under zsh, add the following line to your "~/.zshrc":'
+			elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
+			elog ''
+		fi
 	fi
 
 	# For readability, print Vim post-installation messages last.
@@ -187,47 +187,3 @@ pkg_postrm() {
 		vim-plugin_pkg_postrm
 	fi
 }
-
-#FIXME: Are all of the "rm" statements below *REALLY* necessary? If so, couldn't
-#we just "rm -rf powerline/bindings" instead?
-#FIXME: No; none of them appear to have been necessary.
-
-#FIXME: Shift post-installation elog messages to the pkg_postinst() phase.
-#FIXME: Such messages contained numerous spelling and grammar mistakes.
-
-#FIXME: Inherit "vim-plugin" rather than attempting to install the vim plugin manually.
-#		insinto /usr/share/vim/vimfiles/plugin
-#		doins powerline/bindings/vim/plugin/powerline.vim
-#FIXME: For a related ebuild, see hasufell's "youcompleteme-9999.ebuild" at:
-#https://gist.github.com/hasufell/5340579
-#In particular, we probably want to inherit "vim-plugin" below.
-
-#FIXME: Split font installation into separate ebuild
-#"media-fonts/powerline-symbols".
-#FIXME: There *IS* no "git" eclass in modern Portage installations. Since I
-#assume ZyX intended this to be either "git-2" or "git-r3", we select the more
-#modern eclass: "git-r3".
-
-#FIXME: This is somewhat absurd and *STRONGLY* discouraged under Gentoo. If you
-#haven't explicitly tested it, it probably doesn't work -- regardless of
-#otherwise well-justified assumptions of Pythonic portability. We reduce this to
-#a minimal set of working architectures, although even this many is probably too
-#many.
-
-#KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-
-#FIXME: I'm not entirely clear why "git" or "ipython" are listed here. Since
-#neither are referenced below, I've excised both. Yay!
-
-#IUSE="vim zsh doc awesome tmux bash ipython test git"
-
-#S="${WORKDIR}/${PN}"
-#	elog ""
-
-#inherit distutils-r1 eutils font git-r3
-#FONT_SUFFIX="otf"
-#FONT_S="${S}/font"
-#
-#FONT_CONF=(
-#	"${FONT_S}/10-powerline-symbols.conf"
-#)
