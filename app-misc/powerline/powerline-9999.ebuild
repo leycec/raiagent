@@ -28,7 +28,7 @@ HOMEPAGE="http://github.com/Lokaltog/powerline"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
-IUSE="awesome doc bash test tmux vim zsh"
+IUSE="awesome doc bash test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 PYTHON_DEPS+="
@@ -48,7 +48,8 @@ DEPEND="${PYTHON_DEPS}
 		)
 	)"
 RDEPEND="${PYTHON_DEPS}
-	|| ( media-fonts/powerline-symbols media-fonts/powerline-fonts )
+	media-fonts/powerline-symbols
+	fonts? ( media-fonts/powerline )
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
 	vim? ( || (
