@@ -49,5 +49,6 @@ feature-rich alternative is currently Bailey Ling's vim-airline project.
 		<flag name="tmux">Install tmux support files</flag>
 		<flag name="vim">Install vim support files</flag>
 		<flag name="zsh">Install zsh support files</flag>
+		<flag name="fonts">Install fonts pre-patched with Powerline symbols (not recommended)</flag>
 	</use>
 </pkgmetadata>
