@@ -10,7 +10,7 @@ EGIT_REPO_URI="https://github.com/Lokaltog/${PN}"
 
 inherit font git-r3
 
-DESCRIPTION="Popular monospaced fonts pre-patched for Powerline."
+DESCRIPTION="Monospaced fonts pre-patched with Powerline symbols"
 HOMEPAGE="http://github.com/Lokaltog/powerline-fonts"
 
 LICENSE="
@@ -29,7 +29,12 @@ KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 
 # src_install() expects USE flags to be the lowercase basenames of the
 # corresponding font directories. See src_install_font() for details.
-IUSE="anonymouspro dejavusansmono droidsansmono inconsolata inconsolatadz liberationmono meslo sourcecodepro terminus_pcf ubuntumono"
+IUSE_FLAGS=( anonymouspro dejavusansmono droidsansmono inconsolata inconsolatadz liberationmono meslo sourcecodepro terminus_pcf ubuntumono )
+IUSE="${IUSE_FLAGS[*]}"
+#IUSE="anonymouspro dejavusansmono droidsansmono inconsolata inconsolatadz liberationmono meslo sourcecodepro terminus_pcf ubuntumono"
+
+# If no such USE flags were enabled, fail.
+REQUIRED_USE="|| ( ${IUSE_FLAGS[*]} )"
 
 DEPEND=""
 RDEPEND=""
