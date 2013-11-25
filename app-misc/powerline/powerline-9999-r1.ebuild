@@ -6,15 +6,6 @@ EAPI="5"
 # Enforce Bash scrictness.
 set -e
 
-# This ebuild heavily modified from the official Powerline ebuild at:
-# https://raw.github.com/Lokaltog/powerline/develop/packages/gentoo/app-misc/powerline/powerline-9999.ebuild
-#
-# This ebuild is *ONLY* an interim solution until ZyX, the Powerline maintainer,
-# either publishes his own overlay or successfully pushes "powerline" to
-# Portage. As such, this ebuild is unlikely to be frequently updated.
-#
-# Enjoy, folks!
-
 PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} )
 
 EGIT_REPO_URI="https://github.com/Lokaltog/${PN}"
@@ -48,7 +39,7 @@ DEPEND="${PYTHON_DEPS}
 		)
 	)"
 RDEPEND="${PYTHON_DEPS}
-	|| ( media-fonts/powerline-symbols media-fonts/powerline-fonts )
+	media-fonts/powerline-symbols
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
 	vim? ( || (
@@ -57,7 +48,7 @@ RDEPEND="${PYTHON_DEPS}
 	zsh? ( app-shells/zsh )"
 
 # Source directory from which all applicable files will be installed.
-POWERLINE_SRC_DIR='powerline/bindings'
+POWERLINE_SRC_DIR="${T}/bindings"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
@@ -65,28 +56,48 @@ POWERLINE_TRG_DIR='/usr/share/powerline'
 # Basename of Powerline's help file for vim. 
 VIM_PLUGIN_HELPFILES="Powerline"
 
+python_prepare_all() {
+	# Copy the directory tree containing application-specific Powerline
+	# bindings to a temporary directory. Since such tree contains both Python
+	# and non-Python files, failing to remove the latter causes distutils to
+	# install non-Python files into the Powerline Python module directory. To
+	# safely remove such files *AND* permit their installation after the main
+	# distutils-based installation, copy them to such location and then remove
+	# them from the original tree that distutils operates on.
+	cp -R powerline/bindings "${POWERLINE_SRC_DIR}"
+
+	# Remove all non-Python files from the original tree.
+	find  powerline/bindings -type f -not -name '*.py' -delete
+
+	# Remove all Python files from the copied tree, as required by at least the
+	# "vim-plugin" eclass, which installs all non-HTML files (and hence Python
+	# files) as package documentation!
+	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -delete
+
+	sed -ie "/DEFAULT_SYSTEM_CONFIG_DIR/ s@None@'/etc/xdg'@" powerline/__init__.py
+
+	if use vim; then
+		sed -ie '/sys\.path\.append/d' "${POWERLINE_SRC_DIR}/vim/plugin/powerline.vim"
+	fi
+
+	distutils-r1_python_prepare_all
+}
+
+python_compile_all() {
+	if use doc; then
+		einfo "Generating documentation"
+		sphinx-build -b html docs/source docs_output
+		HTML_DOCS=( docs_output/. )
+	fi
+
+	distutils-r1_python_compile_all
+}
+
 python_test() {
 	PYTHON="${PYTHON}" tests/test.sh
 }
 
-src_prepare() {
-	sed -ie "/DEFAULT_SYSTEM_CONFIG_DIR/ s@None@'/etc/xdg'@" powerline/__init__.py
-
-	if use vim; then
-		# Excise "sys.path.append", which points to the wrong location.
-		sed -ie '/sys\.path\.append/d' "${POWERLINE_SRC_DIR}/vim/plugin/powerline.vim"
-	fi
-}
-
-src_compile() {
-	distutils-r1_src_compile
-	if use doc; then
-		einfo "Generating documentation"
-		sphinx-build -b html docs/source docs_output
-	fi
-}
-
-src_install() {
+python_install_all() {
 	if use awesome; then
 		insinto /usr/share/awesome/lib/powerline
 		newins "${POWERLINE_SRC_DIR}/awesome/powerline.lua" init.lua
@@ -104,26 +115,15 @@ src_install() {
 		doins   "${POWERLINE_SRC_DIR}/tmux/powerline.conf"
 	fi
 
+	# Since vim-plugin_src_install() expects ${S} to be the directory to be
+	# moved into "/usr/share/vim/vimfiles", temporarily set ${S} to the
+	# temporary directory containing such plugin, install such plugin, and
+	# restore both ${S} and the current directory changed by such function to
+	# their prior values.
 	if use vim; then
-		# Since vim-plugin_src_install() expects ${S} to be the directory
-		# to be moved into "/usr/share/vim/vimfiles" and the distutils-based
-		# makefile run below expects such directory to not be moved, copy such
-		# directory to a temporary location.
-		cp -R "${POWERLINE_SRC_DIR}/vim" "${T}"
-
-		# Temporarily set ${S} to such location and install such plugin.
 		local S_old="${S}"
-		S="${T}/vim"
-
-		# Since vim-plugin_src_install() installs all non-HTML files in such
-		# directory as documentation, remove such files.
-		rm -f "${S}/__init__.py"
-
-		# Install such plugin.
+		S="${POWERLINE_SRC_DIR}/vim"
 		vim-plugin_src_install
-
-		# Since vim-plugin_src_install() changes the current directory, restore
-		# such directory and ${S} to their prior values.
 		S="${S_old}"
 		cd "${S}"
 	fi
@@ -136,16 +136,12 @@ src_install() {
 	insinto /etc/xdg/powerline
 	doins -r powerline/config_files/*
 
-	# Prevent distutils-r1_src_install() from installing non-Python files.
-	find "${POWERLINE_SRC_DIR}" -type f -not -name '*.py' -delete
-
-	use doc && HTML_DOCS=( docs_output/. )
-	distutils-r1_src_install
+	distutils-r1_python_install_all
 }
 
 pkg_postinst() {
-	# If this package is being installed for the first time rather than
-	# upgraded, print post-installation messages.
+	# If this package is being installed for the first time (rather than
+	# upgraded), print post-installation messages.
 	if ! has_version ${CATEGORY}/${PN}; then
 		if use awesome; then
 			elog 'To enable Powerline under awesome, add the following lines to your'
