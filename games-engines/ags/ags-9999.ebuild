@@ -7,12 +7,13 @@ EAPI=5
 set -e
 
 # The open-source AGS runtime engine has yet to release an official version.
+EGIT_REPO_URI="git://github.com/adventuregamestudio/ags.git"
+EGIT_BRANCH="main"
+
 inherit eutils git-r3
 
 DESCRIPTION="Adventure Game Studio (AGS) runtime engine"
 HOMEPAGE="https://github.com/adventuregamestudio/ags"
-EGIT_REPO_URI="git://github.com/adventuregamestudio/ags.git"
-EGIT_BRANCH="main"
 
 #FIXME: Add "html" USE flag. When enabled, run
 #"Manual/compile_documentation_unix.sh" in the src_compile() phase to compile
