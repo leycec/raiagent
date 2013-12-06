@@ -7,7 +7,7 @@ EAPI=5
 set -e
 
 # The open-source AGS runtime engine has yet to release an official version.
-inherit eutils git-2
+inherit eutils git-r3
 
 DESCRIPTION="Adventure Game Studio (AGS) runtime engine"
 HOMEPAGE="https://github.com/adventuregamestudio/ags"

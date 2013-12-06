@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Exuberant Ctags is a multilanguage reimplementation of the much-underused
+ctags(1) program and is intended to be the mother of all ctags programs. It
+generates indexes of source code definitions which are used by a number of
+editors and tools. The motivation which drove the development of Exuberant
+Ctags was the need for a ctags program which supported generation of tags
+for all possible C language constructs (which no other ctags offers), and
+because most were easily fooled by a number of preprocessor contructs.
+
+Exuberant Ctags offers the following features:
+
+1.  It supports the following languages: Assembler, AWK, ASP, BETA,
+    Bourne/Korn/Z Shell, C, C++, C#, COBOL, Eiffel, Erlang, Fortran, Java, Lisp,
+    Lua, Makefile, Objective-C, Pascal, Perl, PHP, PL/SQL, Python, REXX, Ruby,
+    Scheme, S-Lang, SML (Standard ML), Tcl, Vera, Verilog, VHDL, Vim,
+    and YACC.
+
+2.  It is capable of generating tags for virtually all C language constructs.
+
+3.  It is very robust in parsing code. In particular, the C/C++ parser is
+    far less easily fooled by code containing #if preprocessor conditional
+    constructs, using a conditional path selection algorithm to resolve
+    complicated situations, and a fall-back algorithm when this one fails.
+
+4.  Supports output of Emacs-style TAGS files (i.e. "etags").
+
+5.  User-defined languages, using Posix regular expressions.
+
+6.  Supports UNIX, MSDOS, Windows 95/98/NT/2000/XP, OS/2, QNX, Amiga, QDOS,
+    RISC OS, VMS, Macintosh, and Cray. Some pre-compiled binaries are
+    available on the web site.
+</longdescription>
+	<upstream>
+		<doc lang="en">http://ctags.sourceforge.net/ctags.html</doc>
+		<bugs-to>http://sourceforge.net/tracker/?group_id=6556&amp;atid=106556</bugs-to>
+	</upstream>
+	<use>
+		<flag name="ada">Enable Ada support</flag>
+	</use>
+</pkgmetadata>
