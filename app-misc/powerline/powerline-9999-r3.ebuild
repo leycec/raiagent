@@ -8,23 +8,23 @@ set -e
 
 PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} )
 
-EGIT_REPO_URI="https://github.com/Lokaltog/${PN}"
+EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
 EGIT_BRANCH="develop"
 
-inherit eutils vim-plugin distutils-r1 git-r3
+inherit eutils distutils-r1 git-r3
 
 DESCRIPTION="Ultimate statusline/prompt utility"
 HOMEPAGE="http://github.com/Lokaltog/powerline"
-
 LICENSE="MIT"
+
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE="awesome doc bash test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-PYTHON_DEPS+="
-	virtual/python-argparse"
-DEPEND="${PYTHON_DEPS}
+COMMON_DEPS="virtual/python-argparse"
+DEPEND="${COMMON_DEPS}
+	dev-python/setuptools
 	doc? ( dev-python/sphinx dev-python/docutils )
 	test? (
 		|| ( >=dev-vcs/git-1.7.2 >=dev-python/pygit2-0.17 )
@@ -38,14 +38,12 @@ DEPEND="${PYTHON_DEPS}
 			dev-vcs/mercurial
 		)
 	)"
-RDEPEND="${PYTHON_DEPS}
+RDEPEND="${COMMON_DEPS}
 	media-fonts/powerline-symbols
 	fonts? ( media-fonts/powerline-symbols )
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
-	vim? ( || (
-		>=app-editors/vim-7.3[python]
-		>=app-editors/gvim-7.3[python] ) )
+	vim? ( app-vim/powerline-python )
 	zsh? ( app-shells/zsh )"
 
 # Source directory from which all applicable files will be installed.
@@ -53,9 +51,6 @@ POWERLINE_SRC_DIR="${T}/bindings"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
-
-# Basename of Powerline's help file for vim. 
-VIM_PLUGIN_HELPFILES="Powerline"
 
 python_prepare_all() {
 	# Copy the directory tree containing application-specific Powerline
@@ -70,17 +65,11 @@ python_prepare_all() {
 	# Remove all non-Python files from the original tree.
 	find  powerline/bindings -type f -not -name '*.py' -delete
 
-	# Remove all Python files from the copied tree, as required by at least the
-	# "vim-plugin" eclass, which installs all non-HTML files (and hence Python
-	# files) as package documentation!
+	# Remove all Python files from the copied tree, for safety.
 	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -delete
 
+	# Replace nonstandard paths in the Powerline Python tree.
 	sed -ie "/DEFAULT_SYSTEM_CONFIG_DIR/ s@None@'/etc/xdg'@" powerline/__init__.py
-
-	if use vim; then
-		sed -ie '/sys\.path\.append/d' "${POWERLINE_SRC_DIR}/vim/plugin/powerline.vim"
-	fi
-
 	distutils-r1_python_prepare_all
 }
 
@@ -90,8 +79,6 @@ python_compile_all() {
 		sphinx-build -b html docs/source docs_output
 		HTML_DOCS=( docs_output/. )
 	fi
-
-	distutils-r1_python_compile_all
 }
 
 python_test() {
@@ -116,19 +103,6 @@ python_install_all() {
 		doins   "${POWERLINE_SRC_DIR}/tmux/powerline.conf"
 	fi
 
-	# Since vim-plugin_src_install() expects ${S} to be the directory to be
-	# moved into "/usr/share/vim/vimfiles", temporarily set ${S} to the
-	# temporary directory containing such plugin, install such plugin, and
-	# restore both ${S} and the current directory changed by such function to
-	# their prior values.
-	if use vim; then
-		local S_old="${S}"
-		S="${POWERLINE_SRC_DIR}/vim"
-		vim-plugin_src_install
-		S="${S_old}"
-		cd "${S}"
-	fi
-
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
 		doins "${POWERLINE_SRC_DIR}/zsh/powerline.zsh"
@@ -143,7 +117,7 @@ python_install_all() {
 pkg_postinst() {
 	# If this package is being installed for the first time (rather than
 	# upgraded), print post-installation messages.
-	if ! has_version ${CATEGORY}/${PN}; then
+	if ! has_version "${CATEGORY}/${PN}"; then
 		if use awesome; then
 			elog 'To enable Powerline under awesome, add the following lines to your'
 			elog '"~/.config/awesome/rc.lua" (assuming you originally copied such file from'
@@ -171,16 +145,5 @@ pkg_postinst() {
 			elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
 			elog ''
 		fi
-	fi
-
-	# For readability, print Vim post-installation messages last.
-	if use vim; then
-		vim-plugin_pkg_postinst
-	fi
-}
-
-pkg_postrm() {
-	if use vim; then
-		vim-plugin_pkg_postrm
 	fi
 }
