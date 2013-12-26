@@ -39,9 +39,9 @@ DEPEND="${COMMON_DEPS}
 		)
 	)"
 RDEPEND="${COMMON_DEPS}
+ 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	media-fonts/powerline-symbols
 	fonts? ( media-fonts/powerline-symbols )
-	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
 	vim? ( app-vim/powerline-python )
 	zsh? ( app-shells/zsh )"
@@ -65,8 +65,12 @@ python_prepare_all() {
 	# Remove all non-Python files from the original tree.
 	find  powerline/bindings -type f -not -name '*.py' -delete
 
-	# Remove all Python files from the copied tree, for safety.
-	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -delete
+	# Remove all Python files from the copied tree, for safety. Most such files
+	# relate to Powerline's distutils-based install process. Exclude the
+	# following unrelated Python files:
+	#
+	# * "powerline-awesome.py", an awesome-specific integration script.
+	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -not -name 'powerline-awesome.py' -delete
 
 	# Replace nonstandard paths in the Powerline Python tree.
 	sed -ie "/DEFAULT_SYSTEM_CONFIG_DIR/ s@None@'/etc/xdg'@" powerline/__init__.py
@@ -87,9 +91,10 @@ python_test() {
 
 python_install_all() {
 	if use awesome; then
-		insinto /usr/share/awesome/lib/powerline
+		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
+		insinto "${AWESOME_LIB_DIR}"
 		newins "${POWERLINE_SRC_DIR}/awesome/powerline.lua" init.lua
-		exeinto /usr/share/awesome/lib/powerline
+		exeinto "${AWESOME_LIB_DIR}"
 		doexe  "${POWERLINE_SRC_DIR}/awesome/powerline-awesome.py"
 	fi
 
