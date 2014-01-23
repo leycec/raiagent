@@ -39,12 +39,13 @@ DEPEND="${COMMON_DEPS}
 		)
 	)"
 RDEPEND="${COMMON_DEPS}
- 	awesome? ( >=x11-wm/awesome-3.5.1 )
+	awesome? ( >=x11-wm/awesome-3.5.1 )
 	media-fonts/powerline-symbols
 	fonts? ( media-fonts/powerline-symbols )
 	bash? ( app-shells/bash )
 	vim? ( app-vim/powerline-python )
-	zsh? ( app-shells/zsh )"
+	zsh? ( app-shells/zsh )
+	fish? ( >=app-shells/fish-2.1 )"
 
 # Source directory from which all applicable files will be installed.
 POWERLINE_SRC_DIR="${T}/bindings"
@@ -113,6 +114,11 @@ python_install_all() {
 		doins "${POWERLINE_SRC_DIR}/zsh/powerline.zsh"
 	fi
 
+	if use fish; then
+		insinto /usr/share/fish/functions
+		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
+	fi
+
 	insinto /etc/xdg/powerline
 	doins -r powerline/config_files/*
 
@@ -148,6 +154,12 @@ pkg_postinst() {
 		if use zsh; then
 			elog 'To enable Powerline under zsh, add the following line to your "~/.zshrc":'
 			elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
+			elog ''
+		fi
+
+		if use fish; then
+			elog 'To enable Powerline under zsh, add the following line to your "~/.config/fish/config.fish":'
+			elog "    powerline-setup"
 			elog ''
 		fi
 	fi
