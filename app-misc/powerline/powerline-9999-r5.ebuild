@@ -158,7 +158,7 @@ pkg_postinst() {
 		fi
 
 		if use fish; then
-			elog 'To enable Powerline under zsh, add the following line to your "~/.config/fish/config.fish":'
+			elog 'To enable Powerline under fish, add the following line to your "~/.config/fish/config.fish":'
 			elog "    powerline-setup"
 			elog ''
 		fi
