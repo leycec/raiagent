@@ -19,7 +19,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
-IUSE="awesome doc bash test tmux vim zsh fonts"
+IUSE="awesome doc bash fish test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 COMMON_DEPS="virtual/python-argparse"
