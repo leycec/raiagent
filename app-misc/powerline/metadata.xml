@@ -46,6 +46,7 @@ feature-rich alternative is currently Bailey Ling's vim-airline project.
 	<use>
 		<flag name="awesome">Install awesome (window manager) support files</flag>
 		<flag name="bash">Install bash support files</flag>
+		<flag name="fish">Install fish support files</flag>
 		<flag name="tmux">Install tmux support files</flag>
 		<flag name="vim">Install vim support files</flag>
 		<flag name="zsh">Install zsh support files</flag>

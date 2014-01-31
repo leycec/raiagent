@@ -18,7 +18,7 @@ HOMEPAGE="http://github.com/Lokaltog/powerline"
 LICENSE="MIT"
 
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome doc bash fish test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -119,13 +119,19 @@ python_install_all() {
 		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
 	fi
 
+	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
 	doins -r powerline/config_files/*
 
+	# Install Powerline python modules.
 	distutils-r1_python_install_all
 }
 
 pkg_postinst() {
+	#FIXME: Such messages should also be printed on upgrading with new USE flags.
+	#Is it feasible to test such condition? If not, such messages should simply be
+	#printed unconditionally.
+
 	# If this package is being installed for the first time (rather than
 	# upgraded), print post-installation messages.
 	if ! has_version "${CATEGORY}/${PN}"; then
@@ -159,7 +165,7 @@ pkg_postinst() {
 
 		if use fish; then
 			elog 'To enable Powerline under fish, add the following line to your "~/.config/fish/config.fish":'
-			elog "    powerline-setup"
+			elog '    powerline-setup'
 			elog ''
 		fi
 	fi
