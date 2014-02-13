@@ -12,7 +12,7 @@ inherit games git-2
 # Cataclysm: DDA has yet to release source tarballs. GitHub suffices, instead.
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
 HOMEPAGE="http://www.cataclysmdda.com"
-EGIT_REPO_URI="git://github.com/TheDarklingWolf/Cataclysm-DDA.git"
+EGIT_REPO_URI="git://github.com/CleverRaven/Cataclysm-DDA.git"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
