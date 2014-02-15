@@ -12,7 +12,13 @@ Yet with care and a little luck, many things are possible. You may try to eke ou
 In the course of your ordeal there will be opportunities and temptations to improve or change your very nature. There are tales of survivors fitted with extraordinary cybernetics giving great power and stories too of gravely mutated survivors who, warped by their ingestion of exotic substances or radiation, now more closely resemble insects, birds or fish than their original form.
 </longdescription>
 	<upstream>
-		<doc lang="en">http://www.wiki.cataclysmdda.com/index.php?title=Main_Page</doc>
-		<bugs-to>http://www.cataclysmdda.com/smf/index.php?board=4.0</bugs-to>
+		<doc lang="en">http://www.wiki.cataclysmdda.com</doc>
+		<bugs-to>http://smf.cataclysmdda.com/index.php?board=4.0</bugs-to>
 	</upstream>
+	<use>
+		<flag name="clang">Build with clang++ rather than g++ (experimental!)</flag>
+		<flag name="lua">Enable Lua scripting support (recommended)</flag>
+		<flag name="ncurses">Install ncurses-based terminal executable (recommended)</flag>
+		<flag name="sdl">Install SDL-based X11 executable (recommended)</flag>
+	</use>
 </pkgmetadata>
