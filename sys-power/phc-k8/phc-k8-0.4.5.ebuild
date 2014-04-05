@@ -12,7 +12,7 @@ inherit linux-info linux-mod
 #     http://www.linux-phc.org/forum/viewtopic.php?f=13&t=38
 DESCRIPTION="Processor Hardware Control for AMD K8 CPUs"
 HOMEPAGE="http://www.linux-phc.org"
-SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=143 -> ${P}.tar.gz"
+SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=150 -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -42,6 +42,7 @@ IS_UPGRADING_PHC_K8=""
 #
 #Uninformative error messages must go. To correct this, verify such file to be
 #readable if such file exists.
+
 pkg_setup() {
 	linux-mod_pkg_setup
 
