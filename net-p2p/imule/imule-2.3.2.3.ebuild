@@ -165,7 +165,7 @@ src_install() {
 	mv "${D}/usr/share/doc/${PN}" "${IMULE_DOC_DIR}"
 
 	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
-	mv "${DISTFILES}/${IMULE_NODES_FILE}" "${IMULE_DOC_DIR}/nodes.dat"
+	mv "${DISTDIR}/${IMULE_NODES_FILE}" "${IMULE_DOC_DIR}/nodes.dat"
 
 	if use daemon; then
 		newconfd "${FILESDIR}"/imuled.confd imuled
