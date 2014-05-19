@@ -6,7 +6,7 @@ EAPI=5
 # Enforce Bash strictness.
 set -e
 
-inherit linux-info linux-mod
+inherit linux-info linux-mod readme.gentoo
 
 # The most recent version of "phc-k8" is typically available from:
 #     http://www.linux-phc.org/forum/viewtopic.php?f=13&t=38
@@ -26,11 +26,6 @@ MODULE_NAMES="phc-k8()"
 
 # Makefile target to be executed, cleanly building such module.
 BUILD_TARGETS="all"
-
-# If nonempty, this ebuild is being upgraded from a prior version; else, this
-# ebuild is being installed anew. pkg_preinst() sets this boolean on behalf of
-# pkg_postinst(), below.
-IS_UPGRADING_PHC_K8=""
 
 #FIXME: If "portage" does *NOT* have permissions to read
 #"/usr/src/linux/include/generated/utsrelease.h", the "phc-k8" Makefile
@@ -80,28 +75,22 @@ src_install() {
 	dodoc Changelog README
 	newconfd "${FILESDIR}/conf" "${PN}"
 	newinitd "${FILESDIR}/init" "${PN}"
-}
 
-pkg_preinst() {
-	linux-mod_pkg_postinst
+	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
+	DOC_CONTENTS="
+After determining the highest stable vids (i.e., lowest stable voltages)
+supported by your system, configure \"${EROOT}/etc/conf.d/${PN}\" accordingly
+and add \"${PN}\" to the boot runlevel: e.g.,\\n
+    rc-update add ${PN} boot"
 
-	# If upgrading "phc-k8" from a prior version, set the corresponding boolean.
-	# Since has_version() cannot be called from pkg_postinst() for the same
-	# ebuild as is being installed, this is the next best thing.
-	if has_version sys-power/phc-k8; then
-		IS_UPGRADING_PHC_K8=1
-	fi
+	# Install such document.
+	readme.gentoo_create_doc
 }
 
 pkg_postinst() {
 	linux-mod_pkg_postinst
 
-	# If installing rather than merely upgrading "phc-k8", print a slew of
-	# recommended post-installation instructions.
-	if [ -z "${IS_UPGRADING_PHC_K8}" ]; then
-		elog "After determining the highest stable vids (i.e., lowest stable voltages)"
-		elog "supported under your system, configure \"${ROOT}etc/conf.d/${PN}\""
-		elog "accordingly and add \"${PN}\" to the boot runlevel: e.g.,"
-		elog "    rc-update add ${PN} boot"
-	fi
+	# On first installations of this package, elog the contents of the
+	# previously installed "/usr/share/doc/${P}/README.gentoo" file.
+	readme.gentoo_print_elog
 }

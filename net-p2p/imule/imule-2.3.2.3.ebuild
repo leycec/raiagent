@@ -9,18 +9,22 @@ EAPI=5
 # Enable Bash strictness.
 set -e
 
-inherit eutils flag-o-matic wxwidgets user
+#FIXME: Replicate such "readme.gentoo" logic in all other currently mainted ebuilds.
+inherit eutils flag-o-matic readme.gentoo wxwidgets user
 
 MY_PNV="iMule-${PV}"
 
 # Basename of the seed database required on initial iMule startup.
-IMULE_NODES_FILE="${MY_PNV}-nodes.dat"
+IMULE_NODES_BASE="${MY_PNV}-nodes.dat"
+
+# Absolute path to which such database is installed.
+IMULE_NODES_FILE="/usr/share/${PN}/nodes.dat"
 
 DESCRIPTION="Free, open-source, anonymous, P2P file-sharing software connecting through the I2P and Kad networks"
 HOMEPAGE="http://aceini.no-ip.info/imule"
 SRC_URI="
 	http://aceini.no-ip.info/imule/${PV}/${MY_PNV}-src.tbz
-	http://aceini.no-ip.info/imule/nodes.dat -> ${IMULE_NODES_FILE}"
+	http://aceini.no-ip.info/imule/nodes.dat -> ${IMULE_NODES_BASE}"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -156,16 +160,7 @@ src_configure() {
 }
 
 src_install() {
-	local IMULE_DOC_DIR="${D}/usr/share/doc/${P}"
-
 	emake DESTDIR="${D}" install
-
-	# Since the makefile installs documentation to "/usr/share/doc/${PN}",
-	# move such directory to the expected "/usr/share/doc/${PNV}".
-	mv "${D}/usr/share/doc/${PN}" "${IMULE_DOC_DIR}"
-
-	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
-	mv "${DISTDIR}/${IMULE_NODES_FILE}" "${IMULE_DOC_DIR}/nodes.dat"
 
 	if use daemon; then
 		newconfd "${FILESDIR}"/imuled.confd imuled
@@ -175,6 +170,34 @@ src_install() {
 	#	newconfd "${FILESDIR}"/imuleweb.confd imuleweb
 	#	newinitd "${FILESDIR}"/imuleweb.initd imuleweb
 	#fi
+
+	# Since the makefile installs documentation to "/usr/share/doc/${PN}",
+	# move such directory to the expected "/usr/share/doc/${PNV}".
+	mv "${D}/usr/share/doc/${PN}" "${D}/usr/share/doc/${P}"
+
+	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
+	cp "${DISTDIR}/${IMULE_NODES_BASE}" "${D}/${IMULE_NODES_FILE}"
+
+	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
+	DOC_CONTENTS="
+iMule requires a seed database to be manually installed. To install the
+database we have already provided for you, consider running:\\n
+\\n
+    mkdir ~/.iMule\\n
+    cp ${EROOT}${IMULE_NODES_FILE} ~/.iMule\\n
+\\n
+iMule also requires the I2P SAM application bridge to be enabled. Since
+such bridge is disabled under all default I2P installations, enable
+such bridge before running iMule. Specifically:\\n
+\\n
+* Browse to http://127.0.0.1:7657/configclients (assuming a default I2P
+  installation).\\n
+* Check the \"SAM application bridge\" checkbox.\\n
+* Click the \"Start\" button to the right of such checkbox.\\n
+* Click the \"Save Client Configuration\" button.\""
+
+	# Install such document.
+	readme.gentoo_create_doc
 }
 
 pkg_preinst() {
@@ -186,22 +209,10 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	elog 'iMule requires a seed database to be manually installed. To install the'
-	elog 'database we have already provided for you, consider running:'
-	elog
-	elog '    mkdir ~/.iMule'
-	elog "    cp /usr/share/doc/${P}/nodes.dat ~/.iMule"
-	elog
-	elog 'iMule also requires the I2P SAM application bridge to be enabled. Since'
-	elog 'such bridge is disabled under all default I2P installations, enable'
-	elog 'such bridge before running iMule. Specifically:'
-	elog
-	elog '* Browse to http://127.0.0.1:7657/configclients (assuming a default I2P'
-	elog '  installation).'
-	elog '* Check the "SAM application bridge" checkbox.'
-	elog '* Click the "Start" button to the right of such checkbox.'
-	elog '* Click the "Save Client Configuration" button.'
-	elog
+	# On first installations of this package, elog the contents of the
+	# previously installed "/usr/share/doc/${P}/README.gentoo" file.
+	readme.gentoo_print_elog
+
 	elog 'Installed iMule binaries include:'
 	elog
 
@@ -223,7 +234,4 @@ pkg_postinst() {
 		elog '  "/etc/conf.d/imule" and run such daemon via:'
 		elog '  eselect rc restart imuled'
 	fi
-
-	elog
-	elog 'Enjoy, fellow (anonymous!) mules.'
 }

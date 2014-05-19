@@ -12,12 +12,12 @@ set -e
 EGIT_REPO_URI="https://github.com/fishman/ctags"
 EGIT_BRANCH="deploy"
 
-inherit autotools git-r3
+inherit autotools git-r3 readme.gentoo
 
 DESCRIPTION="Exuberant Ctags creates tags files for code browsing in editors"
 HOMEPAGE="http://ctags.sourceforge.net"
 
-#FIXME: This should really just be submitted to the above git repository with a
+#FIXME: This should really just be submitted to the above git repository via a
 #github pull request.
 SRC_URI="ada? ( mirror://sourceforge/gnuada/ctags-ada-mode-4.3.11.tar.bz2 )"
 
@@ -62,24 +62,27 @@ src_configure() {
 src_install() {
 	emake prefix="${D}"/usr mandir="${D}"/usr/share/man install
 
-	# namepace collision with X/Emacs-provided /usr/bin/ctags -- we
-	# rename ctags to exuberant-ctags (Mandrake does this also).
+	# Due to namespace collision with [X]Emacs-installed ctags, rename "ctags"
+	# to "exuberant-ctags". (Mandrake does this as well).
 	mv "${D}"/usr/bin/{ctags,exuberant-ctags}
 	mv "${D}"/usr/share/man/man1/{ctags,exuberant-ctags}.1
 
 	dodoc FAQ MAINTAINERS NEWS README
 	dohtml -r EXTENDING.html index.html website/
+
+	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
+	DOC_CONTENTS="Select your preferred ctags provider via the ctags eselect module. See \"man ctags.eselect\" for further details."
+
+	# Install such document.
+	readme.gentoo_create_doc
 }
 
 pkg_postinst() {
 	eselect ctags update
 
-	# If this package is being installed for the first time (rather than
-	# upgraded), print post-installation messages.
-	if ! has_version "${CATEGORY}/${PN}"; then
-		elog "You can set the version to be started by /usr/bin/ctags through"
-		elog "the ctags eselect module. \"man ctags.eselect\" for details."
-	fi
+	# On first installations of this package, elog the contents of the
+	# previously installed "/usr/share/doc/${P}/README.gentoo" file.
+	readme.gentoo_print_elog
 }
 
 pkg_postrm() {

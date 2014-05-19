@@ -87,6 +87,6 @@ EOF
 }
 
 pkg_postinst() {
-	elog "Download FTL mods to the user-editable state directory for Grognak's Mod Manager,"
+	elog "Copy FTL mods to the user-editable state directory for Grognak's Mod Manager,"
 	elog "\"${GMM_STATE_DIR}/mods\"."
 }
