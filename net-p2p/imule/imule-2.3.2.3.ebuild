@@ -1,4 +1,4 @@
-# Copyright 1999-2009 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 EAPI=5
@@ -15,7 +15,9 @@ MY_PNV="iMule-${PV}"
 
 DESCRIPTION="Free, open-source, anonymous, P2P file-sharing software connecting through the I2P and Kad networks"
 HOMEPAGE="http://aceini.no-ip.info/imule"
-SRC_URI="http://aceini.no-ip.info/imule/${PV}/${MY_PNV}-src.tbz"
+SRC_URI="
+	http://aceini.no-ip.info/imule/${PV}/${MY_PNV}-src.tbz
+	http://aceini.no-ip.info/imule/nodes.dat"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -66,15 +68,15 @@ src_prepare() {
 	# issues specific to files matching /usr/share/applications/*.desktop:
 	#
 	# "* QA Notice: This package installs one or more .desktop files that do not
-    #  * pass validation.
-    #  * 
-    #  * 	/usr/share/applications/imule.desktop: error: (will be fatal in the future): value "imule.xpm" for key "Icon" in group "Desktop Entry" is an icon name with an extension, but there should be no extension as described in the Icon Theme Specification if the value is not an absolute path
-    #  * 	/usr/share/applications/imule.desktop: warning: value "Application;Network;" for key "Categories" in group "Desktop Entry" contains a deprecated value "Application"
-    #  * 	/usr/share/applications/plasmamule-engine-feeder.desktop: error:
-    #  file contains key "StartupWMClas" in group "Desktop Entry", but keys
-    #  extending the format should start with "X-"'
-    #
-    # However, given iMule's current development hiatus, we can't be bothered.
+	#  * pass validation.
+	#  * 
+	#  * 	/usr/share/applications/imule.desktop: error: (will be fatal in the future): value "imule.xpm" for key "Icon" in group "Desktop Entry" is an icon name with an extension, but there should be no extension as described in the Icon Theme Specification if the value is not an absolute path
+	#  * 	/usr/share/applications/imule.desktop: warning: value "Application;Network;" for key "Categories" in group "Desktop Entry" contains a deprecated value "Application"
+	#  * 	/usr/share/applications/plasmamule-engine-feeder.desktop: error:
+	#  file contains key "StartupWMClas" in group "Desktop Entry", but keys
+	#  extending the format should start with "X-"'
+	#
+	# However, given iMule's current development hiatus, we can't be bothered.
 }
 
 src_configure() {
@@ -90,11 +92,11 @@ src_configure() {
 	#   enable both under USE flag "remote", "remotegui" currently fails to
 	#   compile with the following non-ignorable fatal error:
 	#
-    #    amule-remote-gui.cpp: In member function ‘void CamuleRemoteGuiApp::Startup()’:
-    #    amule-remote-gui.cpp:392:39: error: invalid use of incomplete type ‘class CIP2Country’
-    #    In file included from amule-remote-gui.cpp:43:0:
-    #    amuleDlg.h:44:7: error: forward declaration of ‘class CIP2Country’
-    #
+	#    amule-remote-gui.cpp: In member function ‘void CamuleRemoteGuiApp::Startup()’:
+	#    amule-remote-gui.cpp:392:39: error: invalid use of incomplete type ‘class CIP2Country’
+	#    In file included from amule-remote-gui.cpp:43:0:
+	#    amuleDlg.h:44:7: error: forward declaration of ‘class CIP2Country’
+	#
 	# * Disable imulecmd, the command line client. While we'd prefer to enable
 	#   such client by default, it currently fails to compile with the
 	#   following non-ignorable fatal error:
@@ -147,11 +149,15 @@ src_configure() {
  		$(use_enable mmap)\
  		$(use_enable nls)\
  		$(use_enable upnp)
- 		#$(use_enable remote webserver)
+		#$(use_enable remote webserver)
 }
 
 src_install() {
 	emake DESTDIR="${D}" install
+
+	# Since the makefile installs documentation to "/usr/share/doc/${PN}",
+	# move such directory to the expected "/usr/share/doc/${PNV}".
+	mv "${D}/usr/share/doc/${PN}" "${D}/usr/share/doc/${P}"
 
 	if use daemon; then
 		newconfd "${FILESDIR}"/imuled.confd imuled
@@ -161,18 +167,28 @@ src_install() {
 	#	newconfd "${FILESDIR}"/imuleweb.confd imuleweb
 	#	newinitd "${FILESDIR}"/imuleweb.initd imuleweb
 	#fi
+
+	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
+	dodoc nodes.dat
 }
 
 pkg_preinst() {
-	if use daemon || use remote; then
+	#if use daemon || use remote; then
+	if use daemon; then
 		enewgroup p2p
 		enewuser p2p -1 -1 /home/p2p p2p
 	fi
 }
 
 pkg_postinst() {
-	elog 'iMule requires the I2P SAM application bridge to be enabled. Since'
-	elog 'such bridge is disabled by default I2P installations, enable'
+	elog 'iMule requires a seed database to be manually installed. To install the'
+	elog 'database we have already provided for you, consider running:'
+	elog
+	elog '    mkdir ~/.iMule'
+	elog "    cp /usr/share/doc/${P}/nodes.dat ~/.iMule"
+	elog
+	elog 'iMule also requires the I2P SAM application bridge to be enabled. Since'
+	elog 'such bridge is disabled under all default I2P installations, enable'
 	elog 'such bridge before running iMule. Specifically:'
 	elog
 	elog '* Browse to http://127.0.0.1:7657/configclients (assuming a default I2P'
@@ -204,5 +220,5 @@ pkg_postinst() {
 	fi
 
 	elog
-	elog 'Enjoy, iMulers!'
+	elog 'Enjoy, fellow (anonymous!) mules.'
 }
