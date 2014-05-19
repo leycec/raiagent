@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+iMule is a peer to peer file sharing client, based on the well known eMule.
+Starting with 2.0.0 iMule works on Linux, Mac, *BSD and Windows, which makes it
+the first multi-platform edonkey network client.
+</longdescription>
+	<use>
+		<flag name="daemon">Build headless server</flag>
+		<flag name="kde">Build KDE Plasma applet</flag>
+		<flag name="linkcreator">Build link creator utility</flag>
+		<flag name="stats">Collect and display statistics</flag>
+		<flag name="upnp">Support uPnP networking (recommended)</flag>
+		<!--flag name="remote">Build internal webserver-hosted GUI</flag-->
+	</use>
+</pkgmetadata>

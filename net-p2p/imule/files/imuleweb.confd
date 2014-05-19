@@ -1,0 +1,31 @@
+# Copyright 1999-2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/net-p2p/imule/files/imuleweb.confd,v 1.3 2008/02/04 16:51:51 armin76 Exp $
+
+# Name of the existing user to own the iMule webserver process.
+IMULEWEB_USER="p2p"
+
+# Such user's home directory.
+IMULEWEB_HOME="/home/p2p"
+
+# Absolute path of such process' log file or /dev/null to disable logging.
+IMULEWEB_LOG_FILE=/var/log/imuleweb.log
+
+# Absolute path of such process' PID file.
+IMULEWEB_PID_FILE=/var/run/imuled.pid
+
+# External user password for the remote iMule GUI.
+IMULEWEB_PASS_USER="guest"
+
+# Internal administrator password for the local iMule webserver.
+IMULEWEB_PASS_ADMIN="admin"
+
+# Such webserver's hostname.
+IMULEWEB_HOST="localhost"
+
+# Such webserver's external connection port.
+IMULEWEB_PORT="4712"
+
+# The name of the template styling the remote iMule GUI. Choices include:
+# "default", "php-default", "chicane".
+IMULEWEB_TEMPLATE="default"

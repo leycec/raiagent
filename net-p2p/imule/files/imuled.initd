@@ -1,0 +1,60 @@
+#!/sbin/runscript
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/net-p2p/imule/files/imuled.initd,v 1.4 2007/07/23 12:07:54 armin76 Exp $
+
+depend() {
+	need net
+}
+
+start() {
+    local IMULED_CONF_FILE="${IMULED_HOME}/.iMule/imule.conf"
+
+	if [ ! -f "${IMULED_CONF_FILE}" ]; then
+		eerror "Please run \"imuled\" manually first."
+		eerror "\"${IMULED_CONF_FILE}\" not found."
+		return 1
+	fi
+
+	if pgrep -u "${IMULED_USER}" imuled >/dev/null; then
+		eerror "iMule daemon already running."
+		return 1
+	fi
+
+	if [ -e "${IMULED_PID_FILE}" ]; then
+		 rm "${IMULED_PID_FILE}"
+	fi
+
+	ebegin "Starting iMule daemon."
+	HOME="${IMULED_HOME}" start-stop-daemon --start\
+		--quiet --background\
+		--make-pidfile --pidfile "${IMULED_PID_FILE}"\
+		-c "${IMULED_USER}"\
+		-x /usr/bin/imuled >"${IMULED_LOG_FILE}"
+	
+	sleep 2
+	if ! pgrep -u "${IMULED_USER}" imuled > /dev/null; then
+		eerror "iMule daemon not started."
+		eerror "See logfile \"${IMULED_LOG_FILE}\"."
+		eend 1
+		return 1
+	fi
+	eend 0
+}
+
+stop() {
+	ebegin "Stopping iMule daemon."
+	start-stop-daemon --oknodo --stop --pidfile "${IMULED_PID_FILE}" &>/dev/null
+	eend $?
+}
+
+restart() {
+	svc_stop
+
+	# Wait for "imuled" to stop before starting it anew.
+	while pgrep -u "${IMULED_USER}" imuled >/dev/null; do
+		sleep 1
+	done
+
+	svc_start
+}

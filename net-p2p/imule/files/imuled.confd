@@ -1,0 +1,15 @@
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/net-p2p/imule/files/imuled.confd,v 1.1 2005/07/10 15:02:47 chainsaw Exp $
+
+# Name of the existing user to own the iMule daemon process.
+IMULED_USER="p2p"
+
+# Such user's home directory.
+IMULED_HOME="/home/p2p"
+
+# Absolute path of such process' log file or /dev/null to disable logging.
+IMULED_LOG_FILE=/var/log/imuled.log
+
+# Absolute path of such process' PID file.
+IMULED_PID_FILE=/var/run/imuled.pid

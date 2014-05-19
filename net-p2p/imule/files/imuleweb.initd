@@ -1,0 +1,63 @@
+#!/sbin/runscript
+# Copyright 1999-2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: /var/cvsroot/gentoo-x86/net-p2p/imule/files/imuleweb.initd,v 1.7 2008/02/04 16:51:51 armin76 Exp $
+
+depend() {
+	need net
+	use imuled
+}
+
+start() {
+    local IMULEWEB_CONF_FILE="${IMULEWEB_HOME}/.iMule/imule.conf"
+
+	if [ ! -f "${IMULEWEB_CONF_FILE}" ]; then
+		eerror "Please run \"imuleweb\" manually first."
+		eerror "\"${IMULEWEB_CONF_FILE}\" not found."
+		return 1
+	fi
+
+	if pgrep -u "${IMULEWEB_USER}" imuleweb >/dev/null; then
+		eerror "iMule webserver already running."
+		return 1
+	fi
+
+	if [ -e "${IMULEWEB_PID_FILE}" ]; then
+		rm "${IMULEWEB_PID_FILE}"
+	fi
+
+	IMULEWEB_OPTIONS="-h '${IMULEWEB_HOST}' -p '${IMULEWEB_PORT}' -P '${IMULEWEB_PASS_USER}' -A '${IMULEWEB_PASS_ADMIN}' -t '${IMULEWEB_TEMPLATE}' -q"
+
+	ebegin "Starting iMule webserver."
+	env HOME="${IMULEWEB_HOME}" start-stop-daemon --start\
+		--quiet -b\
+		--make-pidfile --pidfile "${IMULEWEB_PID_FILE}"\
+		-c "${IMULEWEB_USER}"\
+		-x /usr/bin/imuleweb -- ${IMULEWEB_OPTIONS} &>"${IMULEWEB_LOG_FILE}"
+	
+	sleep 1
+	if ! pgrep -u "${IMULEWEB_USER}" imuleweb > /dev/null; then
+		eerror "iMule webserver not started."
+		eerror "See logfile \"${IMULEWEB_LOG_FILE}\"."
+		eend 1
+		return 1
+	fi
+	eend 0
+}
+
+stop() {
+	ebegin "Stopping iMule webserver."
+	start-stop-daemon --oknodo --stop --pidfile "${IMULEWEB_PID_FILE}" &>/dev/null
+	eend $?
+}
+
+restart() {
+	svc_stop
+
+	# Wait for "imuleweb" to stop before starting it anew.
+	while pgrep -u "${IMULEWEB_USER}" imuleweb >/dev/null; do
+		sleep 1
+	done
+
+	svc_start
+}
