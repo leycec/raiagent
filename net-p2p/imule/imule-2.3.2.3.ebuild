@@ -13,16 +13,19 @@ inherit eutils flag-o-matic wxwidgets user
 
 MY_PNV="iMule-${PV}"
 
+# Basename of the seed database required on initial iMule startup.
+IMULE_NODES_FILE="${MY_PNV}-nodes.dat"
+
 DESCRIPTION="Free, open-source, anonymous, P2P file-sharing software connecting through the I2P and Kad networks"
 HOMEPAGE="http://aceini.no-ip.info/imule"
 SRC_URI="
 	http://aceini.no-ip.info/imule/${PV}/${MY_PNV}-src.tbz
-	http://aceini.no-ip.info/imule/nodes.dat"
+	http://aceini.no-ip.info/imule/nodes.dat -> ${IMULE_NODES_FILE}"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="daemon geoip kde linkcreator mmap nls stats +upnp +X"
+IUSE="daemon geoip kde linkcreator mmap nls stats upnp +X"
 #remote
 
 COMMON_DEPEND="
@@ -153,11 +156,16 @@ src_configure() {
 }
 
 src_install() {
+	local IMULE_DOC_DIR="${D}/usr/share/doc/${P}"
+
 	emake DESTDIR="${D}" install
 
 	# Since the makefile installs documentation to "/usr/share/doc/${PN}",
 	# move such directory to the expected "/usr/share/doc/${PNV}".
-	mv "${D}/usr/share/doc/${PN}" "${D}/usr/share/doc/${P}"
+	mv "${D}/usr/share/doc/${PN}" "${IMULE_DOC_DIR}"
+
+	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
+	mv "${DISTFILES}/${IMULE_NODES_FILE}" "${IMULE_DOC_DIR}/nodes.dat"
 
 	if use daemon; then
 		newconfd "${FILESDIR}"/imuled.confd imuled
@@ -167,16 +175,13 @@ src_install() {
 	#	newconfd "${FILESDIR}"/imuleweb.confd imuleweb
 	#	newinitd "${FILESDIR}"/imuleweb.initd imuleweb
 	#fi
-
-	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
-	dodoc nodes.dat
 }
 
 pkg_preinst() {
 	#if use daemon || use remote; then
 	if use daemon; then
 		enewgroup p2p
-		enewuser p2p -1 -1 /home/p2p p2p
+		enewuser  p2p -1 -1 /home/p2p p2p
 	fi
 }
 
