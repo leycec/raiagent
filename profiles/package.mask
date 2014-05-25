@@ -14,3 +14,6 @@
 # ....................{ UNSTABLE                           }....................
 # The Cataclysm: DDA repository is famously active. And famously unstable.
 ~games-roguelike/cataclysm-dda-9999
+
+# Ditto for the SDL1 repository.
+~media-libs/libsdl-1.2.9999
