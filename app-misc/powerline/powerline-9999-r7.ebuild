@@ -53,6 +53,10 @@ POWERLINE_SRC_DIR="${T}/bindings"
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
 
+powerline_set_config() {
+	sed -ie "s@^$1 =.*@$1 = '$2'@" powerline/config.py
+}
+
 python_prepare_all() {
 	# Copy the directory tree containing application-specific Powerline
 	# bindings to a temporary directory. Since such tree contains both Python
@@ -74,7 +78,8 @@ python_prepare_all() {
 	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -not -name 'powerline-awesome.py' -delete
 
 	# Replace nonstandard paths in the Powerline Python tree.
-	sed -ie "/DEFAULT_SYSTEM_CONFIG_DIR/ s@None@'/etc/xdg'@" powerline/__init__.py
+	powerline_set_config DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}/etc/xdg"
+	powerline_set_config BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
 	distutils-r1_python_prepare_all
 }
 
@@ -106,7 +111,7 @@ python_install_all() {
 
 	if use tmux; then
 		insinto "${POWERLINE_TRG_DIR}/tmux"
-		doins   "${POWERLINE_SRC_DIR}/tmux/powerline.conf"
+		doins   "${POWERLINE_SRC_DIR}/tmux/"powerline*.conf
 	fi
 
 	if use zsh; then
