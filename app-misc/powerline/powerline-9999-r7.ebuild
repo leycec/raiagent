@@ -1,4 +1,4 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-python/setuptools/setuptools-9999.ebuild,v 1.1 2013/01/11 09:59:31 mgorny Exp $
 EAPI="5"
@@ -53,11 +53,23 @@ POWERLINE_SRC_DIR="${T}/bindings"
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
 
-powerline_set_config() {
-	sed -ie "s@^$1 =.*@$1 = '$2'@" powerline/config.py
+# void powerline_set_config_var_to_value(
+#     string variable_name, string variable_value)
+#
+# Globally replace each string assigned to the passed Python variable in
+# Powerline's Python configuration with the passed string.
+powerline_set_config_var_to_value() {
+	(( ${#} == 2 )) || die 'Expected one variable name and one variable value.'
+	sed -ie 's~^\('${1}' = \).*~\1'"'"${2}"'~" powerline/config.py
 }
 
 python_prepare_all() {
+	# Replace nonstandard system paths in Powerline's Python configuration.
+	powerline_set_config_var_to_value\
+	    DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}etc/xdg"
+	powerline_set_config_var_to_value\
+	    BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
+
 	# Copy the directory tree containing application-specific Powerline
 	# bindings to a temporary directory. Since such tree contains both Python
 	# and non-Python files, failing to remove the latter causes distutils to
@@ -75,11 +87,13 @@ python_prepare_all() {
 	# following unrelated Python files:
 	#
 	# * "powerline-awesome.py", an awesome-specific integration script.
-	find "${POWERLINE_SRC_DIR}" -type f -name '*.py' -not -name 'powerline-awesome.py' -delete
+	find "${POWERLINE_SRC_DIR}"\
+	    -type f\
+	    -name '*.py'\
+	    -not -name 'powerline-awesome.py'\
+	    -delete
 
-	# Replace nonstandard paths in the Powerline Python tree.
-	powerline_set_config DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}/etc/xdg"
-	powerline_set_config BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
+	# Continue with the default behaviour.
 	distutils-r1_python_prepare_all
 }
 
