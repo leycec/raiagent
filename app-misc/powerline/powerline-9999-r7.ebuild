@@ -22,9 +22,7 @@ KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome doc bash fish test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-COMMON_DEPS="virtual/python-argparse"
-DEPEND="${COMMON_DEPS}
-	dev-python/setuptools
+DEPEND="dev-python/setuptools
 	doc? ( dev-python/sphinx dev-python/docutils )
 	test? (
 		|| ( >=dev-vcs/git-1.7.2 >=dev-python/pygit2-0.17 )
@@ -38,8 +36,7 @@ DEPEND="${COMMON_DEPS}
 			dev-vcs/mercurial
 		)
 	)"
-RDEPEND="${COMMON_DEPS}
-	awesome? ( >=x11-wm/awesome-3.5.1 )
+RDEPEND="awesome? ( >=x11-wm/awesome-3.5.1 )
 	media-fonts/powerline-symbols
 	fonts? ( media-fonts/powerline-symbols )
 	bash? ( app-shells/bash )
