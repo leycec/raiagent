@@ -22,8 +22,12 @@ KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome doc bash fish test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-DEPEND="dev-python/setuptools
-	doc? ( dev-python/sphinx dev-python/docutils )
+DEPEND="
+    dev-python/setuptools
+	doc? (
+	    dev-python/docutils
+	    dev-python/sphinx
+	)
 	test? (
 		|| ( >=dev-vcs/git-1.7.2 >=dev-python/pygit2-0.17 )
 		python_targets_python2_6? (
@@ -35,14 +39,17 @@ DEPEND="dev-python/setuptools
 			dev-vcs/bzr
 			dev-vcs/mercurial
 		)
-	)"
-RDEPEND="awesome? ( >=x11-wm/awesome-3.5.1 )
+	)
+"
+RDEPEND="
 	media-fonts/powerline-symbols
-	fonts? ( media-fonts/powerline-symbols )
+    awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
+	fish? ( >=app-shells/fish-2.1 )
+	fonts? ( media-fonts/powerline-symbols )
 	vim? ( app-vim/powerline-python )
 	zsh? ( app-shells/zsh )
-	fish? ( >=app-shells/fish-2.1 )"
+"
 
 # Source directory from which all applicable files will be installed.
 POWERLINE_SRC_DIR="${T}/bindings"
