@@ -152,7 +152,7 @@ python_install_all() {
 
 pkg_postinst() {
 	if use awesome; then
-		elog 'To enable Powerline under awesome, add the following lines to your'
+		elog 'To enable Powerline under awesome, add the following lines to'
 		elog '"~/.config/awesome/rc.lua" (assuming you originally copied such file from'
 		elog '"/etc/xdg/awesome/rc.lua"):'
 		elog '    require("powerline")'
@@ -161,26 +161,27 @@ pkg_postinst() {
 	fi
 
 	if use bash; then
-		elog 'To enable Powerline under bash, add the following line to either your "~/.bashrc"'
-		elog 'or "~/.profile"':
+		elog 'To enable Powerline under bash, add the following line to either "~/.bashrc" or'
+		elog '"~/.profile":'
 		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/bash/powerline.sh"
 		elog ''
 	fi
 
 	if use tmux; then
-		elog 'To enable Powerline under tmux, add the following line to your "~/.tmux.conf":'
+		elog 'To enable Powerline under tmux, add the following line to "~/.tmux.conf":'
 		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
 		elog ''
 	fi
 
 	if use zsh; then
-		elog 'To enable Powerline under zsh, add the following line to your "~/.zshrc":'
+		elog 'To enable Powerline under zsh, add the following line to "~/.zshrc":'
 		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
 		elog ''
 	fi
 
 	if use fish; then
-		elog 'To enable Powerline under fish, add the following line to your "~/.config/fish/config.fish":'
+		elog 'To enable Powerline under fish, add the following line to'
+		elog '"~/.config/fish/config.fish":'
 		elog '    powerline-setup'
 		elog ''
 	fi
