@@ -29,16 +29,17 @@ DEPEND="
 	    dev-python/sphinx
 	)
 	test? (
-		|| ( >=dev-vcs/git-1.7.2 >=dev-python/pygit2-0.17 )
-		python_targets_python2_6? (
-			dev-vcs/bzr
-			dev-vcs/mercurial
-			virtual/python-unittest2
+		|| (
+		    >=dev-vcs/git-1.7.2
+		    >=dev-python/pygit2-0.17
 		)
-		python_targets_python2_7? (
-			dev-vcs/bzr
-			dev-vcs/mercurial
-		)
+		$(python_gen_cond_dep\
+            'dev-vcs/bzr
+			 dev-vcs/mercurial'\
+            python{2_6,2_7})
+		$(python_gen_cond_dep\
+            'virtual/python-unittest2'\
+            python2_6)
 	)
 "
 RDEPEND="
