@@ -6,7 +6,7 @@ EAPI="5"
 # Enforce Bash scrictness.
 set -e
 
-PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} )
+PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} )
 
 EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
 EGIT_BRANCH="develop"
@@ -36,10 +36,7 @@ DEPEND="
 		$(python_gen_cond_dep\
             'dev-vcs/bzr
 			 dev-vcs/mercurial'\
-            python{2_6,2_7})
-		$(python_gen_cond_dep\
-            'virtual/python-unittest2'\
-            python2_6)
+            python{2_7})
 	)
 "
 RDEPEND="
