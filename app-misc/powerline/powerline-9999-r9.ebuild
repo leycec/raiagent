@@ -36,7 +36,7 @@ DEPEND="
 		$(python_gen_cond_dep\
             'dev-vcs/bzr
 			 dev-vcs/mercurial'\
-            python{2_7})
+            python2_7)
 	)
 "
 RDEPEND="
