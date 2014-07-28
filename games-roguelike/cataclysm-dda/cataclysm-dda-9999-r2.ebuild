@@ -18,17 +18,20 @@ LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="clang lua ncurses sdl"
-REQUIRED_USE="|| ( ncurses sdl )"
+REQUIRED_USE="
+    lua? ( sdl )
+    || ( ncurses sdl )
+"
 
 RDEPEND="
 	sys-devel/gettext:0=[nls]
 	sys-libs/glibc:2.2=
-	lua? ( dev-lang/lua:0= )
+	lua? ( >=dev-lang/lua-5.1:0= )
 	ncurses? ( sys-libs/ncurses:5= )
 	sdl? (
-		media-libs/libsdl:0=
-		media-libs/sdl-ttf:0=
-		media-libs/sdl-image:0=[jpeg,png]
+		media-libs/libsdl2:0=
+		media-libs/sdl2-ttf:0=
+		media-libs/sdl2-image:0=[jpeg,png]
 		media-libs/freetype:2=
 	)
 "
@@ -44,11 +47,14 @@ CATACLYSM_HOME="${GAMES_PREFIX}/${PN}"
 
 # The Makefile is surprisingly Gentoo-friendly. (Thanks!)
 src_prepare() {
-	# Strip hardcoded optimizations and g++ option "-Werror" (converting warnings
-	# to errors, thus failing on the first warning) from the Makefile.
+	# Strip the following from the the Makefile:
+	#
+	# * Hardcoded optimizations (e.g., "-O3").
+	# * g++ option "-Werror", converting compiler warnings to errors and hence
+	#   failing on the first (inevitable) warning.
 	sed -i\
-		-e '/OTHERS += -O3/d'\
-		-e '/WARNINGS = /s~-Werror~~'\
+		-e '/OTHERS += /s~ -O3~~'\
+		-e '/RELEASE_FLAGS = /s~ -Werror~~'\
 		'Makefile'
 
 	# The Makefile assumes subdirectories "obj" and "obj/tiles" both exist,
@@ -62,6 +68,10 @@ src_compile() {
 	local -a emake_options; emake_options=( RELEASE=1 )
 	use clang && emake_options+=( CLANG=1 )
 	use lua   && emake_options+=( LUA=1 )
+
+	# If optional Gentoo-specific string global ${LINGUAS} is defined (e.g., in
+	# "make.conf"), pass all such whitespace-delimited locales.
+	[ -n "${LINGUAS+x}" ] && emake_options+=( LANGUAGES="${LINGUAS}" )
 
 	# If enabling ncurses, compile the ncurses-based executable.
 	if use ncurses; then
@@ -118,53 +128,3 @@ src_install() {
 	# Install documentation.
 	dodoc CONTRIBUTING.md README.md
 }
-
-#LICENSE="CC-BY-SA-3.0"
-#SLOT="0"
-#KEYWORDS="~amd64 ~x86"
-#IUSE=""
-#
-#RDEPEND="
-#	sys-libs/ncurses:5=
-#"
-#
-## C:DDA makefiles explicitly require "g++", GCC's C++ compiler.
-#DEPEND="${RDEPEND}
-#	sys-devel/gcc[cxx]
-#"
-#
-## C:DDA makefiles are surprisingly Gentoo-friendly, requiring only
-## light stripping of flags.
-#src_prepare() {
-#	sed -e "/OTHERS += -O3/d" -i 'Makefile'
-#}
-#
-## Compile a release rather than debug build.
-#src_compile() {
-#	RELEASE=1 emake
-#}
-#
-## C:DDA makefiles define no "install" target. ("A pox on yer scurvy
-## grave!")
-#src_install() {
-#	# Directory to install C:DDA to.
-#	local cataclysm_home="${GAMES_PREFIX}/${PN}"
-#
-#	# The "cataclysm" executable expects to be executed from its home directory.
-#	# Make a wrapper script guaranteeing this.
-#	games_make_wrapper "${PN}" ./cataclysm "${cataclysm_home}"
-#
-#	# Install C:DDA.
-#	insinto "${cataclysm_home}"
-#	doins -r data
-#	exeinto "${cataclysm_home}"
-#	doexe cataclysm
-#
-#	# Force game-specific user and group permissions.
-#	prepgamesdirs
-#
-#	# Since playing C:DDA requires write access to its home directory,
-#	# forcefully grant such access to users in group "games". This is (clearly)
-#	# non-ideal, but there's not much we can do about that... at the moment.
-#	fperms -R g+w "${cataclysm_home}"
-#}

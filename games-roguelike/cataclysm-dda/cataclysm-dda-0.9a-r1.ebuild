@@ -30,12 +30,15 @@ LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="clang lua ncurses sdl"
-REQUIRED_USE="|| ( ncurses sdl )"
+REQUIRED_USE="
+    lua? ( sdl )
+    || ( ncurses sdl )
+"
 
 RDEPEND="
 	sys-devel/gettext:0=[nls]
 	sys-libs/glibc:2.2=
-	lua? ( dev-lang/lua:0= )
+	lua? ( >=dev-lang/lua-5.1:0= )
 	ncurses? ( sys-libs/ncurses:5= )
 	sdl? (
 		media-libs/libsdl:0=
@@ -81,7 +84,7 @@ src_compile() {
 
 	# If optional Gentoo-specific string global ${LINGUAS} is defined (e.g., in
 	# "make.conf"), pass all such whitespace-delimited locales.
-	[ -n ${LINGUAS+x} ] && emake_options+=( LANGUAGES="${LINGUAS}" )
+	[ -n "${LINGUAS+x}" ] && emake_options+=( LANGUAGES="${LINGUAS}" )
 
 	# If enabling ncurses, compile the ncurses-based executable.
 	if use ncurses; then
