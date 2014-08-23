@@ -19,7 +19,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
-IUSE="awesome doc bash fish test tmux vim zsh fonts"
+IUSE="awesome doc bash fish shell test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -141,6 +141,11 @@ python_install_all() {
 		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
 	fi
 
+	if use shell; then
+		insinto "${POWERLINE_TRG_DIR}/shell"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
+	fi
+
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
 	doins -r powerline/config_files/*
@@ -182,6 +187,18 @@ pkg_postinst() {
 		elog 'To enable Powerline under fish, add the following line to'
 		elog '"~/.config/fish/config.fish":'
 		elog '    powerline-setup'
+		elog ''
+	fi
+
+	if use shell; then
+		elog 'To enable Powerline under mksh, add the following line to ~/.mkshrc:'
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/shell/powerline.sh"
+		elog ''
+		elog 'To enable Powerline under busybox type the above command during the'
+		elog 'interactive session.'
+		elog ''
+		elog 'To enable Powerline under dash place this commmand in the file '
+		elog 'pointed by $ENV environment variable (you may have to set it first).'
 		elog ''
 	fi
 }
