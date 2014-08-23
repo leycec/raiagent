@@ -29,6 +29,7 @@ DEPEND="
 	    dev-python/sphinx
 	)
 	test? (
+		app-misc/screen
 		|| (
 		    >=dev-vcs/git-1.7.2
 		    >=dev-python/pygit2-0.17
