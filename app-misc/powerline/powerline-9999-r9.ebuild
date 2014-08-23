@@ -23,26 +23,26 @@ IUSE="awesome doc bash fish test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
-    dev-python/setuptools
+	dev-python/setuptools
 	doc? (
-	    dev-python/docutils
-	    dev-python/sphinx
+		dev-python/docutils
+		dev-python/sphinx
 	)
 	test? (
 		app-misc/screen
 		|| (
-		    >=dev-vcs/git-1.7.2
-		    >=dev-python/pygit2-0.17
+			>=dev-vcs/git-1.7.2
+			>=dev-python/pygit2-0.17
 		)
 		$(python_gen_cond_dep\
-            'dev-vcs/bzr
+			'dev-vcs/bzr
 			 dev-vcs/mercurial'\
-            python2_7)
+			python2_7)
 	)
 "
 RDEPEND="
 	media-fonts/powerline-symbols
-    awesome? ( >=x11-wm/awesome-3.5.1 )
+	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-symbols )
@@ -69,9 +69,9 @@ powerline_set_config_var_to_value() {
 python_prepare_all() {
 	# Replace nonstandard system paths in Powerline's Python configuration.
 	powerline_set_config_var_to_value\
-	    DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}etc/xdg"
+		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}etc/xdg"
 	powerline_set_config_var_to_value\
-	    BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
+		BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
 
 	# Copy the directory tree containing application-specific Powerline
 	# bindings to a temporary directory. Since such tree contains both Python
@@ -91,10 +91,10 @@ python_prepare_all() {
 	#
 	# * "powerline-awesome.py", an awesome-specific integration script.
 	find "${POWERLINE_SRC_DIR}"\
-	    -type f\
-	    -name '*.py'\
-	    -not -name 'powerline-awesome.py'\
-	    -delete
+		-type f\
+		-name '*.py'\
+		-not -name 'powerline-awesome.py'\
+		-delete
 
 	# Continue with the default behaviour.
 	distutils-r1_python_prepare_all
