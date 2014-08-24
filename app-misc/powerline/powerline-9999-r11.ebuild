@@ -19,7 +19,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
-IUSE="awesome doc bash fish shell test tmux vim zsh fonts"
+IUSE="awesome busybox doc bash dash fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -44,8 +44,11 @@ RDEPEND="
 	media-fonts/powerline-symbols
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
+	busybox? ( sys-apps/busybox )
+	dash? ( app-shells/dash )
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-symbols )
+	mksh? ( app-shells/mksh )
 	vim? ( app-vim/powerline-python )
 	zsh? ( app-shells/zsh )
 "
@@ -83,7 +86,7 @@ python_prepare_all() {
 	cp -R powerline/bindings "${POWERLINE_SRC_DIR}"
 
 	# Remove all non-Python files from the original tree.
-	find  powerline/bindings -type f -not -name '*.py' -delete
+	find powerline/bindings -type f -not -name '*.py' -delete
 
 	# Remove all Python files from the copied tree, for safety. Most such files
 	# relate to Powerline's distutils-based install process. Exclude the
@@ -126,6 +129,26 @@ python_install_all() {
 		doins   "${POWERLINE_SRC_DIR}/bash/powerline.sh"
 	fi
 
+	if use busybox; then
+		insinto "${POWERLINE_TRG_DIR}/busybox"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
+	fi
+
+	if use dash; then
+		insinto "${POWERLINE_TRG_DIR}/dash"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
+	fi
+
+	if use fish; then
+		insinto /usr/share/fish/functions
+		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
+	fi
+
+	if use mksh; then
+		insinto "${POWERLINE_TRG_DIR}/mksh"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
+	fi
+
 	if use tmux; then
 		insinto "${POWERLINE_TRG_DIR}/tmux"
 		doins   "${POWERLINE_SRC_DIR}/tmux/"powerline*.conf
@@ -134,16 +157,6 @@ python_install_all() {
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
 		doins "${POWERLINE_SRC_DIR}/zsh/powerline.zsh"
-	fi
-
-	if use fish; then
-		insinto /usr/share/fish/functions
-		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
-	fi
-
-	if use shell; then
-		insinto "${POWERLINE_TRG_DIR}/shell"
-		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
 	fi
 
 	# Install Powerline configuration files.
@@ -171,15 +184,18 @@ pkg_postinst() {
 		elog ''
 	fi
 
-	if use tmux; then
-		elog 'To enable Powerline under tmux, add the following line to "~/.tmux.conf":'
-		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
+	if use busybox; then
+		elog "To enable Powerline under an interactive session of BusyBox's ash shell,"
+		elog "interactively run the following command:"
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/busybox/powerline.sh"
 		elog ''
 	fi
 
-	if use zsh; then
-		elog 'To enable Powerline under zsh, add the following line to "~/.zshrc":'
-		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
+	if use dash; then
+		elog 'To enable Powerline under dash, add the following line tothe file'
+		elog 'referenced by the ${ENV} environment variable (which you may need to'
+		elog 'manually create, if such variable does not yet exist):'
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/dash/powerline.sh"
 		elog ''
 	fi
 
@@ -190,15 +206,21 @@ pkg_postinst() {
 		elog ''
 	fi
 
-	if use shell; then
-		elog 'To enable Powerline under mksh, add the following line to ~/.mkshrc:'
-		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/shell/powerline.sh"
+	if use mksh; then
+		elog 'To enable Powerline under mksh, add the following line to "~/.mkshrc":'
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/mksh/powerline.sh"
 		elog ''
-		elog 'To enable Powerline under busybox type the above command during the'
-		elog 'interactive session.'
+	fi
+
+	if use tmux; then
+		elog 'To enable Powerline under tmux, add the following line to "~/.tmux.conf":'
+		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
 		elog ''
-		elog 'To enable Powerline under dash place this commmand in the file '
-		elog 'pointed by $ENV environment variable (you may have to set it first).'
+	fi
+
+	if use zsh; then
+		elog 'To enable Powerline under zsh, add the following line to "~/.zshrc":'
+		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
 		elog ''
 	fi
 }
