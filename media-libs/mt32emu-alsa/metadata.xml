@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Running mt32d will provide two ports 128:0 and 128:1 provided that it is the
+only soft-synth running. When trying to play MT-32 midi streams use ALSA port
+128:0. 128:1 attempts to emulate general midi support using the MT-32 mode, try
+it for a laugh. Run mt32d with the -h parameter to get a list and description
+of the other parameters.
+
+Running mt32d as root user will allow program to use real-time scheduling which
+may reduce/remove drop outs as the program can use the CPU more aggressively. 
+</longdescription>
+</pkgmetadata>

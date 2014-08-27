@@ -1,0 +1,37 @@
+#!/sbin/runscript
+# Copyright 1999-2010 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+depend() {
+    # start() writes to the "/proc" pseudo-filesystem.
+	need localmount
+	use alsasound
+}
+
+start() {
+    #FIXME: "--stdout" and "--stderr" appear to do nothing in the current
+    #context, manpage documentation to the contrary. We'll probably need to
+    #manually redirect such output, which is fairly annoying.
+
+	ebegin "Starting the MT-32 ALSA MIDI daemon"
+	start-stop-daemon\
+        --start\
+        --exec /usr/bin/mt32d\
+        --stdout "${MT32D_LOG_STDOUT}"\
+        --stderr "${MT32D_LOG_STDERR}"\
+        --pidfile /var/run/mt32d.pid\
+        --make-pidfile\
+        --background\
+        -- ${MT32D_OPTS-}
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping the MT-32 ALSA MIDI daemon"
+	start-stop-daemon\
+	    --stop\
+        --exec /usr/bin/mt32d\
+        --pidfile /var/run/mt32d.pid
+	eend $?
+}

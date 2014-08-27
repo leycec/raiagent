@@ -21,7 +21,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 RDEPEND="media-libs/portaudio"
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	sys-devel/gcc[cxx]"
 
 S="${WORKDIR}/${MY_P}/${PN}"
 
