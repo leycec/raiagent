@@ -46,5 +46,5 @@ src_prepare() {
 	find "${S}" -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
-	sed -ie '/sys\.path\.append/d' "${S}"/plugin/powerline.vim
+	sed --in-place --expression='/sys\.path\.append/d' "${S}"/plugin/powerline.vim
 }
