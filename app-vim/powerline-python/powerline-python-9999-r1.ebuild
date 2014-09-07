@@ -43,7 +43,7 @@ src_prepare() {
 
 	# Remove all remaining Python files to prevent vim-plugin_src_install() from
 	# installing such files as documentation.
-	find . -type f -name '*.py' -delete
+	find "${S}" -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
 	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim
