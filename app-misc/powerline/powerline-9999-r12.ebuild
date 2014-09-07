@@ -18,7 +18,7 @@ HOMEPAGE="http://github.com/Lokaltog/powerline"
 LICENSE="MIT"
 
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+KEYWORDS=""
 IUSE="awesome busybox doc bash dash fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
