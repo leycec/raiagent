@@ -37,14 +37,14 @@ src_prepare() {
 	# such directory away, deleting everything remaining under ${S}, and moving
 	# such directory back to ${S}.
 	mkdir "${T}"/ignore
-	mv powerline/bindings/vim "${T}"
+	mv "${S}"/powerline/bindings/vim "${T}"
 	mv * "${T}"/ignore
 	mv "${T}"/vim/* "${S}"
 
 	# Remove all remaining Python files to prevent vim-plugin_src_install() from
 	# installing such files as documentation.
-	find . -type f -name '*.py' -delete
+	find "${S}" -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
-	sed -ie '/sys\.path\.append/d' plugin/powerline.vim
+	sed -ie '/sys\.path\.append/d' "${S}"/plugin/powerline.vim
 }
