@@ -34,10 +34,6 @@ DEPEND="
 			>=dev-vcs/git-1.7.2
 			>=dev-python/pygit2-0.17
 		)
-		$(python_gen_cond_dep\
-			'dev-vcs/bzr
-			 dev-vcs/mercurial'\
-			python2_7)
 	)
 "
 RDEPEND="
