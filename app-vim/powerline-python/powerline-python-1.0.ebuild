@@ -7,19 +7,16 @@ EAPI=5
 # Enforce Bash scrictness.
 set -e
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
-EGIT_BRANCH="develop"
-
 # Since eclasses cannot be conditionally inherited, this ebuild remains distinct
 # from the top-level Powerline ebuild at "app-misc/powerline".
-inherit vim-plugin git-r3
+inherit vim-plugin
 
 DESCRIPTION="Vim plugin for Python-based Powerline"
 HOMEPAGE="http://github.com/Lokaltog/powerline"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE=""
 DEPEND="|| (
 	>=app-editors/vim-7.2[python]
@@ -30,6 +27,10 @@ RDEPEND="${DEPEND}
 
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
+
+SRC_URI="https://pypi.python.org/packages/source/p/powerline-status/powerline-status-${PV}.tar.gz"
+
+S="${WORKDIR}/powerline-status-${PV}"
 
 src_prepare() {
 	# vim-plugin_src_install() expects ${S} to be the Vim plugin directory to be

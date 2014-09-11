@@ -9,19 +9,18 @@ set -e
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
-EGIT_BRANCH="develop"
-
-inherit eutils distutils-r1 git-r3
+inherit eutils distutils-r1
 
 DESCRIPTION="Ultimate statusline/prompt utility"
 HOMEPAGE="http://github.com/Lokaltog/powerline"
 LICENSE="MIT"
 
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome busybox doc bash dash fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
+SRC_URI="https://pypi.python.org/packages/source/p/powerline-status/powerline-status-${PV}.tar.gz"
 
 DEPEND="
 	dev-python/setuptools
@@ -55,6 +54,8 @@ POWERLINE_SRC_DIR="${T}/bindings"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
+
+S="${WORKDIR}/powerline-status-${PV}"
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -101,7 +102,7 @@ python_prepare_all() {
 }
 
 python_compile_all() {
-	if use doc; then
+	if use doc && test -d "${S}/docs" ; then
 		einfo "Generating documentation"
 		sphinx-build -b html "${S}/docs/source" docs_output
 		HTML_DOCS=( docs_output/. )
