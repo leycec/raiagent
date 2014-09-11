@@ -16,7 +16,7 @@ EGIT_REPO_URI="git://github.com/CleverRaven/Cataclysm-DDA.git"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE="clang lua ncurses sdl"
 REQUIRED_USE="
     lua? ( sdl )
