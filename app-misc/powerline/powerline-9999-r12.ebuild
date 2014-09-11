@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/setuptools/setuptools-9999.ebuild,v 1.1 2013/01/11 09:59:31 mgorny Exp $
+# $Header: $
 EAPI="5"
 
 # Enforce Bash scrictness.
@@ -34,10 +34,6 @@ DEPEND="
 			>=dev-vcs/git-1.7.2
 			>=dev-python/pygit2-0.17
 		)
-		$(python_gen_cond_dep\
-			'dev-vcs/bzr
-			 dev-vcs/mercurial'\
-			python2_7)
 	)
 "
 RDEPEND="
@@ -66,7 +62,7 @@ POWERLINE_TRG_DIR='/usr/share/powerline'
 # Powerline's Python configuration with the passed string.
 powerline_set_config_var_to_value() {
 	(( ${#} == 2 )) || die 'Expected one variable name and one variable value.'
-	sed -ie 's~^\('${1}' = \).*~\1'"'"${2}"'~" powerline/config.py
+	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py
 }
 
 python_prepare_all() {
@@ -83,10 +79,10 @@ python_prepare_all() {
 	# safely remove such files *AND* permit their installation after the main
 	# distutils-based installation, copy them to such location and then remove
 	# them from the original tree that distutils operates on.
-	cp -R powerline/bindings "${POWERLINE_SRC_DIR}"
+	cp -R "${S}"/powerline/bindings "${POWERLINE_SRC_DIR}"
 
 	# Remove all non-Python files from the original tree.
-	find powerline/bindings -type f -not -name '*.py' -delete
+	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
 
 	# Remove all Python files from the copied tree, for safety. Most such files
 	# relate to Powerline's distutils-based install process. Exclude the
@@ -106,13 +102,13 @@ python_prepare_all() {
 python_compile_all() {
 	if use doc; then
 		einfo "Generating documentation"
-		sphinx-build -b html docs/source docs_output
+		sphinx-build -b html "${S}"/docs/source docs_output
 		HTML_DOCS=( docs_output/. )
 	fi
 }
 
 python_test() {
-	PYTHON="${PYTHON}" tests/test.sh
+	PYTHON="${PYTHON}" "${S}"/tests/test.sh
 }
 
 python_install_all() {
@@ -161,7 +157,7 @@ python_install_all() {
 
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
-	doins -r powerline/config_files/*
+	doins -r "${S}"/powerline/config_files/*
 
 	# Install Powerline python modules.
 	distutils-r1_python_install_all
