@@ -67,7 +67,7 @@ src_prepare() {
 	# from installing files already installed with KDE. (While we technically
 	# only need to patch "Makefile.in", patch both for good measure.)
 	if use kde; then
-		sed -ie 's~ ed2k.protocol magnet.protocol~~'\
+		sed -i -e 's~ ed2k.protocol magnet.protocol~~'\
 			src/utils/plasmamule/Makefile.*
 	fi
 

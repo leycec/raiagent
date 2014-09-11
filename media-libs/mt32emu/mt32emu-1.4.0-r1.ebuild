@@ -22,7 +22,8 @@ IUSE=""
 
 RDEPEND="media-libs/portaudio"
 DEPEND="${RDEPEND}
-	sys-devel/gcc[cxx]"
+	sys-devel/gcc[cxx]
+"
 
 S="${WORKDIR}/${MY_P}/${PN}"
 
@@ -30,5 +31,5 @@ src_prepare() {
     cmake-utils_src_prepare
 
     # Install documentation to the expected system-wide path.
-	sed -ie "s~share/doc/munt/libmt32emu~share/doc/${P}~" 'CMakeLists.txt'
+	sed -i -e "s~share/doc/munt/libmt32emu~share/doc/${P}~" CMakeLists.txt
 }

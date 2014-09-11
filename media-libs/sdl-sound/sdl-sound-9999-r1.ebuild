@@ -15,7 +15,7 @@ EHG_REPO_URI="https://hg.icculus.org/icculus/SDL_sound"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE="flac midi mikmod modplug mp3 mpeg physfs speex static-libs vorbis wav"
 
 RDEPEND+="
@@ -26,10 +26,11 @@ RDEPEND+="
 	mp3?     ( media-sound/mpg123 )
 	physfs?  ( dev-games/physfs )
 	speex?   ( media-libs/speex media-libs/libogg )
-	vorbis?  ( >=media-libs/libvorbis-1.0_beta4 )"
-DEPEND+="
-	${RDEPEND}
-	virtual/pkgconfig"
+	vorbis?  ( >=media-libs/libvorbis-1.0_beta4 )
+"
+DEPEND+="${RDEPEND}
+	virtual/pkgconfig
+"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -41,8 +42,8 @@ src_prepare() {
 	# it's unclear why static patches were chosen in the first place. Ideally,
 	# dynamic patching should prove more robust in the face of future commits to
 	# the SDL_sound live repository.
-	sed -ie 's~\(libSDL_sound_la_LIBADD =\)~\1 -lm~' Makefile.am
-	sed -ie 's~AM\(_CONFIG_HEADER(config.h)\)~AC\1~' configure.in
+	sed -i -e 's~\(libSDL_sound_la_LIBADD =\)~\1 -lm~' Makefile.am
+	sed -i -e 's~AM\(_CONFIG_HEADER(config.h)\)~AC\1~' configure.in
 
 	# Regenerate the "configure.in" and "Makefile.in" scripts.
 	mv configure.in configure.ac
