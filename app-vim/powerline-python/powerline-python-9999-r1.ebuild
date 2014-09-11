@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/setuptools/setuptools-9999.ebuild,v 1.1 2013/01/11 09:59:31 mgorny Exp $
+# $Header: $
 EAPI="5"
 
 # Enforce Bash scrictness.
@@ -25,7 +25,8 @@ DEPEND="|| (
     >=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
- 	app-misc/powerline"
+ 	app-misc/powerline
+"
 
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
@@ -45,5 +46,5 @@ src_prepare() {
 	find . -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
-	sed -ie '/sys\.path\.append/d' plugin/powerline.vim
+	sed -i -e '/sys\.path\.append/d' plugin/powerline.vim
 }
