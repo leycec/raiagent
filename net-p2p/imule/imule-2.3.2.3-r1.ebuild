@@ -201,7 +201,6 @@ such bridge before running iMule. Specifically:\\n
 }
 
 pkg_preinst() {
-	#if use daemon || use remote; then
 	if use daemon; then
 		enewgroup p2p
 		enewuser  p2p -1 -1 /home/p2p p2p
@@ -209,8 +208,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	# On first installations of this package, elog the contents of the
-	# previously installed "/usr/share/doc/${P}/README.gentoo" file.
+	# On first installation, print Gentoo-specific documentation.
 	readme.gentoo_print_elog
 
 	elog 'Installed iMule binaries include:'
