@@ -11,21 +11,15 @@ PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
 EGIT_BRANCH="develop"
 
-# Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo", inherit the latter later.
-inherit eutils readme.gentoo distutils-r1 git-r3
+inherit eutils distutils-r1 git-r3
 
 DESCRIPTION="Ultimate statusline/prompt utility"
-HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
+HOMEPAGE="http://github.com/Lokaltog/powerline"
 LICENSE="MIT"
 
 SLOT="0"
-KEYWORDS=""
-
-# Since official Powerline releases omit documentation provided by the live
-# Powerline repository, omit the "doc" USE flag and corresponding dependencies
-# and logic provided by the live Powerline ebuild.
-IUSE="awesome busybox bash dash doc fish mksh test tmux vim zsh fonts"
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+IUSE="awesome busybox doc bash dash fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -51,7 +45,7 @@ RDEPEND="
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-symbols )
 	mksh? ( app-shells/mksh )
-	vim? ( ~app-vim/powerline-status-${PV} )
+	vim? ( app-vim/powerline-python )
 	zsh? ( app-shells/zsh )
 "
 
@@ -60,12 +54,6 @@ POWERLINE_SRC_DIR="${T}/bindings"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
-POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
-
-# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
-# Since such contents depend on USE flags, defer defining such global to the
-# src_prepare() phase.
-DOC_CONTENTS=""
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -80,9 +68,9 @@ powerline_set_config_var_to_value() {
 python_prepare_all() {
 	# Replace nonstandard system paths in Powerline's Python configuration.
 	powerline_set_config_var_to_value\
-		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}"etc/xdg
+		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}etc/xdg"
 	powerline_set_config_var_to_value\
-		BINDINGS_DIRECTORY "${POWERLINE_TRG_DIR_EROOTED}"
+		BINDINGS_DIRECTORY "${EROOT}${POWERLINE_TRG_DIR}"
 
 	# Copy the directory tree containing application-specific Powerline
 	# bindings to a temporary directory. Since such tree contains both Python
@@ -107,63 +95,12 @@ python_prepare_all() {
 		-not -name 'powerline-awesome.py'\
 		-delete
 
-	# Define USE flag-specific documentation.
-	if use awesome; then
-		DOC_CONTENTS+="
-To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
-\\t require(\"powerline\")\\n
-\\t	right_layout:add(powerline_widget)\\n\\n"
-	fi
-
-	if use bash; then
-		DOC_CONTENTS+="
-To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
-\\t	source ${POWERLINE_TRG_DIR_EROOTED}bash/powerline.sh\\n\\n"
-	fi
-
-	if use busybox; then
-		DOC_CONTENTS+="
-To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
-\\t	. ${POWERLINE_TRG_DIR_EROOTED}busybox/powerline.sh\\n\\n"
-	fi
-
-	if use dash; then
-		DOC_CONTENTS+="
-To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
-\\t . ${POWERLINE_TRG_DIR_EROOTED}dash/powerline.sh\\n
- If such variable does not exist, you may need to manually create such file.\\n\\n"
-	fi
-
-	if use fish; then
-		DOC_CONTENTS+="
-To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
-\\t powerline-setup\\n\\n"
-	fi
-
-	if use mksh; then
-		DOC_CONTENTS+="
-To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
-\\t	. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
-	fi
-
-	if use tmux; then
-		DOC_CONTENTS+="
-To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
-\\t source ${POWERLINE_TRG_DIR_EROOTED}tmux/powerline.conf\\n\\n"
-	fi
-
-	if use zsh; then
-		DOC_CONTENTS+="
-To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
-\\t source ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
-	fi
-
 	# Continue with the default behaviour.
 	distutils-r1_python_prepare_all
 }
 
 python_compile_all() {
-	if use doc && [ -d "${S}"/docs ]; then
+	if use doc; then
 		einfo "Generating documentation"
 		sphinx-build -b html "${S}"/docs/source docs_output
 		HTML_DOCS=( docs_output/. )
@@ -178,58 +115,108 @@ python_install_all() {
 	if use awesome; then
 		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
 		insinto "${AWESOME_LIB_DIR}"
-		newins "${POWERLINE_SRC_DIR}"/awesome/powerline.lua init.lua
+		newins "${POWERLINE_SRC_DIR}/awesome/powerline.lua" init.lua
 		exeinto "${AWESOME_LIB_DIR}"
-		doexe  "${POWERLINE_SRC_DIR}"/awesome/powerline-awesome.py
+		doexe  "${POWERLINE_SRC_DIR}/awesome/powerline-awesome.py"
 	fi
 
 	if use bash; then
-		insinto "${POWERLINE_TRG_DIR}"/bash
-		doins   "${POWERLINE_SRC_DIR}"/bash/powerline.sh
+		insinto "${POWERLINE_TRG_DIR}/bash"
+		doins   "${POWERLINE_SRC_DIR}/bash/powerline.sh"
 	fi
 
 	if use busybox; then
-		insinto "${POWERLINE_TRG_DIR}"/busybox
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_TRG_DIR}/busybox"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
 	fi
 
 	if use dash; then
-		insinto "${POWERLINE_TRG_DIR}"/dash
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_TRG_DIR}/dash"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
 	fi
 
 	if use fish; then
 		insinto /usr/share/fish/functions
-		doins "${POWERLINE_SRC_DIR}"/fish/powerline-setup.fish
+		doins "${POWERLINE_SRC_DIR}/fish/powerline-setup.fish"
 	fi
 
 	if use mksh; then
-		insinto "${POWERLINE_TRG_DIR}"/mksh
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_TRG_DIR}/mksh"
+		doins   "${POWERLINE_SRC_DIR}/shell/powerline.sh"
 	fi
 
 	if use tmux; then
-		insinto "${POWERLINE_TRG_DIR}"/tmux
-		doins   "${POWERLINE_SRC_DIR}"/tmux/powerline*.conf
+		insinto "${POWERLINE_TRG_DIR}/tmux"
+		doins   "${POWERLINE_SRC_DIR}/tmux/"powerline*.conf
 	fi
 
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
-		doins "${POWERLINE_SRC_DIR}"/zsh/powerline.zsh
+		doins "${POWERLINE_SRC_DIR}/zsh/powerline.zsh"
 	fi
 
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
 	doins -r "${S}"/powerline/config_files/*
 
-	# Install Gentoo-specific documentation.
-	readme.gentoo_create_doc
-
 	# Install Powerline python modules.
 	distutils-r1_python_install_all
 }
 
 pkg_postinst() {
-	# On first installation, print Gentoo-specific documentation.
-	readme.gentoo_print_elog
+	if use awesome; then
+		elog 'To enable Powerline under awesome, add the following lines to'
+		elog '"~/.config/awesome/rc.lua" (assuming you originally copied such file from'
+		elog '"/etc/xdg/awesome/rc.lua"):'
+		elog '    require("powerline")'
+		elog '    right_layout:add(powerline_widget)'
+		elog ''
+	fi
+
+	if use bash; then
+		elog 'To enable Powerline under bash, add the following line to either "~/.bashrc" or'
+		elog '"~/.profile":'
+		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/bash/powerline.sh"
+		elog ''
+	fi
+
+	if use busybox; then
+		elog "To enable Powerline under an interactive session of BusyBox's ash shell,"
+		elog "interactively run the following command:"
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/busybox/powerline.sh"
+		elog ''
+	fi
+
+	if use dash; then
+		elog 'To enable Powerline under dash, add the following line tothe file'
+		elog 'referenced by the ${ENV} environment variable (which you may need to'
+		elog 'manually create, if such variable does not yet exist):'
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/dash/powerline.sh"
+		elog ''
+	fi
+
+	if use fish; then
+		elog 'To enable Powerline under fish, add the following line to'
+		elog '"~/.config/fish/config.fish":'
+		elog '    powerline-setup'
+		elog ''
+	fi
+
+	if use mksh; then
+		elog 'To enable Powerline under mksh, add the following line to "~/.mkshrc":'
+		elog "    . ${EROOT}${POWERLINE_TRG_DIR}/mksh/powerline.sh"
+		elog ''
+	fi
+
+	if use tmux; then
+		elog 'To enable Powerline under tmux, add the following line to "~/.tmux.conf":'
+		elog "    source ${EROOT}${POWERLINE_TRG_DIR}/tmux/powerline.conf"
+		elog ''
+	fi
+
+	if use zsh; then
+		elog 'To enable Powerline under zsh, add the following line to "~/.zshrc":'
+		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
+		elog ''
+	fi
 }
