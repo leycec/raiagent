@@ -25,7 +25,7 @@ DEPEND="|| (
 	>=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
-	app-misc/powerline
+	~app-misc/powerline-$PV
 "
 
 # Basename of this plugin's help file.
