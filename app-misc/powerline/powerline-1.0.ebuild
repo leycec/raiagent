@@ -1,21 +1,15 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
-EAPI="5"
 
-#FIXME: As an elog() statement below details, this ebuild has been deprecated
-#by "app-misc/powerline-status". Consider removing this ebuild in several
-#months time (e.g., in Q1 2015).
+EAPI=5
 
 # Enforce Bash scrictness.
 set -e
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
-EGIT_BRANCH="develop"
-
-inherit eutils distutils-r1 git-r3
+inherit eutils distutils-r1
 
 DESCRIPTION="Ultimate statusline/prompt utility"
 HOMEPAGE="http://github.com/Lokaltog/powerline"
@@ -25,6 +19,8 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome busybox doc bash dash fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
+SRC_URI="https://pypi.python.org/packages/source/p/powerline-status/powerline-status-${PV}.tar.gz"
 
 DEPEND="
 	dev-python/setuptools
@@ -59,6 +55,8 @@ POWERLINE_SRC_DIR="${T}/bindings"
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
 
+S="${WORKDIR}/powerline-status-${PV}"
+
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
 #
@@ -66,7 +64,7 @@ POWERLINE_TRG_DIR='/usr/share/powerline'
 # Powerline's Python configuration with the passed string.
 powerline_set_config_var_to_value() {
 	(( ${#} == 2 )) || die 'Expected one variable name and one variable value.'
-	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py
+	sed -ie 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}/powerline/config.py"
 }
 
 python_prepare_all() {
@@ -83,10 +81,10 @@ python_prepare_all() {
 	# safely remove such files *AND* permit their installation after the main
 	# distutils-based installation, copy them to such location and then remove
 	# them from the original tree that distutils operates on.
-	cp -R "${S}"/powerline/bindings "${POWERLINE_SRC_DIR}"
+	cp -R "${S}/powerline/bindings" "${POWERLINE_SRC_DIR}"
 
 	# Remove all non-Python files from the original tree.
-	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
+	find "${S}/powerline/bindings" -type f -not -name '*.py' -delete
 
 	# Remove all Python files from the copied tree, for safety. Most such files
 	# relate to Powerline's distutils-based install process. Exclude the
@@ -104,15 +102,15 @@ python_prepare_all() {
 }
 
 python_compile_all() {
-	if use doc; then
+	if use doc && test -d "${S}/docs" ; then
 		einfo "Generating documentation"
-		sphinx-build -b html "${S}"/docs/source docs_output
+		sphinx-build -b html "${S}/docs/source" docs_output
 		HTML_DOCS=( docs_output/. )
 	fi
 }
 
 python_test() {
-	PYTHON="${PYTHON}" "${S}"/tests/test.sh
+	PYTHON="${PYTHON}" "${S}/tests/test.sh"
 }
 
 python_install_all() {
@@ -223,11 +221,4 @@ pkg_postinst() {
 		elog "    source ${EROOT}/usr/share/zsh/site-contrib/powerline.zsh"
 		elog ''
 	fi
-
-	elog '*********************************************************************'
-	elog 'Due to an official name change for the official 1.0 release of'
-	elog 'Powerline, this ebuild has been deprecated by the new'
-	elog '"app-misc/powerline-status" ebuild. Please consider switching.'
-	elog 'This ebuild is now obsolete and will (probably!) be removed shortly.'
-	elog '*********************************************************************'
 }

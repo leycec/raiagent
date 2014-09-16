@@ -14,9 +14,9 @@ EGIT_BRANCH="develop"
 inherit vim-plugin git-r3
 
 DESCRIPTION="Vim plugin for Python-based Powerline"
-HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-LICENSE="MIT"
+HOMEPAGE="http://github.com/Lokaltog/powerline"
 
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
 IUSE=""
@@ -25,7 +25,7 @@ DEPEND="|| (
 	>=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
-	~app-misc/powerline-status-${PV}
+	~app-misc/powerline-$PV
 "
 
 # Basename of this plugin's help file.
@@ -43,7 +43,7 @@ src_prepare() {
 
 	# Remove all remaining Python files to prevent vim-plugin_src_install() from
 	# installing such files as documentation.
-	find . -type f -name '*.py' -delete
+	find "${S}" -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
 	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim

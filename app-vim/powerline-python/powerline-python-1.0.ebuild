@@ -11,23 +11,26 @@ set -e
 inherit vim-plugin
 
 DESCRIPTION="Vim plugin for Python-based Powerline"
-HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-SRC_URI="mirror://pypi/packages/source/p/${PN}/${P}.tar.gz"
-LICENSE="MIT"
+HOMEPAGE="http://github.com/Lokaltog/powerline"
 
+LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE=""
 DEPEND="|| (
 	>=app-editors/vim-7.2[python]
 	>=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
-	~app-misc/powerline-status-${PV}
+	=app-misc/powerline-9999*
 "
 
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
+
+SRC_URI="https://pypi.python.org/packages/source/p/powerline-status/powerline-status-${PV}.tar.gz"
+
+S="${WORKDIR}/powerline-status-${PV}"
 
 src_prepare() {
 	# vim-plugin_src_install() expects ${S} to be the Vim plugin directory to be
@@ -41,7 +44,7 @@ src_prepare() {
 
 	# Remove all remaining Python files to prevent vim-plugin_src_install() from
 	# installing such files as documentation.
-	find . -type f -name '*.py' -delete
+	find "${S}" -type f -name '*.py' -delete
 
 	# Remove nonstandard paths from the plugin's implementation.
 	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim
