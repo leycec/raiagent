@@ -12,22 +12,22 @@ PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 # precedence over those defined by "readme.gentoo", inherit the latter later.
 inherit eutils readme.gentoo distutils-r1
 
-DESCRIPTION="Ultimate statusline/prompt utility"
+DESCRIPTION="Python-based statusline/prompt utility"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
 SRC_URI="mirror://pypi/packages/source/p/${PN}/${P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
-
-# Since official Powerline releases omit documentation provided by the live
-# Powerline repository, omit the "doc" USE flag and corresponding dependencies
-# and logic provided by the live Powerline ebuild.
-IUSE="awesome busybox bash dash fish mksh test tmux vim zsh fonts"
+IUSE="awesome busybox bash dash doc fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
 	dev-python/setuptools
+	doc? (
+		dev-python/docutils
+		dev-python/sphinx
+	)
 	test? (
 		app-misc/screen
 		|| (
@@ -55,11 +55,6 @@ POWERLINE_SRC_DIR="${T}/bindings"
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
 POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
-
-# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
-# Since such contents depend on USE flags, defer defining such global to the
-# src_prepare() phase.
-DOC_CONTENTS=""
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -101,57 +96,6 @@ python_prepare_all() {
 		-not -name 'powerline-awesome.py'\
 		-delete
 
-	# Define USE flag-specific documentation.
-	if use awesome; then
-		DOC_CONTENTS+="
-To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
-\\t require(\"powerline\")\\n
-\\t	right_layout:add(powerline_widget)\\n\\n"
-	fi
-
-	if use bash; then
-		DOC_CONTENTS+="
-To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
-\\t	source ${POWERLINE_TRG_DIR_EROOTED}bash/powerline.sh\\n\\n"
-	fi
-
-	if use busybox; then
-		DOC_CONTENTS+="
-To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
-\\t	. ${POWERLINE_TRG_DIR_EROOTED}busybox/powerline.sh\\n\\n"
-	fi
-
-	if use dash; then
-		DOC_CONTENTS+="
-To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
-\\t . ${POWERLINE_TRG_DIR_EROOTED}dash/powerline.sh\\n
- If such variable does not exist, you may need to manually create such file.\\n\\n"
-	fi
-
-	if use fish; then
-		DOC_CONTENTS+="
-To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
-\\t powerline-setup\\n\\n"
-	fi
-
-	if use mksh; then
-		DOC_CONTENTS+="
-To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
-\\t	. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
-	fi
-
-	if use tmux; then
-		DOC_CONTENTS+="
-To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
-\\t source ${POWERLINE_TRG_DIR_EROOTED}tmux/powerline.conf\\n\\n"
-	fi
-
-	if use zsh; then
-		DOC_CONTENTS+="
-To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
-\\t source ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
-	fi
-
 	# Continue with the default behaviour.
 	distutils-r1_python_prepare_all
 }
@@ -169,47 +113,84 @@ python_test() {
 }
 
 python_install_all() {
+	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
+	DOC_CONTENTS=""
+
 	if use awesome; then
 		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
 		insinto "${AWESOME_LIB_DIR}"
 		newins "${POWERLINE_SRC_DIR}"/awesome/powerline.lua init.lua
 		exeinto "${AWESOME_LIB_DIR}"
 		doexe  "${POWERLINE_SRC_DIR}"/awesome/powerline-awesome.py
+
+		DOC_CONTENTS+="
+	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
+	\\trequire(\"powerline\")\\n
+	\\tright_layout:add(powerline_widget)\\n\\n"
 	fi
 
 	if use bash; then
 		insinto "${POWERLINE_TRG_DIR}"/bash
 		doins   "${POWERLINE_SRC_DIR}"/bash/powerline.sh
+
+		DOC_CONTENTS+="
+	To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
+	\\tsource ${POWERLINE_TRG_DIR_EROOTED}bash/powerline.sh\\n\\n"
 	fi
 
 	if use busybox; then
 		insinto "${POWERLINE_TRG_DIR}"/busybox
 		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+
+		DOC_CONTENTS+="
+	To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
+	\\t. ${POWERLINE_TRG_DIR_EROOTED}busybox/powerline.sh\\n\\n"
 	fi
 
 	if use dash; then
 		insinto "${POWERLINE_TRG_DIR}"/dash
 		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+
+		DOC_CONTENTS+="
+	To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
+	\\t. ${POWERLINE_TRG_DIR_EROOTED}dash/powerline.sh\\n
+	If such variable does not exist, you may need to manually create such file.\\n\\n"
 	fi
 
 	if use fish; then
 		insinto /usr/share/fish/functions
 		doins "${POWERLINE_SRC_DIR}"/fish/powerline-setup.fish
+
+		DOC_CONTENTS+="
+	To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
+	\\tpowerline-setup\\n\\n"
 	fi
 
 	if use mksh; then
 		insinto "${POWERLINE_TRG_DIR}"/mksh
 		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+
+		DOC_CONTENTS+="
+	To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
+	\\t. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
 	fi
 
 	if use tmux; then
 		insinto "${POWERLINE_TRG_DIR}"/tmux
 		doins   "${POWERLINE_SRC_DIR}"/tmux/powerline*.conf
+
+		DOC_CONTENTS+="
+	To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
+	\\tsource ${POWERLINE_TRG_DIR_EROOTED}tmux/powerline.conf\\n\\n"
 	fi
 
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
 		doins "${POWERLINE_SRC_DIR}"/zsh/powerline.zsh
+
+		DOC_CONTENTS+="
+	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
+	\\tsource ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
 	fi
 
 	# Install Powerline configuration files.

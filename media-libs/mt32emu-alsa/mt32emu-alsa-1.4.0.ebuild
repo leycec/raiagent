@@ -69,7 +69,7 @@ src_install() {
 	\"MT32_CONTROL.ROM\" and \"MT32_PCM.ROM\" to \"/usr/share/mt32-rom-data\".\\n
 	\\n
 	After installation, add \"${PN}\" to the default runlevel: e.g.,\\n
-		rc-update add ${PN} default\\n
+	\\trc-update add ${PN} default\\n
 	\\n
 	The \"${PN}\" service provides ALSA port 128:0 for playing MT-32 MIDI
 	streams (if \"${PN}\" is the only currently running ALSA soft-synth)."
