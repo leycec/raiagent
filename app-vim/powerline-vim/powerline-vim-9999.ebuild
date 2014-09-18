@@ -25,11 +25,14 @@ DEPEND="|| (
 	>=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
-	~app-misc/powerline-status-${PV}
+	~app-misc/powerline-${PV}
 "
 
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
+
+# Note the lack of an assignment to ${S} here. Under live ebuilds, the default
+# ${S} suffices.
 
 src_prepare() {
 	# vim-plugin_src_install() expects ${S} to be the Vim plugin directory to be

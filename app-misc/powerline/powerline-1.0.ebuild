@@ -8,19 +8,20 @@ set -e
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
-EGIT_BRANCH="develop"
-
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo", inherit the latter later.
-inherit eutils readme.gentoo distutils-r1 git-r3
+inherit eutils readme.gentoo distutils-r1
+
+MY_PN='powerline-status'
+MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="Python-based statusline/prompt utility"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
+SRC_URI="mirror://pypi/packages/source/p/${MY_PN}/${MY_P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 IUSE="awesome busybox bash dash doc fish mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -47,7 +48,7 @@ RDEPEND="
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-symbols )
 	mksh? ( app-shells/mksh )
-	vim? ( ~app-vim/powerline-status-${PV} )
+	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
 "
 
@@ -57,6 +58,8 @@ POWERLINE_SRC_DIR="${T}/bindings"
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
 POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
+
+S="${WORKDIR}/${MY_P}"
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)

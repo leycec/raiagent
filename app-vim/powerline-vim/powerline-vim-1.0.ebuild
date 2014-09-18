@@ -10,9 +10,12 @@ set -e
 # from the top-level Powerline ebuild at "app-misc/powerline".
 inherit vim-plugin
 
+MY_PN='powerline-status'
+MY_P="${MY_PN}-${PV}"
+
 DESCRIPTION="Vim plugin for Python-based Powerline"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-SRC_URI="mirror://pypi/packages/source/p/${PN}/${P}.tar.gz"
+SRC_URI="mirror://pypi/packages/source/p/${MY_PN}/${MY_P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
@@ -23,11 +26,13 @@ DEPEND="|| (
 	>=app-editors/gvim-7.2[python]
 )"
 RDEPEND="${DEPEND}
-	~app-misc/powerline-status-${PV}
+	~app-misc/powerline-${PV}
 "
 
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
+
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	# vim-plugin_src_install() expects ${S} to be the Vim plugin directory to be
