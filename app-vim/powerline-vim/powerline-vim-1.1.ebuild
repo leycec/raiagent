@@ -15,7 +15,7 @@ MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="Vim plugin for Python-based Powerline"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-SRC_URI="mirror://pypi/packages/source/p/${MY_PN}/${MY_P}.tar.gz"
+SRC_URI="mirror://pypi/p/${MY_PN}/${MY_P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
