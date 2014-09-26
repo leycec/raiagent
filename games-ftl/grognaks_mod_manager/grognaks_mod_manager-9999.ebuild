@@ -6,6 +6,8 @@ EAPI=5
 # Enforce Bash scrictness.
 set -e
 
+EGIT_REPO_URI="git://github.com/Grognak/Grognaks-Mod-Manager.git"
+
 # GMM requires "Python 2.6 or higher. With 3.x, there may be bugs."
 PYTHON_COMPAT=( python2_{6,7} )
 
@@ -20,11 +22,10 @@ inherit python-single-r1 games git-2
 
 DESCRIPTION="Grognak's Mod Manager, a \"Faster than Light\" (FTL) mod manager"
 HOMEPAGE="http://www.ftlgame.com/forum/viewtopic.php?p=9994"
-EGIT_REPO_URI="git://github.com/Grognak/Grognaks-Mod-Manager.git"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
