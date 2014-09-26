@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+GoldenDict is a feature-rich dictionary lookup program, supporting multiple dictionary formats (StarDict/Babylon/Lingvo/Dictd/AARD/MDict/SDict) and online dictionaries, featuring perfect article rendering with the complete markup, illustrations and other content retained, and allowing you to type in words without any accents or correct case.
+</longdescription>
+	<upstream>
+        <bugs-to>https://github.com/goldendict/goldendict/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="epwing">Support EPWING dictionaries</flag>
+		<flag name="lzma">Support LZMA-compressed Zim dictionaries</flag>
+		<flag name="sound">Support libao- and ffmpeg-driven audio playback</flag>
+	</use>
+</pkgmetadata>
