@@ -38,7 +38,7 @@ RDEPEND="
 	) )
 	kde? ( media-libs/phonon:= )
 	epwing? ( dev-libs/eb:= )
-	lzma? ( app-arch/xz-utils:= )
+	lzma? ( >=app-arch/xz-utils-5.0.5:= )
 	tiff? ( media-libs/tiff:0= )
 	sound? (
 		media-libs/libao:=
