@@ -6,7 +6,7 @@ PLOCALES="ar_SA bg_BG cs_CZ de_DE el_GR it_IT lt_LT ru_RU vi_VN uk_UA zh_CN"
 
 inherit l10n qt4-r2
 
-MY_PV="1.5.0-RC"
+MY_PV="${PV/_rc/-RC}"
 MY_P="${PN}-${MY_PV}"
 
 DESCRIPTION="Feature-rich dictionary lookup program"

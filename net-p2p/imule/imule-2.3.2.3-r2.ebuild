@@ -9,7 +9,6 @@ EAPI=5
 # Enable Bash strictness.
 set -e
 
-#FIXME: Replicate such "readme.gentoo" logic in all other currently mainted ebuilds.
 inherit eutils flag-o-matic readme.gentoo wxwidgets user
 
 MY_PNV="iMule-${PV}"
@@ -20,17 +19,17 @@ IMULE_NODES_BASE="${MY_PNV}-nodes.dat"
 # Absolute path to which such database is installed.
 IMULE_NODES_FILE="/usr/share/${PN}/nodes.dat"
 
-DESCRIPTION="Free, open-source, anonymous, P2P file-sharing software connecting through the I2P and Kad networks"
-HOMEPAGE="http://aceini.no-ip.info/imule"
+DESCRIPTION="Free, open-source, anonymous, I2P-based, file-sharing P2P software"
+HOMEPAGE="http://www.imule.i2p.us"
 SRC_URI="
-	http://aceini.no-ip.info/imule/${PV}/${MY_PNV}-src.tbz
-	http://aceini.no-ip.info/imule/nodes.dat -> ${IMULE_NODES_BASE}"
+	http://www.imule.i2p.us/files/download.php?Fichier=${MY_PNV}-src.tbz
+	http://www.imule.i2p.us/nodes.dat
+"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="daemon geoip kde linkcreator mmap nls stats upnp +X"
-#remote
 
 COMMON_DEPEND="
 	>=dev-libs/crypto++-5:0=
@@ -180,23 +179,44 @@ src_install() {
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="
-iMule requires a seed database to be manually installed. To install the
-database we have already provided for you, consider running:\\n
-\\n
-    mkdir ~/.iMule\\n
-    cp ${EROOT}${IMULE_NODES_FILE} ~/.iMule\\n
-\\n
-iMule also requires the I2P SAM application bridge to be enabled. Since
-such bridge is disabled under all default I2P installations, enable
-such bridge before running iMule. Specifically:\\n
-\\n
-* Browse to http://127.0.0.1:7657/configclients (assuming a default I2P
-  installation).\\n
-* Check the \"SAM application bridge\" checkbox.\\n
-* Click the \"Start\" button to the right of such checkbox.\\n
-* Click the \"Save Client Configuration\" button.\""
+	iMule requires a seed database to be manually installed. To install the
+	database we have already provided for you, consider running:\\n
+	\\n
+	\\tmkdir ~/.iMule\\n
+	\\tcp ${EROOT}${IMULE_NODES_FILE} ~/.iMule\\n
+	\\n
+	iMule also requires the I2P SAM application bridge to be enabled. Since
+	such bridge is disabled under all default I2P installations, enable
+	such bridge before running iMule. Specifically:\\n
+	\\n
+	* Browse to http://127.0.0.1:7657/configclients (assuming a default I2P
+	  installation).\\n
+	* Check the \"SAM application bridge\" checkbox.\\n
+	* Click the \"Start\" button to the right of such checkbox.\\n
+	* Click the \"Save Client Configuration\" button.\"\\n
+	\\n
+	Installed iMule binaries include:\\n
+	\\n"
 
-	# Install such document.
+	if use X; then
+		DOC_CONTENTS+="* \"imule\", the standard iMule GUI.\\n"
+	fi
+	if use daemon; then
+		DOC_CONTENTS+="* \"imuled\", a headless daemon for iMule. Configure such daemon at \"/etc/conf.d/imule\" and run such daemon as:\\n
+		\\teselect rc restart imuled\\n"
+	fi
+	if use linkcreator; then
+		use X &&
+			DOC_CONTENTS+="* \"alc\", the Link Creator GUI.\\n"
+			DOC_CONTENTS+="* \"alcc\", the Link Creator CLI.\\n"
+	fi
+	if use stats; then
+		use X &&
+			DOC_CONTENTS+="* \"wxcas\", the iMule statistics GUI.\\n"
+			DOC_CONTENTS+="* \"cas\", the iMule statistics CLI.\\n"
+	fi
+
+	# Install such documentation.
 	readme.gentoo_create_doc
 }
 
@@ -210,26 +230,4 @@ pkg_preinst() {
 pkg_postinst() {
 	# On first installation, print Gentoo-specific documentation.
 	readme.gentoo_print_elog
-
-	elog 'Installed iMule binaries include:'
-	elog
-
-	if use X; then
-		elog '* "imule", the standard iMule GUI.'
-	fi
-	if use linkcreator; then
-		use X &&
-			elog '* "alc", the Link Creator GUI.'
-			elog '* "alcc", the Link Creator CLI.'
-	fi
-	if use stats; then
-		use X &&
-			elog '* "wxcas", the iMule statistics GUI.'
-			elog '* "cas", the iMule statistics CLI.'
-	fi
-	if use daemon; then
-		elog '* "imuled", the iMule headless daemon. Configure such daemon at'
-		elog '  "/etc/conf.d/imule" and run such daemon via:'
-		elog '  eselect rc restart imuled'
-	fi
 }

@@ -7,9 +7,6 @@ PLOCALES="ar_SA be_BY bg_BG cs_CZ de_DE el_GR es_AR es_ES fa_IR fr_FR it_IT ja_J
 
 inherit l10n git-r3 qt4-r2
 
-MY_PV="1.5.0-RC"
-MY_P="${PN}-${MY_PV}"
-
 DESCRIPTION="Feature-rich dictionary lookup program"
 HOMEPAGE="http://goldendict.org"
 
@@ -68,8 +65,8 @@ src_prepare() {
 	# do not install duplicates
 	sed -e '/[icon,desktop]s2/d' -i ${PN}.pro || die
 
-	# fix desktop file
-	sed -e '/^Categories=/s/Qt$/Qt;/' -i redist/${PN}.desktop || die
+	# append missing trailing semicolon to desktop file
+	sed -e '/^Categories=/s/$/;/' -i redist/${PN}.desktop || die
 }
 
 src_configure() {
@@ -80,6 +77,7 @@ src_configure() {
 	use tiff || qmake_options+="CONFIG+=no_extra_tiff_handler"
 	# echo "qmake_options: ${qmake_options[*]}"
 
+	# The makefile defaults ${PREFIX} to "/usr/local"; correct this.
 	PREFIX="${EPREFIX}"/usr eqmake4 ${PN}.pro "${qmake_options[@]}"
 }
 
