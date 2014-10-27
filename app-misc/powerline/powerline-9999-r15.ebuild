@@ -111,6 +111,7 @@ python_compile_all() {
 		sphinx-build -b html "${S}"/docs/source docs_output
 		HTML_DOCS=( docs_output/. )
 	fi
+	sphinx-build -b man "${S}"/docs/source man_pages
 }
 
 python_test() {
@@ -207,6 +208,8 @@ python_install_all() {
 
 	# Install Powerline python modules.
 	distutils-r1_python_install_all
+
+	doman man_pages/*.1
 }
 
 pkg_postinst() {
