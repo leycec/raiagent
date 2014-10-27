@@ -21,13 +21,16 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="awesome busybox bash dash doc fish mksh test tmux vim zsh fonts"
+IUSE="awesome busybox bash dash doc fish man mksh test tmux vim zsh fonts"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
 	dev-python/setuptools
 	doc? (
 		dev-python/docutils
+		dev-python/sphinx
+	)
+	man? (
 		dev-python/sphinx
 	)
 	test? (
@@ -106,12 +109,18 @@ python_prepare_all() {
 }
 
 python_compile_all() {
+	# Build documentation, if both available *AND* requested by the user. 
 	if use doc && [ -d "${S}"/docs ]; then
 		einfo "Generating documentation"
 		sphinx-build -b html "${S}"/docs/source docs_output
 		HTML_DOCS=( docs_output/. )
 	fi
-	sphinx-build -b man "${S}"/docs/source man_pages
+
+	# Build man pages.
+	if use man; then
+		einfo "Generating man pages"
+		sphinx-build -b man "${S}"/docs/source man_pages
+	fi
 }
 
 python_test() {
@@ -119,9 +128,15 @@ python_test() {
 }
 
 python_install_all() {
+	# Install man pages.
+	if use man; then
+		doman man_pages/*.1
+	fi
+
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS=""
 
+	# Install application-specific libraries and documentation.
 	if use awesome; then
 		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
 		insinto "${AWESOME_LIB_DIR}"
@@ -208,8 +223,6 @@ python_install_all() {
 
 	# Install Powerline python modules.
 	distutils-r1_python_install_all
-
-	doman man_pages/*.1
 }
 
 pkg_postinst() {
