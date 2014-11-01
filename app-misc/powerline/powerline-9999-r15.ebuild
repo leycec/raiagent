@@ -26,13 +26,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
 	dev-python/setuptools
-	doc? (
-		dev-python/docutils
-		dev-python/sphinx
-	)
-	man? (
-		dev-python/sphinx
-	)
+	doc? ( dev-python/sphinx )
+	man? ( dev-python/sphinx )
 	test? (
 		app-misc/screen
 		|| (
