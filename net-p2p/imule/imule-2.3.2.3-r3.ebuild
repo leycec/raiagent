@@ -20,10 +20,10 @@ IMULE_NODES_BASE="${MY_PNV}-nodes.dat"
 IMULE_NODES_FILE="/usr/share/${PN}/nodes.dat"
 
 DESCRIPTION="Free, open-source, anonymous, I2P-based, file-sharing P2P software"
-HOMEPAGE="http://www.imule.i2p.us"
+HOMEPAGE="http://www.imule.i2p.rocks"
 SRC_URI="
-	http://www.imule.i2p.us/files/download.php?Fichier=${MY_PNV}-src.tbz
-	http://www.imule.i2p.us/nodes.dat
+	http://www.imule.i2p.rocks/files/download.php?Fichier=${MY_PNV}-src.tbz
+	http://echelon.i2p.us/imule/nodes.dat
 "
 
 LICENSE="GPL-2"
@@ -34,6 +34,7 @@ IUSE="daemon geoip kde linkcreator mmap nls stats upnp +X"
 COMMON_DEPEND="
 	>=dev-libs/crypto++-5:0=
 	>=sys-libs/zlib-1.2.1:0=
+	sys-devel/binutils:=
 	virtual/libiconv:0=
 	virtual/libintl:0=
 	geoip? ( dev-libs/geoip:0= )
