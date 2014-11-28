@@ -12,7 +12,7 @@ inherit linux-info linux-mod readme.gentoo
 #     http://www.linux-phc.org/forum/viewtopic.php?f=13&t=38
 DESCRIPTION="Processor Hardware Control for AMD K8 CPUs"
 HOMEPAGE="http://www.linux-phc.org"
-SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=150 -> ${P}.tar.gz"
+SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=164 -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -88,7 +88,7 @@ src_install() {
 After determining the highest stable vids (i.e., lowest stable voltages)
 supported by your system, configure \"${EROOT}/etc/conf.d/${PN}\" accordingly
 and add \"${PN}\" to the boot runlevel: e.g.,\\n
-    rc-update add ${PN} boot"
+	rc-update add ${PN} boot"
 
 	# Install such document.
 	readme.gentoo_create_doc
