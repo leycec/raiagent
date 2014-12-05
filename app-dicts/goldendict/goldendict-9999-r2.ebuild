@@ -43,6 +43,7 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
+	!app-text/goldendict
 	virtual/pkgconfig
 "
 
@@ -54,18 +55,19 @@ src_unpack() {
 src_prepare() {
 	qt4-r2_src_prepare
 
-	# print discrepancies between ${PLOCALES} and actual locale files
-	l10n_find_plocales_changes "${S}/locale" "" ".ts"
+	# Print discrepancies between ${PLOCALES} and actual locale files.
+	l10n_find_plocales_changes "${S}"/locale "" .ts
 
+	# Avoid installing locales unsupported by Gentoo.
 	disable_locale() {
 		sed -e "s;locale/${1}.ts;;" -i ${PN}.pro || die
 	}
 	l10n_for_each_disabled_locale_do disable_locale
 
-	# do not install duplicates
+	# Avoid installing duplicates.
 	sed -e '/[icon,desktop]s2/d' -i ${PN}.pro || die
 
-	# append missing trailing semicolon to desktop file
+	# Append a missing trailing semicolon to the desktop file.
 	sed -e '/^Categories=/s/$/;/' -i redist/${PN}.desktop || die
 }
 
