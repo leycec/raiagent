@@ -11,7 +11,7 @@ EGIT_REPO_URI="https://github.com/powerline/${PN#powerline-}"
 inherit font git-r3
 
 DESCRIPTION="Monospaced fonts pre-patched with Powerline symbols"
-HOMEPAGE="http://github.com/powerline/fonts"
+HOMEPAGE="https://github.com/powerline/fonts"
 
 LICENSE="
 	anonymouspro? ( OFL-1.1 )

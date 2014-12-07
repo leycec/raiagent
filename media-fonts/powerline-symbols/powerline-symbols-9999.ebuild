@@ -12,7 +12,7 @@ EGIT_BRANCH="develop"
 inherit font git-r3
 
 DESCRIPTION="OpenType Unicode font containing only Powerline-specific symbols."
-HOMEPAGE="http://github.com/powerline/powerline"
+HOMEPAGE="https://github.com/powerline/powerline"
 
 LICENSE="MIT"
 SLOT="0"
