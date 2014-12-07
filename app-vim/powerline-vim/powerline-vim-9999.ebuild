@@ -6,7 +6,7 @@ EAPI="5"
 # Enforce Bash scrictness.
 set -e
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
+EGIT_REPO_URI="https://github.com/powerline/powerline"
 EGIT_BRANCH="develop"
 
 # Since eclasses cannot be conditionally inherited, this ebuild remains distinct

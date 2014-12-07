@@ -8,7 +8,7 @@ set -e
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
 
-EGIT_REPO_URI="https://github.com/Lokaltog/powerline"
+EGIT_REPO_URI="https://github.com/powerline/powerline"
 EGIT_BRANCH="develop"
 
 # Since default phase functions defined by "distutils-r1" take absolute
