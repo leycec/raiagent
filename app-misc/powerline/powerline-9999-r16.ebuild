@@ -6,7 +6,7 @@ EAPI="5"
 # Enforce Bash scrictness.
 set -e
 
-PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
+PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 EGIT_REPO_URI="https://github.com/powerline/powerline"
 EGIT_BRANCH="develop"
