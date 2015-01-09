@@ -21,7 +21,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="awesome busybox bash dash doc fish man mksh test tmux vim zsh fonts"
+IUSE="awesome busybox bash dash doc fish man mksh test tmux vim zsh fonts rc"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -47,6 +47,7 @@ RDEPEND="
 	mksh? ( app-shells/mksh )
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
+	rc? ( app-shells/rc )
 "
 
 # Source directory from which all applicable files will be installed.
@@ -189,6 +190,15 @@ python_install_all() {
 		DOC_CONTENTS+="
 	To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
 	\\t. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
+	fi
+
+	if use rc; then
+		insinto "${POWERLINE_TRG_DIR}"/rc
+		doins   "${POWERLINE_SRC_DIR}"/rc/powerline.rc
+
+		DOC_CONTENTS+="
+	To enable Powerline under rc shell, add the following line to \"~/.rcrc\":\\n
+	\\t. ${POWERLINE_TRG_DIR_EROOTED}rc/powerline.rc\\n\\n"
 	fi
 
 	if use tmux; then
