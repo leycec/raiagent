@@ -21,7 +21,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="awesome busybox bash dash doc fish man mksh test tmux vim zsh fonts rc"
+IUSE="awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -222,6 +222,12 @@ python_install_all() {
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
 	doins -r "${S}"/powerline/config_files/*
+
+	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which case
+	# calling readme.gentoo_create_doc() will throw a fatal error:
+	#     "You are not specifying README.gentoo contents!"
+	# Avoid this by defaulting ${DOC_CONTENTS} to a non-empty string if empty.
+	DOC_CONTENTS=${DOC_CONTENTS:-All Powerline USE flags were disabled.}
 
 	# Install Gentoo-specific documentation.
 	readme.gentoo_create_doc

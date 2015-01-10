@@ -22,7 +22,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
-IUSE="awesome busybox bash dash doc fish man mksh test tmux vim zsh fonts"
+IUSE="awesome busybox bash dash doc fish fonts man mksh test tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -208,6 +208,12 @@ python_install_all() {
 	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
 	\\tsource ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
 	fi
+
+	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which case
+	# calling readme.gentoo_create_doc() will throw a fatal error:
+	#     "You are not specifying README.gentoo contents!"
+	# Avoid this by defaulting ${DOC_CONTENTS} to a non-empty string if empty.
+	DOC_CONTENTS=${DOC_CONTENTS:-All Powerline USE flags were disabled.}
 
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
