@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 EAPI="5"
@@ -6,7 +6,7 @@ EAPI="5"
 # Enforce Bash scrictness.
 set -e
 
-PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,2_0} )
+PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo", inherit the latter later.
@@ -26,14 +26,14 @@ IUSE="awesome busybox bash dash doc fish fonts man mksh test tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
-	dev-python/setuptools
-	doc? ( dev-python/sphinx )
-	man? ( dev-python/sphinx )
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
+	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		app-misc/screen
 		|| (
 			>=dev-vcs/git-1.7.2
-			>=dev-python/pygit2-0.17
+			>=dev-python/pygit2-0.17[${PYTHON_USEDEP}]
 		)
 	)
 "
@@ -44,7 +44,7 @@ RDEPEND="
 	busybox? ( sys-apps/busybox )
 	dash? ( app-shells/dash )
 	fish? ( >=app-shells/fish-2.1 )
-	fonts? ( media-fonts/powerline-symbols )
+	fonts? ( media-fonts/powerline-fonts )
 	mksh? ( app-shells/mksh )
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
