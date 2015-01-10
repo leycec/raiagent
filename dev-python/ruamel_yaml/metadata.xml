@@ -17,7 +17,4 @@ ruamel.yaml is a YAML package for Python. It is a derivative of Kirill Simonov's
 * tox and py.test based testing
 * currently assumes that the C yaml library is installed. That library doesn't generate CommentTokens, so it cannot be used to do round trip editing on comments. It can be used for normal processing (no need to install ruamel.yaml and PyYaml)
 </longdescription>
-    <!--use>
-        <flag name="libyaml">enable libyaml-based C implementation</flag>
-    </use-->
 </pkgmetadata>

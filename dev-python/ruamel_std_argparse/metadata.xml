@@ -6,18 +6,11 @@
 		<name>leycec</name>
 	</maintainer>
 	<longdescription>
-ruamel.yaml is a YAML package for Python. It is a derivative of Kirill Simonov's PyYAML 3.11 which supports YAML1.1. Major differences with PyYAML 3.11 include:
+This package provides extensions to argparse on two levels:
 
-* integrated Python 2 and 3 sources, running on Python 2.6, 2.7, 3.3 and 3.4.
-* round trip mode that includes comments (block mode, key ordering kept)
-* support for simple lists as mapping keys by transformation to tuples
-* !!omap generates ordereddict (C) on Python 2, collections.OrderedDict on Python 3, and !!omap is generated for these types.
-* some YAML 1.2 enhancements (0o octal prefix, \/ escape)
-* pep8 compliance
-* tox and py.test based testing
-* currently assumes that the C yaml library is installed. That library doesn't generate CommentTokens, so it cannot be used to do round trip editing on comments. It can be used for normal processing (no need to install ruamel.yaml and PyYaml)
+* basic argparse extensions: default subparser, subparser aliases in 2.X
+* additional actions that can be specified for add_argument
+* smart formatter that allows combination of defaults help formatting and raw desciptions
+* wrapper for argparse using decorators
 </longdescription>
-    <!--use>
-        <flag name="libyaml">enable libyaml-based C implementation</flag>
-    </use-->
 </pkgmetadata>
