@@ -9,7 +9,7 @@ set -e
 EGIT_REPO_URI="git://github.com/Grognak/Grognaks-Mod-Manager.git"
 
 # GMM requires "Python 2.6 or higher. With 3.x, there may be bugs."
-PYTHON_COMPAT=( python2_{6,7} )
+PYTHON_COMPAT=( python2_7 )
 
 # GMM requires Python Tk support.
 PYTHON_REQ_USE="tk"

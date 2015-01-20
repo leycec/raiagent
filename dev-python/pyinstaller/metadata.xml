@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+PyInstaller is a program that converts (packages) Python programs into
+stand-alone executables, under Windows, Linux, Mac OS X, Solaris and AIX. Many
+packages are supported "out of the box."
+</longdescription>
+	<upstream>
+		<doc lang="en">http://pythonhosted.org//PyInstaller/</doc>
+		<bugs-to>https://github.com/pyinstaller/pyinstaller/issues</bugs-to>
+	</upstream>
+</pkgmetadata>
