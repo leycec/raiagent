@@ -67,7 +67,8 @@ POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
 # Powerline's Python configuration with the passed string.
 powerline_set_config_var_to_value() {
 	(( ${#} == 2 )) || die 'Expected one variable name and one variable value.'
-	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py
+	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py ||
+		die '"sed" failed.'
 }
 
 python_prepare_all() {
@@ -84,7 +85,7 @@ python_prepare_all() {
 	# safely remove such files *AND* permit their installation after the main
 	# distutils-based installation, copy them to such location and then remove
 	# them from the original tree that distutils operates on.
-	cp -R "${S}"/powerline/bindings "${POWERLINE_SRC_DIR}"
+	cp -R "${S}"/powerline/bindings "${POWERLINE_SRC_DIR}" || die '"cp" failed.'
 
 	# Remove all non-Python files from the original tree.
 	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
@@ -108,19 +109,21 @@ python_compile_all() {
 	# Build documentation, if both available *AND* requested by the user. 
 	if use doc && [ -d "${S}"/docs ]; then
 		einfo "Generating documentation"
-		sphinx-build -b html "${S}"/docs/source docs_output
+		sphinx-build -b html "${S}"/docs/source docs_output ||
+			die 'HTML documentation compilation failed.'
 		HTML_DOCS=( docs_output/. )
 	fi
 
 	# Build man pages.
 	if use man; then
 		einfo "Generating man pages"
-		sphinx-build -b man "${S}"/docs/source man_pages
+		sphinx-build -b man "${S}"/docs/source man_pages ||
+			die 'Manpage compilation failed.'
 	fi
 }
 
 python_test() {
-	PYTHON="${PYTHON}" "${S}"/tests/test.sh
+	PYTHON="${PYTHON}" "${S}"/tests/test.sh || die 'Unit tests failed.'
 }
 
 python_install_all() {
