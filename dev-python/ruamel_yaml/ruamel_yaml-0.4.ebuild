@@ -39,6 +39,7 @@ RDEPEND="
 #    dev-python/cython[${PYTHON_USEDEP}]
 
 DEPEND="${RDEPEND}
+	!dev-python/pyyaml[libyaml]
 	dev-python/cython
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 "
