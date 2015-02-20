@@ -21,7 +21,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="qtile awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh"
+IUSE="qtile awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh extra"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
