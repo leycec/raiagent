@@ -61,6 +61,7 @@ RDEPEND="
 
 # Source directory from which all applicable files will be installed.
 POWERLINE_BINDINGS_DIR="${T}/bindings"
+POWERLINE_FULL_BINDINGS_DIR="${T}/bindings-full"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
@@ -130,6 +131,9 @@ python_prepare_all() {
 	# distutils-based installation, copy them to such location and then remove
 	# them from the original tree that distutils operates on.
 	cp -R "${S}"/powerline/bindings "${POWERLINE_BINDINGS_DIR}" || die '"cp" failed.'
+	if use test ; then
+		cp -R "${S}"/powerline/bindings "${POWERLINE_FULL_BINDINGS_DIR}" || die '"cp" failed.'
+	fi
 
 	# Remove all non-Python files from the original tree.
 	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
@@ -169,7 +173,7 @@ python_compile_all() {
 python_test() {
 	# *All* bindings files are required for tests.
 	mv "${S}"/powerline/bindings{,.bak}
-	cp -R "${POWERLINE_BINDINGS_DIR}" "${S}"/powerline/bindings
+	cp -R "${POWERLINE_FULL_BINDINGS_DIR}" "${S}"/powerline/bindings
 	# Powerline shell tests do not work with LD_PRELOAD-based sandbox.
 	env -i LANG=en_US.UTF-8 PATH="$PATH" PYTHON="${PYTHON}" "${S}"/tests/test.sh || die 'Unit tests failed.'
 	rm -r "${S}"/powerline/bindings
