@@ -31,6 +31,7 @@ DEPEND="
 	test? (
 		app-misc/screen
 		>=dev-vcs/git-1.7.2
+		dev-libs/libvterm
 	)
 "
 RDEPEND="
