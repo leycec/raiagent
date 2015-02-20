@@ -30,10 +30,7 @@ DEPEND="
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		app-misc/screen
-		|| (
-			>=dev-vcs/git-1.7.2
-			>=dev-python/pygit2-0.17[${PYTHON_USEDEP}]
-		)
+		>=dev-vcs/git-1.7.2
 	)
 "
 RDEPEND="
