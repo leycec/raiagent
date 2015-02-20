@@ -67,8 +67,11 @@ POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
 src_unpack() {
 	git-r3_src_unpack
 	if use test ; then
+		local saved_egit_branch="$EGIT_BRANCH"
+		EGIT_BRANCH="master"
 		git-r3_fetch "https://github.com/powerline/bot-ci" "master" "powerline-bot-ci"
 		git-r3_checkout "https://github.com/powerline/bot-ci" "${S}/tests/bot-ci" "powerline-bot-ci"
+		EGIT_BRANCH="$saved_egit_branch"
 	fi
 }
 
