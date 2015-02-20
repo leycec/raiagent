@@ -32,10 +32,10 @@ DEPEND="
 		app-misc/screen
 		>=dev-vcs/git-1.7.2
 		dev-libs/libvterm
+		dev-python/psutil
 	)
 "
 RDEPEND="
-	dev-python/psutil
 	media-fonts/powerline-symbols
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
@@ -48,6 +48,10 @@ RDEPEND="
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
 	qtile? ( >=x11-wm/qtile-0.6 )
+	extra? (
+		dev-python/netifaces
+		dev-python/psutil
+	)
 "
 
 # Source directory from which all applicable files will be installed.
