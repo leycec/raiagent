@@ -21,7 +21,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh"
+IUSE="qtile awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -48,6 +48,7 @@ RDEPEND="
 	rc? ( app-shells/rc )
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
+	qtile? ( >=x11-wm/qtile-0.6 )
 "
 
 # Source directory from which all applicable files will be installed.
@@ -220,6 +221,28 @@ python_install_all() {
 		DOC_CONTENTS+="
 	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
 	\\tsource ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
+	fi
+
+	if use qtile; then
+		DOC_CONTENTS+="
+	To enable powerline under qtile, add the following to \"~/.config/qtile/config.py\":\\n
+	\\tfrom libqtile.bar import Bar\\n
+	\\tfrom libqtile.config import Screen\\n
+	\\tfrom libqtile.widget import Spacer\\n
+	\\t\\n
+	\\tfrom powerline.bindings.qtile.widget import PowerlineTextBox\\n
+	\\t\\n
+	\\tscreens = [\\n
+	\\t   Screen(\\n
+	\\t       top=Bar([\\n
+	\\t               PowerlineTextBox(timeout=2, side='left'),\\n
+	\\t               Spacer(),\\n
+	\\t               PowerlineTextBox(timeout=2, side='right'),\\n
+	\\t           ],\\n
+	\\t           35\\n
+	\\t       ),\\n
+	\\t   ),\\n
+	\\t]\\n\\n"
 	fi
 
 	# Install Powerline configuration files.
