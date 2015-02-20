@@ -60,7 +60,7 @@ RDEPEND="
 "
 
 # Source directory from which all applicable files will be installed.
-POWERLINE_SRC_DIR="${T}/bindings"
+POWERLINE_BINDINGS_DIR="${T}/bindings"
 
 # Target directory to which all applicable files will be installed.
 POWERLINE_TRG_DIR='/usr/share/powerline'
@@ -129,7 +129,7 @@ python_prepare_all() {
 	# safely remove such files *AND* permit their installation after the main
 	# distutils-based installation, copy them to such location and then remove
 	# them from the original tree that distutils operates on.
-	cp -R "${S}"/powerline/bindings "${POWERLINE_SRC_DIR}" || die '"cp" failed.'
+	cp -R "${S}"/powerline/bindings "${POWERLINE_BINDINGS_DIR}" || die '"cp" failed.'
 
 	# Remove all non-Python files from the original tree.
 	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
@@ -139,7 +139,7 @@ python_prepare_all() {
 	# following unrelated Python files:
 	#
 	# * "powerline-awesome.py", an awesome-specific integration script.
-	find "${POWERLINE_SRC_DIR}"\
+	find "${POWERLINE_BINDINGS_DIR}"\
 		-type f\
 		-name '*.py'\
 		-not -name 'powerline-awesome.py'\
@@ -169,7 +169,7 @@ python_compile_all() {
 python_test() {
 	# *All* bindings files are required for tests.
 	mv "${S}"/powerline/bindings{,.bak}
-	cp -R "${POWERLINE_SRC_DIR}" "${S}"/powerline/bindings
+	cp -R "${POWERLINE_BINDINGS_DIR}" "${S}"/powerline/bindings
 	# Powerline shell tests do not work with LD_PRELOAD-based sandbox.
 	env -i LANG=en_US.UTF-8 PATH="$PATH" PYTHON="${PYTHON}" "${S}"/tests/test.sh || die 'Unit tests failed.'
 	rm -r "${S}"/powerline/bindings
@@ -189,9 +189,9 @@ python_install_all() {
 	if use awesome; then
 		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
 		insinto "${AWESOME_LIB_DIR}"
-		newins "${POWERLINE_SRC_DIR}"/awesome/powerline.lua init.lua
+		newins "${POWERLINE_BINDINGS_DIR}"/awesome/powerline.lua init.lua
 		exeinto "${AWESOME_LIB_DIR}"
-		doexe  "${POWERLINE_SRC_DIR}"/awesome/powerline-awesome.py
+		doexe  "${POWERLINE_BINDINGS_DIR}"/awesome/powerline-awesome.py
 
 		DOC_CONTENTS+="
 	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
@@ -201,7 +201,7 @@ python_install_all() {
 
 	if use bash; then
 		insinto "${POWERLINE_TRG_DIR}"/bash
-		doins   "${POWERLINE_SRC_DIR}"/bash/powerline.sh
+		doins   "${POWERLINE_BINDINGS_DIR}"/bash/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
@@ -210,7 +210,7 @@ python_install_all() {
 
 	if use busybox; then
 		insinto "${POWERLINE_TRG_DIR}"/busybox
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
@@ -219,7 +219,7 @@ python_install_all() {
 
 	if use dash; then
 		insinto "${POWERLINE_TRG_DIR}"/dash
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
@@ -229,7 +229,7 @@ python_install_all() {
 
 	if use fish; then
 		insinto /usr/share/fish/functions
-		doins "${POWERLINE_SRC_DIR}"/fish/powerline-setup.fish
+		doins "${POWERLINE_BINDINGS_DIR}"/fish/powerline-setup.fish
 
 		DOC_CONTENTS+="
 	To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
@@ -238,7 +238,7 @@ python_install_all() {
 
 	if use mksh; then
 		insinto "${POWERLINE_TRG_DIR}"/mksh
-		doins   "${POWERLINE_SRC_DIR}"/shell/powerline.sh
+		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
@@ -269,7 +269,7 @@ python_install_all() {
 
 	if use rc; then
 		insinto "${POWERLINE_TRG_DIR}"/rc
-		doins   "${POWERLINE_SRC_DIR}"/rc/powerline.rc
+		doins   "${POWERLINE_BINDINGS_DIR}"/rc/powerline.rc
 
 		DOC_CONTENTS+="
 	To enable Powerline under rc shell, add the following line to \"~/.rcrc\":\\n
@@ -278,7 +278,7 @@ python_install_all() {
 
 	if use tmux; then
 		insinto "${POWERLINE_TRG_DIR}"/tmux
-		doins   "${POWERLINE_SRC_DIR}"/tmux/powerline*.conf
+		doins   "${POWERLINE_BINDINGS_DIR}"/tmux/powerline*.conf
 
 		DOC_CONTENTS+="
 	To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
@@ -287,7 +287,7 @@ python_install_all() {
 
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
-		doins "${POWERLINE_SRC_DIR}"/zsh/powerline.zsh
+		doins "${POWERLINE_BINDINGS_DIR}"/zsh/powerline.zsh
 
 		DOC_CONTENTS+="
 	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
