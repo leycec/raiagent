@@ -35,6 +35,7 @@ DEPEND="
 	)
 "
 RDEPEND="
+	dev-python/psutil
 	media-fonts/powerline-symbols
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
@@ -58,6 +59,14 @@ POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
 
 # Note the lack of an assignment to ${S} here. Under live ebuilds, the default
 # ${S} suffices.
+
+src_unpack() {
+	git-r3_src_unpack
+	if use test ; then
+		git-r3_fetch "https://github.com/powerline/bot-ci" "master" "powerline-bot-ci"
+		git-r3_checkout "https://github.com/powerline/bot-ci" "${S}/tests/bot-ci" "powerline-bot-ci"
+	fi
+}
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
