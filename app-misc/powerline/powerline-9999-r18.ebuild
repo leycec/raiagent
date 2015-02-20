@@ -21,7 +21,7 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh"
+IUSE="qtile awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh extra"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 DEPEND="
@@ -30,10 +30,9 @@ DEPEND="
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		app-misc/screen
-		|| (
-			>=dev-vcs/git-1.7.2
-			>=dev-python/pygit2-0.17[${PYTHON_USEDEP}]
-		)
+		>=dev-vcs/git-1.7.2
+		dev-libs/libvterm
+		dev-python/psutil
 	)
 "
 RDEPEND="
@@ -48,6 +47,11 @@ RDEPEND="
 	rc? ( app-shells/rc )
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
+	qtile? ( >=x11-wm/qtile-0.6 )
+	extra? (
+		dev-python/netifaces
+		dev-python/psutil
+	)
 "
 
 # Source directory from which all applicable files will be installed.
@@ -59,6 +63,17 @@ POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
 
 # Note the lack of an assignment to ${S} here. Under live ebuilds, the default
 # ${S} suffices.
+
+src_unpack() {
+	git-r3_src_unpack
+	if use test ; then
+		local saved_egit_branch="$EGIT_BRANCH"
+		EGIT_BRANCH="master"
+		git-r3_fetch "https://github.com/powerline/bot-ci" "master" "powerline-bot-ci"
+		git-r3_checkout "https://github.com/powerline/bot-ci" "${S}/tests/bot-ci" "powerline-bot-ci"
+		EGIT_BRANCH="$saved_egit_branch"
+	fi
+}
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -220,6 +235,28 @@ python_install_all() {
 		DOC_CONTENTS+="
 	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
 	\\tsource ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
+	fi
+
+	if use qtile; then
+		DOC_CONTENTS+="
+	To enable powerline under qtile, add the following to \"~/.config/qtile/config.py\":\\n
+	\\tfrom libqtile.bar import Bar\\n
+	\\tfrom libqtile.config import Screen\\n
+	\\tfrom libqtile.widget import Spacer\\n
+	\\t\\n
+	\\tfrom powerline.bindings.qtile.widget import PowerlineTextBox\\n
+	\\t\\n
+	\\tscreens = [\\n
+	\\t   Screen(\\n
+	\\t       top=Bar([\\n
+	\\t               PowerlineTextBox(timeout=2, side='left'),\\n
+	\\t               Spacer(),\\n
+	\\t               PowerlineTextBox(timeout=2, side='right'),\\n
+	\\t           ],\\n
+	\\t           35\\n
+	\\t       ),\\n
+	\\t   ),\\n
+	\\t]\\n\\n"
 	fi
 
 	# Install Powerline configuration files.
