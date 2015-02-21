@@ -36,7 +36,7 @@ DEPEND="
 	test? (
 		app-misc/screen
 		dev-python/psutil[${PYTHON_USEDEP}]
-		x11-libs/libvterm
+		dev-libs/libvterm
 		>=dev-vcs/git-1.7.2
 	)
 "
