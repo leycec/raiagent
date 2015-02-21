@@ -175,7 +175,14 @@ python_test() {
 	mv "${S}"/powerline/bindings{,.bak}
 	cp -R "${POWERLINE_FULL_BINDINGS_DIR}" "${S}"/powerline/bindings
 	# Powerline shell tests do not work with LD_PRELOAD-based sandbox.
-	env -i USER="$USER" HOME="$HOME" LANG=en_US.UTF-8 PATH="$PATH" PYTHON="${PYTHON}" "${S}"/tests/test.sh || die 'Unit tests failed.'
+	env -i \
+		USER="$USER" \
+		HOME="$HOME" \
+		LANG=en_US.UTF-8 \
+		PATH="$PATH" \
+		PYTHON="${PYTHON}" \
+		"${S}"/tests/test.sh \
+		|| die 'Unit tests failed.'
 	rm -r "${S}"/powerline/bindings
 	mv "${S}"/powerline/bindings{.bak,}
 }
