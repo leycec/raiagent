@@ -21,6 +21,6 @@ src_test() {
 	emake test
 }
 
-# src_install() {
-# 	emake PREFIX="${D}/usr" install
-# }
+src_install() {
+	emake PREFIX="${D}/usr" install
+}
