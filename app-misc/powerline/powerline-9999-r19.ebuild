@@ -34,7 +34,7 @@ DEPEND="
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
-		app-misc/screen
+		dev-python/pexpect
 		dev-python/psutil[${PYTHON_USEDEP}]
 		x11-libs/libvterm
 		>=dev-vcs/git-1.7.2
