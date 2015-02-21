@@ -48,15 +48,15 @@ feature-rich alternative is currently Bailey Ling's vim-airline project.
 		<flag name="bash">Install bash support files</flag>
 		<flag name="dash">Install dash support files</flag>
 		<flag name="busybox">Install BusyBox ash support files</flag>
+		<flag name="extra">Install optional dependencies enabling additional segments</flag>
 		<flag name="fish">Install fish support files</flag>
 		<flag name="fonts">Install fonts pre-patched with Powerline symbols (not recommended)</flag>
 		<flag name="man">Build and install man pages</flag>
 		<flag name="mksh">Install mksh support files</flag>
+		<flag name="qtile">Install qtile support files</flag>
 		<flag name="rc">Install rc shell support files</flag>
 		<flag name="tmux">Install tmux support files</flag>
 		<flag name="vim">Install vim support files</flag>
 		<flag name="zsh">Install zsh support files</flag>
-		<flag name="qtile">Install qtile support files</flag>
-		<flag name="extra">Install some optional dependencies that enable more segments.</flag>
 	</use>
 </pkgmetadata>

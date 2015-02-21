@@ -1,0 +1,8 @@
+# ====================[ use.mask                           ]====================
+#
+# --------------------( SYNOPSIS                           )--------------------
+# List of ebuild-specific USE flags to be disabled for this architecture.
+
+# ....................{ UNSUPPORTED                        }....................
+# "app-shells/rc" has yet to be ported to PowerPC.
+app-misc/powerline rc

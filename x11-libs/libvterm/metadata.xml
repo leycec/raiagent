@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Based on ROTE, libvterm is a terminal emulator library which attempts to mimic
+both VT100 and rxvt capabilities. Although the natural display apparatus is
+curses, the API is simple enough to grow and adopt other mechanisms. 
+</longdescription>
+</pkgmetadata>

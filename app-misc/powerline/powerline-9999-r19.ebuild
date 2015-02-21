@@ -21,18 +21,23 @@ LICENSE="MIT"
 
 SLOT="0"
 KEYWORDS=""
-IUSE="qtile awesome busybox bash dash doc fish fonts man mksh rc test tmux vim zsh extra"
+IUSE="awesome busybox bash dash doc extra fish fonts man mksh rc qtile test tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+# Some optional dependencies are only available for a limited subset of
+# architectures supported by this ebuild. For example, "app-shells/rc" is only
+# available for amd64 and x86 architectures. Such dependencies are explicitly
+# masked in the corresponding "profiles/arch/${ARCH}/package.use.mask" file for
+# this overlay.
 DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		app-misc/screen
+		dev-python/psutil[${PYTHON_USEDEP}]
+		x11-libs/libvterm
 		>=dev-vcs/git-1.7.2
-		dev-libs/libvterm
-		dev-python/psutil
 	)
 "
 RDEPEND="
@@ -41,17 +46,17 @@ RDEPEND="
 	bash? ( app-shells/bash )
 	busybox? ( sys-apps/busybox )
 	dash? ( app-shells/dash )
+	extra? (
+		dev-python/netifaces[${PYTHON_USEDEP}]
+		dev-python/psutil[${PYTHON_USEDEP}]
+	)
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-fonts )
 	mksh? ( app-shells/mksh )
+	qtile? ( >=x11-wm/qtile-0.6 )
 	rc? ( app-shells/rc )
 	vim? ( ~app-vim/powerline-vim-${PV} )
 	zsh? ( app-shells/zsh )
-	qtile? ( >=x11-wm/qtile-0.6 )
-	extra? (
-		dev-python/netifaces
-		dev-python/psutil
-	)
 "
 
 # Source directory from which all applicable files will be installed.
@@ -66,12 +71,36 @@ POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
 
 src_unpack() {
 	git-r3_src_unpack
-	if use test ; then
-		local saved_egit_branch="$EGIT_BRANCH"
+
+	#FIXME: This seems a little terrible. Ideally, a new
+	#"app-misc/powerline-bot-ci/powerline-bot-ci-9999.ebuild" should be added
+	#conditionally depended upon above, and then copied into the work tree
+	#below. For the moment, unit tests break sandboxing, so we can't be
+	#particularly bothered.
+
+	# If running unit tests, clone Powerline's testing-specific "bot-ci"
+	# repository. 
+	if use test; then
+		ewarn 'Unit tests currently fail under most systems. Consider adding "-test" to "FEATURE" in "/etc/portage/make.conf".'
+		has sandbox ${FEATURES} && ewarn\
+			'Unit testing currently conflicts with Portage sandboxing. Expect numerous ignorable error messages.'
+
+		# Preserve the git branch name for the current ebuild.
+		local egit_branch_saved="${EGIT_BRANCH}"
+
+		# Download metadata for such repository.
+		local work_dirname="powerline-bot-ci"
+		local egit_repo_uri="https://github.com/powerline/bot-ci"
 		EGIT_BRANCH="master"
-		git-r3_fetch "https://github.com/powerline/bot-ci" "master" "powerline-bot-ci"
-		git-r3_checkout "https://github.com/powerline/bot-ci" "${S}/tests/bot-ci" "powerline-bot-ci"
-		EGIT_BRANCH="$saved_egit_branch"
+
+		# Clone such repository.
+		git-r3_fetch\
+			"${egit_repo_uri}" "${EGIT_BRANCH}" "${work_dirname}"
+		git-r3_checkout\
+			"${egit_repo_uri}" "${S}/tests/bot-ci" "${work_dirname}"
+
+		# Restore such branch name.
+		EGIT_BRANCH="${egit_branch_saved}"
 	fi
 }
 
@@ -210,6 +239,28 @@ python_install_all() {
 	\\t. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
 	fi
 
+	if use qtile; then
+		DOC_CONTENTS+="
+	To enable powerline under qtile, add the following to \"~/.config/qtile/config.py\":\\n
+	\\tfrom libqtile.bar import Bar\\n
+	\\tfrom libqtile.config import Screen\\n
+	\\tfrom libqtile.widget import Spacer\\n
+	\\t\\n
+	\\tfrom powerline.bindings.qtile.widget import PowerlineTextBox\\n
+	\\t\\n
+	\\tscreens = [\\n
+	\\t   Screen(\\n
+	\\t       top=Bar([\\n
+	\\t               PowerlineTextBox(timeout=2, side='left'),\\n
+	\\t               Spacer(),\\n
+	\\t               PowerlineTextBox(timeout=2, side='right'),\\n
+	\\t           ],\\n
+	\\t           35\\n
+	\\t       ),\\n
+	\\t   ),\\n
+	\\t]\\n\\n"
+	fi
+
 	if use rc; then
 		insinto "${POWERLINE_TRG_DIR}"/rc
 		doins   "${POWERLINE_SRC_DIR}"/rc/powerline.rc
@@ -237,28 +288,6 @@ python_install_all() {
 	\\tsource ${EROOT}usr/share/zsh/site-contrib/powerline.zsh\\n\\n"
 	fi
 
-	if use qtile; then
-		DOC_CONTENTS+="
-	To enable powerline under qtile, add the following to \"~/.config/qtile/config.py\":\\n
-	\\tfrom libqtile.bar import Bar\\n
-	\\tfrom libqtile.config import Screen\\n
-	\\tfrom libqtile.widget import Spacer\\n
-	\\t\\n
-	\\tfrom powerline.bindings.qtile.widget import PowerlineTextBox\\n
-	\\t\\n
-	\\tscreens = [\\n
-	\\t   Screen(\\n
-	\\t       top=Bar([\\n
-	\\t               PowerlineTextBox(timeout=2, side='left'),\\n
-	\\t               Spacer(),\\n
-	\\t               PowerlineTextBox(timeout=2, side='right'),\\n
-	\\t           ],\\n
-	\\t           35\\n
-	\\t       ),\\n
-	\\t   ),\\n
-	\\t]\\n\\n"
-	fi
-
 	# Install Powerline configuration files.
 	insinto /etc/xdg/powerline
 	doins -r "${S}"/powerline/config_files/*
@@ -276,7 +305,7 @@ python_install_all() {
 	distutils-r1_python_install_all
 }
 
+# On first installation, print Gentoo-specific documentation.
 pkg_postinst() {
-	# On first installation, print Gentoo-specific documentation.
 	readme.gentoo_print_elog
 }
