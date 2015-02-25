@@ -34,10 +34,10 @@ src_prepare() {
 src_test() {
 	# Ideally, valgrind-specific unit tests could be reliably enabled by
 	# passing "VALGRIND=1". Sadly, such tests currently fail with:
-    #     valgrind:  Fatal error at startup: a function redirection
-    #     valgrind:  which is mandatory for this platform-tool combination
-    #     valgrind:  cannot be set up.
-	emake test || die 'Unit tests failed.'
+	#     valgrind:  Fatal error at startup: a function redirection
+	#     valgrind:  which is mandatory for this platform-tool combination
+	#     valgrind:  cannot be set up.
+	emake test || die 'Functional tests failed.'
 }
 
 src_install() {
