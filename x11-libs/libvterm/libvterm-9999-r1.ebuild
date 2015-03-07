@@ -3,7 +3,7 @@
 # $Header: $
 EAPI=5
 
-inherit multilib bzr
+inherit multilib bzr flag-o-matic
 
 DESCRIPTION="Abstract library implementation of a VT220/xterm/ECMA-48 terminal emulator"
 HOMEPAGE="http://www.leonerd.org.uk/code/libvterm"
@@ -44,4 +44,9 @@ src_install() {
 	# By default, the Makefile installs to "/usr/local/lib". That's terrible.
 	emake PREFIX="${D}/usr" LIBDIR="${D}/usr/$(get_libdir)" install
 	dodoc doc/URLs doc/seqs.txt
+}
+
+src_compile() {
+	append-cflags -fPIC
+	emake
 }
