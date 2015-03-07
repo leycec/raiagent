@@ -48,5 +48,5 @@ src_install() {
 
 src_compile() {
 	append-cflags -fPIC
-	emake
+	emake || die "emake failed"
 }
