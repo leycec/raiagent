@@ -74,7 +74,7 @@ src_unpack() {
 	git-r3_src_unpack
 
 	#FIXME: This seems a little terrible. Ideally, a new
-	#"app-misc/powerline-bot-ci/powerline-bot-ci-9999.ebuild" should be added
+	#"app-misc/powerline-bot-ci/powerline-bot-ci-9999.ebuild" should be added,
 	#conditionally depended upon above, and then copied into the work tree
 	#below. For the moment, unit tests break sandboxing, so we can't be
 	#particularly bothered.

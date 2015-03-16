@@ -43,11 +43,13 @@ src_test() {
 src_install() {
 	# By default, the Makefile installs to "/usr/local/lib". That's terrible.
 	emake PREFIX="${D}/usr" LIBDIR="${D}/usr/$(get_libdir)" install ||
-		die 'emake install failed'
+		die 'Installation failed.'
 	dodoc doc/URLs doc/seqs.txt
 }
 
 src_compile() {
+	# NeoVim requires the "-fPIC" CFLAG. See also:
+	#     https://github.com/neovim/neovim/pull/2076
 	append-cflags -fPIC
-	emake || die "emake failed"
+	emake || die 'Compilation failed.'
 }
