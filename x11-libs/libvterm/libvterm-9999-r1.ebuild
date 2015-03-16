@@ -42,6 +42,7 @@ src_test() {
 
 src_install() {
 	# By default, the Makefile installs to "/usr/local/lib". That's terrible.
-	emake PREFIX="${D}/usr" LIBDIR="${D}/usr/$(get_libdir)" install
+	emake PREFIX="${D}/usr" LIBDIR="${D}/usr/$(get_libdir)" install ||
+		die 'emake install failed'
 	dodoc doc/URLs doc/seqs.txt
 }
