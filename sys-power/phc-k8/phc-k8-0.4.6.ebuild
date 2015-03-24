@@ -12,7 +12,7 @@ inherit linux-info linux-mod readme.gentoo
 #     http://www.linux-phc.org/forum/viewtopic.php?f=13&t=38
 DESCRIPTION="Processor Hardware Control for AMD K8 CPUs"
 HOMEPAGE="http://www.linux-phc.org"
-SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=150 -> ${P}.tar.gz"
+SRC_URI="http://www.linux-phc.org/forum/download/file.php?id=165 -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -20,12 +20,6 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 S="${WORKDIR}/${PN}_v${PV/_beta/b}"
-
-# Basename of the module to be built with mandatory suffix "()".
-MODULE_NAMES="phc-k8()"
-
-# Makefile target to be executed, cleanly building such module.
-BUILD_TARGETS="all"
 
 #FIXME: If "portage" does *NOT* have permissions to read
 #"/usr/src/linux/include/generated/utsrelease.h", the "phc-k8" Makefile
@@ -41,9 +35,8 @@ BUILD_TARGETS="all"
 pkg_setup() {
 	linux-mod_pkg_setup
 
-	# If the currently installed kernel (i.e., the target of symbolic link
-	# "/usr/src/linux") has *NOT* been properly configured for "phc-k8", print a
-	# nonfatal warning.
+	# If the current kernel has *NOT* been properly configured for "phc-k8",
+	# print nonfatal warnings.
 	if linux_config_exists; then
 		if ! linux_chkconfig_module X86_POWERNOW_K8; then
 			ewarn 'Kernel configuration option "X86_POWERNOW_K8" must be compiled as a'
@@ -55,6 +48,9 @@ pkg_setup() {
 		ewarn 'module rather than into the kernel itself.'
 	fi
 
+	# Basename of the module to be built with mandatory suffix "()".
+	MODULE_NAMES="phc-k8()"
+
 	# The makefile assumes kernel sources to reside under
 	# "/lib/modules/`uname -r`/build/", by default. Since such directory does
 	# not necessarily correspond to that of the currently installed kernel,
@@ -62,26 +58,29 @@ pkg_setup() {
 	# as set by eclass "linux-info". (Whew!)
 	BUILD_PARAMS="KERNELSRC=\"${KERNEL_DIR}\" -j1"
 
-	# If such kernel is a 2.x rather than 3.x kernel, such kernel provides no
-	# files matching mperf.{c,h,ko,o}. In such case, instruct the makefile to
-	# provide such files by setting ${BUILD_MPERF} to a non-empty string.
-	if kernel_is le 2 6 32; then
-		BUILD_PARAMS+=' BUILD_MPERF=1'
-	fi
+	# Makefile target to be executed, cleanly building such module.
+	BUILD_TARGETS="all"
+}
+
+src_prepare() {
+	# PHC-K8 >= 0.4.6 no longer supports 2.6 kernels, implying the current
+	# kernel provides "mperf.{c,h,ko}" files. Prevent use of these files.
+	sed -e '/^MODULES/s~mperf.ko~~' \
+		-e '/^obj-m/s~mperf.o~~' \
+		-i Makefile || die '"sed" failed.'
 }
 
 src_install() {
 	linux-mod_src_install
+
 	dodoc Changelog README
 	newconfd "${FILESDIR}/conf" "${PN}"
 	newinitd "${FILESDIR}/init" "${PN}"
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="
-After determining the highest stable vids (i.e., lowest stable voltages)
-supported by your system, configure \"${EROOT}/etc/conf.d/${PN}\" accordingly
-and add \"${PN}\" to the boot runlevel: e.g.,\\n
-	rc-update add ${PN} boot"
+	After determining the highest stable vids (i.e., lowest stable voltages) supported by your system, configure \"${EROOT}/etc/conf.d/${PN}\" accordingly and add \"${PN}\" to the boot runlevel: e.g.,\\n
+	\\trc-update add ${PN} boot"
 
 	# Install such document.
 	readme.gentoo_create_doc
