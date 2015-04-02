@@ -40,7 +40,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	>=app-admin/eselect-vi-1.1
+	>=app-eselect/eselect-vi-1.1
 	>=sys-libs/ncurses-5.2-r2
 	nls? ( virtual/libintl )
 	acl? ( kernel_linux? ( sys-apps/acl ) )
