@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Tool to setup a build environment on Windows for Python projects with compiled extensions using Carl Kleffner's MinGW static compiler toolchain.
+
+This project can be used in the following contexts:
+
+    setting up a build environment under Windows for AppVeyor CI,
+    setting up a build environment under Linux &amp; Wine for Travis CI,
+    setting up a docker-based Linux + Wine local build and debug environment.
+</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/ogrisel/python-winbuilder/issues</bugs-to>
+	</upstream>
+</pkgmetadata>
