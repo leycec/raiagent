@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+A simple, cross-platform, pure Python module for JavaScript-like message boxes.
+</longdescription>
+	<upstream>
+		<doc lang="en">https://pymsgbox.readthedocs.org/en/latest/index.html</doc>
+	</upstream>
+</pkgmetadata>
