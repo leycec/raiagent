@@ -24,12 +24,6 @@ src_unpack() {
 	cp "${DISTDIR}/${P}" "${S}/" || die '"cp" failed.'
 }
 
-src_prepare() {
-	sed -e 's~ is modified\.$~ will not be modified.~' -i ${P} ||
-		die '"sed" failed.'
-	perl-module_src_prepare
-}
-
 src_install() {
 	newbin ${P} ${PN}
 	perl-module_src_install
