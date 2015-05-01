@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+This is a Perl script which is designed to apply an IPS patch to a ROM. It is a quick hack according to the author, but it seems to work OK for me. It is released under the terms of the GNU GPL.
+</longdescription>
+</pkgmetadata>
