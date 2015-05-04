@@ -19,8 +19,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# No dependencies to speak of. Nice!
-RDEPEND=""
+RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
 	test? ( dev-python/nose[${PYTHON_USEDEP}] )
 "

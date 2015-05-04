@@ -23,8 +23,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# No dependencies to speak of. Nice!
-RDEPEND=""
+RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${MY_P}"

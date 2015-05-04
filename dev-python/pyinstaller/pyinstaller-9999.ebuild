@@ -42,7 +42,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #sufficiently extreme, in fact, that we do *NOT* currently bother. For an
 #exhaustive list of such dependencies, see "tests/test-requirements.txt".
 
-RDEPEND=""
+RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
 
 # While the typical "waf" project permits "waf" to be run from outside the

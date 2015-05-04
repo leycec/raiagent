@@ -3,10 +3,7 @@
 # $Header: $
 EAPI=5
 
-# Enforce Bash strictness.
-set -e
-
-PYTHON_COMPAT=( python2_{5,6,7} )
+PYTHON_COMPAT=( python2_{6,7} pypy )
 
 # While eLyXer does bundle both an ad-hoc Python installer ("install.py") and
 # ad-hoc Bourne shell installer ("make"), neither are suitable for running with

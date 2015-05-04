@@ -29,7 +29,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-RDEPEND="
+RDEPEND="${PYTHON_DEPS}
 	dev-libs/libyaml
 	dev-python/ruamel_std_argparse[${PYTHON_USEDEP}]
 "
