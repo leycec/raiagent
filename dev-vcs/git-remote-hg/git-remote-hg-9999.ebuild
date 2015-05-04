@@ -30,6 +30,6 @@ DEPEND="${RDEPEND}"
 
 # Despite being Python-based, git-remote-hg leverages autotools. Go figure.
 src_install() {
-	emake prefix="${D}/usr" install || die 'Installation failed.'
+	emake prefix="${D}/usr" install install-doc || die 'Installation failed.'
 	dodoc README.asciidoc doc/SubmittingPatches
 }
