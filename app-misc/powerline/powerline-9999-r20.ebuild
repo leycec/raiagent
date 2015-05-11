@@ -82,10 +82,6 @@ src_unpack() {
 	# If running unit tests, clone Powerline's testing-specific "bot-ci"
 	# repository. 
 	if use test; then
-		ewarn 'Unit tests currently fail under most systems. Consider adding "-test" to "FEATURE" in "/etc/portage/make.conf".'
-		has sandbox ${FEATURES} && ewarn\
-			'Unit testing currently conflicts with Portage sandboxing. Expect numerous ignorable error messages.'
-
 		# Preserve the git branch name for the current ebuild.
 		local egit_branch_saved="${EGIT_BRANCH}"
 
