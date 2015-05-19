@@ -3,22 +3,21 @@
 # $Header: $
 EAPI="5"
 
-# Enforce Bash scrictness.
-set -e
-
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
-EGIT_REPO_URI="https://github.com/powerline/powerline"
-EGIT_BRANCH="develop"
-
 # Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo", inherit the latter later.
+# precedence over those defined by "readme.gentoo", the latter is inherited
+# after the former.
 inherit eutils readme.gentoo distutils-r1 git-r3
 
 DESCRIPTION="Python-based statusline/prompt utility"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-LICENSE="MIT"
+SRC_URI=""
 
+EGIT_REPO_URI="https://github.com/powerline/powerline"
+EGIT_BRANCH="develop"
+
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
 IUSE="awesome busybox bash dash doc extra fish fonts man mksh rc qtile test tmux vim zsh"
@@ -33,12 +32,7 @@ DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? (
-		dev-python/pexpect
-		dev-python/psutil[${PYTHON_USEDEP}]
-		x11-libs/libvterm
-		>=dev-vcs/git-1.7.2
-	)
+	test? ( app-misc/powerline-bot-ci )
 "
 RDEPEND="
 	media-fonts/powerline-symbols
@@ -59,47 +53,24 @@ RDEPEND="
 	zsh? ( app-shells/zsh )
 "
 
-# Source directory from which all applicable files will be installed.
-POWERLINE_BINDINGS_DIR="${T}/bindings"
-POWERLINE_FULL_BINDINGS_DIR="${T}/bindings-full"
+# Source directory containing application-specific Powerline bindings, from
+# which all non-Python files will be removed. See python_prepare_all().
+POWERLINE_SRC_BINDINGS_PYTHON_DIR="${S}"/powerline/bindings
 
-# Target directory to which all applicable files will be installed.
-POWERLINE_TRG_DIR='/usr/share/powerline'
-POWERLINE_TRG_DIR_EROOTED="${EROOT}usr/share/powerline/"
+# Temporary directory housing application-specific Powerline bindings, from
+# which all Python files will be removed. See python_prepare_all().
+POWERLINE_TMP_BINDINGS_NONPYTHON_DIR="${T}"/bindings
+
+# Temporary directory housing application-specific Powerline bindings, from
+# which all *NO* files will be removed. See python_prepare_all().
+POWERLINE_TMP_BINDINGS_DIR="${T}"/bindings-full
+
+# Final target directory to which all applicable files will be installed.
+POWERLINE_HOME=/usr/share/powerline
+POWERLINE_HOME_EROOTED="${EROOT}"usr/share/powerline/
 
 # Note the lack of an assignment to ${S} here. Under live ebuilds, the default
 # ${S} suffices.
-
-src_unpack() {
-	git-r3_src_unpack
-
-	#FIXME: This seems a little terrible. Ideally, a new
-	#"app-misc/powerline-bot-ci/powerline-bot-ci-9999.ebuild" should be added,
-	#conditionally depended upon above, and then copied into the work tree
-	#below. For the moment, unit tests break sandboxing, so we can't be
-	#particularly bothered.
-
-	# If running unit tests, clone Powerline's testing-specific "bot-ci"
-	# repository. 
-	if use test; then
-		# Preserve the git branch name for the current ebuild.
-		local egit_branch_saved="${EGIT_BRANCH}"
-
-		# Download metadata for such repository.
-		local work_dirname="powerline-bot-ci"
-		local egit_repo_uri="https://github.com/powerline/bot-ci"
-		EGIT_BRANCH="master"
-
-		# Clone such repository.
-		git-r3_fetch\
-			"${egit_repo_uri}" "${EGIT_BRANCH}" "${work_dirname}"
-		git-r3_checkout\
-			"${egit_repo_uri}" "${S}/tests/bot-ci" "${work_dirname}"
-
-		# Restore such branch name.
-		EGIT_BRANCH="${egit_branch_saved}"
-	fi
-}
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -117,29 +88,44 @@ python_prepare_all() {
 	powerline_set_config_var_to_value\
 		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}"etc/xdg
 	powerline_set_config_var_to_value\
-		BINDINGS_DIRECTORY "${POWERLINE_TRG_DIR_EROOTED}"
+		BINDINGS_DIRECTORY "${POWERLINE_HOME_EROOTED}"
 
-	# Copy the directory tree containing application-specific Powerline
-	# bindings to a temporary directory. Since such tree contains both Python
-	# and non-Python files, failing to remove the latter causes distutils to
-	# install non-Python files into the Powerline Python module directory. To
-	# safely remove such files *AND* permit their installation after the main
-	# distutils-based installation, copy them to such location and then remove
-	# them from the original tree that distutils operates on.
-	cp -R "${S}"/powerline/bindings "${POWERLINE_BINDINGS_DIR}" || die '"cp" failed.'
-	if use test ; then
-		cp -R "${S}"/powerline/bindings "${POWERLINE_FULL_BINDINGS_DIR}" || die '"cp" failed.'
+	# Copy application-specific Powerline bindings to a temporary directory.
+	# Since such bindings comprise both Python and non-Python files, failing to
+	# remove the latter causes distutils to install non-Python files into the
+	# Powerline Python module directory. To safely remove such files *AND*
+	# permit their installation after the main distutils-based installation,
+	# copy them to such directory and then remove them from the original
+	# directory that distutils operates on.
+	cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" ||
+		die '"cp" failed.'
+
+	# If running unit tests...
+	if use test; then
+		# Additionally copy such bindings to a second temporary directory. Since
+		# unit tests require all bindings *AND* since subsequent logic removes
+		# files from the first such directory, no such files will be removed
+		# from the second such directory.
+		cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_DIR}" ||
+			die '"cp" failed.'
+
+		# Copy all unit test-specific shell scripts into the unit test tree.
+		cp -R /usr/share/powerline-bot-ci "${S}"/tests/bot-ci ||
+			die '"cp" failed.'
 	fi
 
 	# Remove all non-Python files from the original tree.
-	find "${S}"/powerline/bindings -type f -not -name '*.py' -delete
+	find "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"\
+		-type f\
+		-not -name '*.py'\
+		-delete
 
 	# Remove all Python files from the copied tree, for safety. Most such files
 	# relate to Powerline's distutils-based install process. Exclude the
 	# following unrelated Python files:
 	#
 	# * "powerline-awesome.py", an awesome-specific integration script.
-	find "${POWERLINE_BINDINGS_DIR}"\
+	find "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"\
 		-type f\
 		-name '*.py'\
 		-not -name 'powerline-awesome.py'\
@@ -151,8 +137,8 @@ python_prepare_all() {
 
 python_compile_all() {
 	# Build documentation, if both available *AND* requested by the user. 
-	if use doc && [ -d "${S}"/docs ]; then
-		einfo "Generating documentation"
+	if use doc && [[ -d "${S}"/docs ]]; then
+		einfo 'Generating documentation'
 		sphinx-build -b html "${S}"/docs/source docs_output ||
 			die 'HTML documentation compilation failed.'
 		HTML_DOCS=( docs_output/. )
@@ -160,27 +146,40 @@ python_compile_all() {
 
 	# Build man pages.
 	if use man; then
-		einfo "Generating man pages"
+		einfo 'Generating man pages'
 		sphinx-build -b man "${S}"/docs/source man_pages ||
 			die 'Manpage compilation failed.'
 	fi
 }
 
 python_test() {
-	# *All* bindings files are required for tests.
-	mv "${S}"/powerline/bindings{,.bak}
-	cp -R "${POWERLINE_FULL_BINDINGS_DIR}" "${S}"/powerline/bindings
-	# Powerline shell tests do not work with LD_PRELOAD-based sandbox.
-	env -i \
-		USER="$USER" \
-		HOME="$HOME" \
-		LANG=en_US.UTF-8 \
-		PATH="$PATH" \
-		PYTHON="${PYTHON}" \
-		"${S}"/tests/test.sh \
-		|| die 'Unit tests failed.'
-	rm -r "${S}"/powerline/bindings
-	mv "${S}"/powerline/bindings{.bak,}
+	# Temporarily replace the source bindings directory currently containing
+	# only Python files with the temporary bindings directory containing all
+	# original files. Unit tests require unmodified bindings.
+	mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
+	cp -R "${POWERLINE_TMP_BINDINGS_DIR}" "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" ||
+		die '"cp" failed.'
+
+	#FIXME: This is pretty terrible, and will definitely prevent Powerline from
+	#being added to Portage. Can the unit tests be improved so as not to break
+	#ebuild sandboxing? If not, would it be possible to disable those unit
+	#tests breaking ebuild sandboxing? Even that would probably be preferable to
+	#the current approach. Sandboxing is crucial. It should not be circumvented
+	#for *ANY* reason -- even reasons as ostensibly valid as this.
+
+	# Circumvent Portage's ${LD_PRELOAD}-based ebuild sandbox for the duration
+	# of Powerline shell tests, which currently break sandboxing.
+	env -i\
+		USER="${USER}"\
+		HOME="${HOME}"\
+		LANG=en_US.UTF-8\
+		PATH="${PATH}"\
+		PYTHON="${PYTHON}"\
+		"${S}"/tests/test.sh || die 'Unit tests failed.'
+
+	# Revert the source bindings directory to only contain Python files again.
+	rm -r "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"rm" failed.'
+	mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{.bak,} || die '"mv" failed.'
 }
 
 python_install_all() {
@@ -196,9 +195,9 @@ python_install_all() {
 	if use awesome; then
 		local AWESOME_LIB_DIR='/usr/share/awesome/lib/powerline'
 		insinto "${AWESOME_LIB_DIR}"
-		newins "${POWERLINE_BINDINGS_DIR}"/awesome/powerline.lua init.lua
+		newins "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline.lua init.lua
 		exeinto "${AWESOME_LIB_DIR}"
-		doexe  "${POWERLINE_BINDINGS_DIR}"/awesome/powerline-awesome.py
+		doexe  "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline-awesome.py
 
 		DOC_CONTENTS+="
 	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
@@ -207,36 +206,36 @@ python_install_all() {
 	fi
 
 	if use bash; then
-		insinto "${POWERLINE_TRG_DIR}"/bash
-		doins   "${POWERLINE_BINDINGS_DIR}"/bash/powerline.sh
+		insinto "${POWERLINE_HOME}"/bash
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/bash/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
-	\\tsource ${POWERLINE_TRG_DIR_EROOTED}bash/powerline.sh\\n\\n"
+	\\tsource ${POWERLINE_HOME_EROOTED}bash/powerline.sh\\n\\n"
 	fi
 
 	if use busybox; then
-		insinto "${POWERLINE_TRG_DIR}"/busybox
-		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_HOME}"/busybox
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
-	\\t. ${POWERLINE_TRG_DIR_EROOTED}busybox/powerline.sh\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}busybox/powerline.sh\\n\\n"
 	fi
 
 	if use dash; then
-		insinto "${POWERLINE_TRG_DIR}"/dash
-		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_HOME}"/dash
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
-	\\t. ${POWERLINE_TRG_DIR_EROOTED}dash/powerline.sh\\n
+	\\t. ${POWERLINE_HOME_EROOTED}dash/powerline.sh\\n
 	If such variable does not exist, you may need to manually create such file.\\n\\n"
 	fi
 
 	if use fish; then
 		insinto /usr/share/fish/functions
-		doins "${POWERLINE_BINDINGS_DIR}"/fish/powerline-setup.fish
+		doins "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/fish/powerline-setup.fish
 
 		DOC_CONTENTS+="
 	To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
@@ -244,12 +243,12 @@ python_install_all() {
 	fi
 
 	if use mksh; then
-		insinto "${POWERLINE_TRG_DIR}"/mksh
-		doins   "${POWERLINE_BINDINGS_DIR}"/shell/powerline.sh
+		insinto "${POWERLINE_HOME}"/mksh
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
 	To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
-	\\t. ${POWERLINE_TRG_DIR_EROOTED}mksh/powerline.sh\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}mksh/powerline.sh\\n\\n"
 	fi
 
 	if use qtile; then
@@ -275,26 +274,26 @@ python_install_all() {
 	fi
 
 	if use rc; then
-		insinto "${POWERLINE_TRG_DIR}"/rc
-		doins   "${POWERLINE_BINDINGS_DIR}"/rc/powerline.rc
+		insinto "${POWERLINE_HOME}"/rc
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/rc/powerline.rc
 
 		DOC_CONTENTS+="
 	To enable Powerline under rc shell, add the following line to \"~/.rcrc\":\\n
-	\\t. ${POWERLINE_TRG_DIR_EROOTED}rc/powerline.rc\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}rc/powerline.rc\\n\\n"
 	fi
 
 	if use tmux; then
-		insinto "${POWERLINE_TRG_DIR}"/tmux
-		doins   "${POWERLINE_BINDINGS_DIR}"/tmux/powerline*.conf
+		insinto "${POWERLINE_HOME}"/tmux
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/tmux/powerline*.conf
 
 		DOC_CONTENTS+="
 	To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
-	\\tsource ${POWERLINE_TRG_DIR_EROOTED}tmux/powerline.conf\\n\\n"
+	\\tsource ${POWERLINE_HOME_EROOTED}tmux/powerline.conf\\n\\n"
 	fi
 
 	if use zsh; then
 		insinto /usr/share/zsh/site-contrib
-		doins "${POWERLINE_BINDINGS_DIR}"/zsh/powerline.zsh
+		doins "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/zsh/powerline.zsh
 
 		DOC_CONTENTS+="
 	To enable Powerline under zsh, add the following line to \"~/.zshrc\":\\n
@@ -306,8 +305,10 @@ python_install_all() {
 	doins -r "${S}"/powerline/config_files/*
 
 	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which case
-	# calling readme.gentoo_create_doc() will throw a fatal error:
+	# calling readme.gentoo_create_doc() throws the following fatal error:
+	#
 	#     "You are not specifying README.gentoo contents!"
+	#
 	# Avoid this by defaulting ${DOC_CONTENTS} to a non-empty string if empty.
 	DOC_CONTENTS=${DOC_CONTENTS:-All Powerline USE flags were disabled.}
 
