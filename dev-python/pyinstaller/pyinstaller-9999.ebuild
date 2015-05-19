@@ -9,19 +9,20 @@ EAPI=5
 # "python2_7" and "pypy" are omitted here.
 PYTHON_COMPAT=( python{3_3,3_4} pypy3 )
 
-EGIT_REPO_URI="https://github.com/pyinstaller/pyinstaller"
-EGIT_BRANCH="python3"
-
 # "waf" requires a threading-enabled Python interpreter.
 PYTHON_REQ_USE='threads(+)'
 
 # Order of operations is significant here. Since we explicitly call "waf-utils"
 # but *NOT* "distutils-r1" phase functions, ensure that the latter remain the
 # default by inheriting the latter *AFTER* the former.
-inherit waf-utils distutils-r1 git-2
+inherit waf-utils distutils-r1 git-r3
 
 DESCRIPTION="Program converting Python programs into stand-alone executables"
 HOMEPAGE="http://www.pyinstaller.org"
+SRC_URI=""
+
+EGIT_REPO_URI="https://github.com/pyinstaller/pyinstaller"
+EGIT_BRANCH="python3"
 
 LICENSE="pyinstaller"
 SLOT="0"
