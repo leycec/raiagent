@@ -20,7 +20,7 @@ collide.
 `raiagent` publishes well-documented ebuilds unabashadly biased towards the CLI,
 Python, cryptography, emulation, and roguelikes. Prominent ebuilds include:
 
-* [Powerline](https://github.com/powerline/powerline), a general-purpose
+* [Powerline](https://github.com/powerline/powerline), a general-purpose CLI
   statusline theme. `raiagent`
   [officially hosts](https://powerline.readthedocs.org/en/latest/installation/linux.html)
   Powerline ebuilds, co-maintained by a [frequent Powerline
