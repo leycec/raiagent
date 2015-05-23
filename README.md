@@ -28,8 +28,9 @@ Python, cryptography, emulation, and roguelikes. Prominent ebuilds include:
 * [PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3
   branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a
   cross-platform Python freezing utility. `raiagent` unofficially hosts
-  PyInstaller ebuilds, as well as frequently committing to the [PyInstaller
-  codebase](https://github.com/leycec/pyinstaller).
+  PyInstaller ebuilds, as well as [frequently
+  committing]((https://github.com/leycec/pyinstaller)) to the official
+  PyInstaller codebase.
 * [Cataclysm: Dark Days Ahead](http://en.cataclysmdda.com), a post-apocalyptic
   survival horror roguelike. `raiagent`
   [officially hosts](http://www.wiki.cataclysmdda.com/index.php?title=How_to_compile#Gentoo)
@@ -75,8 +76,8 @@ that *other* [disreputable fellow](http://paludis.exherbo.org)), this is:
 
 `raiagent` is thanks to the concerted efforts of [numerous
 committers](https://github.com/leycec/raiagent/graphs/contributors), including
-(...but hardly limited to):
+(but certainly *not* limited to):
 
 * Nikolai Aleksandrovich Pavlov ([ZyX-I](https://github.com/ZyX-I)), whose
-  gracious contributions to the suite of [Powerline ebuilds](https://github.com/leycec/raiagent/tree/master/app-misc) has been *utterly* invaluable. Thanks,
+  gracious contributions to the suite of [Powerline ebuilds](https://github.com/leycec/raiagent/tree/master/app-misc) has been unutterably invaluable. Thanks,
   Nikolai. Your Sisyphean efforts will not go unremembered.
