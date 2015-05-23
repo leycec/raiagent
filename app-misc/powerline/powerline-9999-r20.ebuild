@@ -6,8 +6,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo", the latter is inherited
-# after the former.
+# precedence over those defined by "readme.gentoo", inherit the latter later.
 inherit eutils readme.gentoo distutils-r1 git-r3
 
 DESCRIPTION="Python-based statusline/prompt utility"
