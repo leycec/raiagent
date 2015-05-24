@@ -74,10 +74,20 @@ that *other* [disreputable fellow](http://paludis.exherbo.org)), this is:
 
 ## Contributors
 
-`raiagent` is thanks to the concerted efforts of [numerous
-committers](https://github.com/leycec/raiagent/graphs/contributors), including
-(but certainly *not* limited to):
+`raiagent` is thanks to the concerted efforts of numerous
+[committers](https://github.com/leycec/raiagent/graphs/contributors) and
+[issue reporters](https://github.com/leycec/raiagent/issues) – especially:
 
 * Nikolai Aleksandrovich Pavlov ([ZyX-I](https://github.com/ZyX-I)), whose
   gracious contributions to the suite of [Powerline ebuilds](https://github.com/leycec/raiagent/tree/master/app-misc) has been unutterably invaluable. Thanks,
   Nikolai. Your Sisyphean efforts will not go unremembered.
+
+## See Also
+
+[`leycec`](https://github.com/leycec), the principal maintainer of `raiagent`,
+actively contributes to numerous other third-party Gentoo overlays – especially:
+
+* [stefan-gr](https://github.com/stefan-gr)'s
+  [`abendbrot`](https://github.com/stefan-gr/abendbrot) overlay, emphasizing
+  emulation frontends (e.g., [EmulationStation](http://www.emulationstation.org),
+  [RetroArch](http://www.libretro.com)).
