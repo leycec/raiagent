@@ -15,7 +15,7 @@ KEYWORDS=""
 IUSE="test"
 
 DEPEND=""
-RDEPEND=""
+RDEPEND="!dev-libs/libvterm-neovim"
 
 src_prepare() {
 	# Prevent "libtool" from emitting ignorable warnings during installation
