@@ -35,7 +35,7 @@ DEPEND="
 		dev-python/pexpect[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		|| (
-			x11-libs/libvterm
+			dev-libs/libvterm
 			dev-libs/libvterm-neovim
 		)
 		app-misc/powerline-bot-ci
