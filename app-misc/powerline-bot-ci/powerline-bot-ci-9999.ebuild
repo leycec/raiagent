@@ -3,9 +3,7 @@
 # $Header: $
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
-
-inherit python-r1 git-r3
+inherit git-r3
 
 DESCRIPTION="Shell scripts used for building powerline test dependencies"
 HOMEPAGE="https://github.com/powerline/bot-ci"
@@ -18,13 +16,8 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
 IUSE=""
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-RDEPEND="
-	dev-python/pexpect
-	dev-python/psutil[${PYTHON_USEDEP}]
-	x11-libs/libvterm
-"
+RDEPEND=""
 DEPEND=""
 
 # Such scripts are principally intended to be used with Travis and hence

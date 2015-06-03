@@ -15,13 +15,13 @@ KEYWORDS=""
 IUSE="test"
 
 DEPEND=""
-RDEPEND=""
+RDEPEND="!dev-libs/libvterm-neovim"
 
 src_prepare() {
 	# Prevent "libtool" from emitting ignorable warnings during installation
 	# resembling:
 	#
-	#     libtool: warning: '/var/tmp/portage/x11-libs/libvterm-9999-r1/work/libvterm-9999/libvterm.la' has not been installed in '/usr/local/lib'
+	#     libtool: warning: '/var/tmp/portage/dev-libs/libvterm-9999-r2/work/libvterm-9999/libvterm.la' has not been installed in '/usr/local/lib'
 	#     libtool: warning: remember to run 'libtool --finish /usr/local/lib'
 	#
 	# We pass both "--no-warnings" *AND* "--warnings=none" to guarantee this.
