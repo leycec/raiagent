@@ -3,6 +3,15 @@
 # $Header: $
 EAPI="5"
 
+#FIXME: As much as is feasible, the differences between the live- and non-live
+#ebuilds should be automated away. For example, with conditionals resembling:
+#
+#    if [[ ${PV} == "9999" ]] ; then
+#        ...
+#    else
+#        ...
+#    fi
+
 # To simplify maintenance, this ebuild differs from the live ebuild by:
 #
 # * Defining the ${MY_PN}, ${MY_P}, ${SRC_URI}, and ${S} globals.
