@@ -1,7 +1,7 @@
 raiagent
 ===========
 
-Welcome to `raiagent`, the third-party Gentoo overlay where
+**Welcome to `raiagent`,** the third-party Gentoo overlay where
 [Raia](https://en.wikipedia.org/wiki/Raja_%28genus%29) and gentlemanly conduct
 collide.
 
