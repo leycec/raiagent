@@ -3,23 +3,6 @@
 # $Header: $
 EAPI="5"
 
-#FIXME: As much as is feasible, the differences between the live- and non-live
-#ebuilds should be automated away. For example, with conditionals resembling:
-#
-#    if [[ ${PV} == "9999" ]] ; then
-#        ...
-#    else
-#        ...
-#    fi
-
-# To simplify maintenance, this ebuild differs from the live ebuild by:
-#
-# * Defining the ${MY_PN}, ${MY_P}, ${SRC_URI}, and ${S} globals.
-# * *NOT* inheriting the "git-r3" eclass or defining corresponding globals.
-# * *NOT* defining the "test" USE flag, any logic referencing such flag, or the
-#   python_test() phase function. Only the live repository currently provides
-#   tests, complicating our life. 
-
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
