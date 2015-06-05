@@ -3,23 +3,35 @@
 # $Header: $
 EAPI="5"
 
+#FIXME: As much as is feasible, the differences between the live- and non-live
+#ebuilds should be automated away. For example, with conditionals resembling:
+#
+#    if [[ ${PV} == "9999" ]] ; then
+#        ...
+#    else
+#        ...
+#    fi
+
+# To simplify maintenance, this ebuild differs from the live ebuild by:
+#
+# * Defining the ${MY_PN}, ${MY_P}, ${SRC_URI}, and ${S} globals.
+# * *NOT* inheriting the "git-r3" eclass or defining corresponding globals.
+# * *NOT* defining the "test" USE flag, any logic referencing such flag, or the
+#   python_test() phase function. Only the live repository currently provides
+#   tests, complicating our life. 
+
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo", inherit the latter later.
-inherit eutils readme.gentoo distutils-r1 git-r3
+inherit eutils readme.gentoo distutils-r1
 
 DESCRIPTION="Python-based statusline/prompt utility"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-SRC_URI=""
-
-EGIT_REPO_URI="https://github.com/powerline/powerline"
-EGIT_BRANCH="develop"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS=""
-IUSE="awesome busybox bash dash doc extra fish fonts man mksh rc qtile test tmux vim zsh"
+IUSE="awesome busybox bash dash doc extra fish fonts man mksh rc qtile tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Some optional dependencies are only available for a limited subset of
@@ -31,15 +43,6 @@ DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? (
-		dev-python/pexpect[${PYTHON_USEDEP}]
-		dev-python/psutil[${PYTHON_USEDEP}]
-		|| (
-			dev-libs/libvterm
-			dev-libs/libvterm-neovim
-		)
-		app-misc/powerline-bot-ci
-	)
 "
 RDEPEND="
 	media-fonts/powerline-symbols
@@ -60,6 +63,33 @@ RDEPEND="
 	zsh? ( app-shells/zsh )
 "
 
+if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+
+	EGIT_REPO_URI="https://github.com/powerline/powerline"
+	EGIT_BRANCH="develop"
+	SRC_URI=""
+	KEYWORDS=""
+
+	# Only the live repository currently provides tests, complicating our life.
+	IUSE+=" test"
+	DEPEND+="
+	test? (
+		dev-python/pexpect[${PYTHON_USEDEP}]
+		dev-python/psutil[${PYTHON_USEDEP}]
+		|| (
+			dev-libs/libvterm
+			dev-libs/libvterm-neovim
+		)
+	)"
+else
+	MY_PN="powerline-status"
+	MY_P="${MY_PN}-${PV}"
+	SRC_URI="mirror://pypi/p/${MY_PN}/${MY_P}.tar.gz"
+	KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+	S="${WORKDIR}/${MY_P}"
+fi
+
 # Source directory containing application-specific Powerline bindings, from
 # which all non-Python files will be removed. See python_prepare_all().
 POWERLINE_SRC_BINDINGS_PYTHON_DIR="${S}"/powerline/bindings
@@ -76,8 +106,70 @@ POWERLINE_TMP_BINDINGS_DIR="${T}"/bindings-full
 POWERLINE_HOME=/usr/share/powerline
 POWERLINE_HOME_EROOTED="${EROOT}"usr/share/powerline/
 
-# Note the lack of an assignment to ${S} here. Under live ebuilds, the default
-# ${S} suffices.
+# Powerline's Travis-specific continuous integration repository.
+TEST_EGIT_REPO_URI="https://github.com/powerline/bot-ci"
+TEST_EGIT_BRANCH="master"
+
+if [[ ${PV} == 9999 ]]; then
+	src_fetch() {
+		git-r3_src_fetch
+
+		# If testing, fetch Powerline's Travis-specific continuous integration
+		# repository. Powerline requires the following files from such
+		# repository when testing:
+		# 
+		# * "scripts/common/main.sh".
+		if use test; then
+			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}"\
+			EGIT_BRANCH="${TEST_EGIT_BRANCH}"\
+				git-r3_src_fetch
+		fi
+	}
+
+	src_unpack() {
+		git-r3_src_unpack
+
+		# If testing, clone the previously fetched repository directly into
+		# Powerline's test tree.
+		if use test; then
+			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}"\
+			EGIT_BRANCH="${TEST_EGIT_BRANCH}"\
+			EGIT_CHECKOUT_DIR="${S}/tests/bot-ci"\
+				git-r3_src_unpack
+		fi
+	}
+
+	python_test() {
+		# Temporarily replace the source bindings directory currently containing
+		# only Python files with the temporary bindings directory containing all
+		# original files. Tests require unmodified bindings.
+		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
+		cp -R "${POWERLINE_TMP_BINDINGS_DIR}" "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" ||
+			die '"cp" failed.'
+
+		#FIXME: This is pretty terrible, and will definitely prevent Powerline
+		#from being added to Portage. Can the tests be improved so as not to
+		#break ebuild sandboxing? If not, would it be possible to disable those
+		#tests breaking ebuild sandboxing? Even that would probably be
+		#preferable to the current approach. Sandboxing is crucial. It should
+		#not be circumvented for *ANY* reason -- even reasons as ostensibly
+		#valid as this.
+
+		# Circumvent Portage's ${LD_PRELOAD}-based ebuild sandbox for the
+		# duration of Powerline shell tests, which currently break sandboxing.
+		env -i\
+			USER="${USER}"\
+			HOME="${HOME}"\
+			LANG=en_US.UTF-8\
+			PATH="${PATH}"\
+			PYTHON="${PYTHON}"\
+			"${S}"/tests/test.sh || die 'Tests failed.'
+
+		# Revert the source bindings directory to only contain Python files.
+		rm -r "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"rm" failed.'
+		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{.bak,} || die '"mv" failed.'
+	}
+fi
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -107,17 +199,13 @@ python_prepare_all() {
 	cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" ||
 		die '"cp" failed.'
 
-	# If running unit tests...
-	if use test; then
+	# If testing...
+	if [[ ${PV} == 9999 ]] && use test; then
 		# Additionally copy such bindings to a second temporary directory. Since
-		# unit tests require all bindings *AND* since subsequent logic removes
-		# files from the first such directory, no such files will be removed
-		# from the second such directory.
+		# tests require all bindings *AND* since subsequent logic removes files
+		# from the first such directory, no such files will be removed from the
+		# second such directory.
 		cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_DIR}" ||
-			die '"cp" failed.'
-
-		# Copy all unit test-specific shell scripts into the unit test tree.
-		cp -R /usr/share/powerline-bot-ci "${S}"/tests/bot-ci ||
 			die '"cp" failed.'
 	fi
 
@@ -157,36 +245,6 @@ python_compile_all() {
 		sphinx-build -b man "${S}"/docs/source man_pages ||
 			die 'Manpage compilation failed.'
 	fi
-}
-
-python_test() {
-	# Temporarily replace the source bindings directory currently containing
-	# only Python files with the temporary bindings directory containing all
-	# original files. Unit tests require unmodified bindings.
-	mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
-	cp -R "${POWERLINE_TMP_BINDINGS_DIR}" "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" ||
-		die '"cp" failed.'
-
-	#FIXME: This is pretty terrible, and will definitely prevent Powerline from
-	#being added to Portage. Can the unit tests be improved so as not to break
-	#ebuild sandboxing? If not, would it be possible to disable those unit
-	#tests breaking ebuild sandboxing? Even that would probably be preferable to
-	#the current approach. Sandboxing is crucial. It should not be circumvented
-	#for *ANY* reason -- even reasons as ostensibly valid as this.
-
-	# Circumvent Portage's ${LD_PRELOAD}-based ebuild sandbox for the duration
-	# of Powerline shell tests, which currently break sandboxing.
-	env -i\
-		USER="${USER}"\
-		HOME="${HOME}"\
-		LANG=en_US.UTF-8\
-		PATH="${PATH}"\
-		PYTHON="${PYTHON}"\
-		"${S}"/tests/test.sh || die 'Unit tests failed.'
-
-	# Revert the source bindings directory to only contain Python files again.
-	rm -r "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"rm" failed.'
-	mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{.bak,} || die '"mv" failed.'
 }
 
 python_install_all() {
