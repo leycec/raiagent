@@ -50,10 +50,9 @@ CATACLYSM_HOME="${GAMES_DATADIR}/${PN}"
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="github.com/CleverRaven/Cataclysm-DDA.git"
+	EGIT_REPO_URI="https://github.com/CleverRaven/Cataclysm-DDA.git"
 	SRC_URI=""
 	KEYWORDS=""
-	S="${WORKDIR}/Cataclysm-DDA-${PV}"
 else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
@@ -71,7 +70,6 @@ else
 	S="${WORKDIR}/Cataclysm-DDA-${MY_PV}"
 fi
 
-# The Makefile is surprisingly Gentoo-friendly. (Thanks!)
 src_prepare() {
 	# Strip the following from the the Makefile:
 	#
@@ -165,43 +163,6 @@ src_install() {
 		emake install "${CATACLYSM_EMAKE_SDL[@]}"
 	fi
 
-	# # Install executable-agnostic data files.
-	# insinto "${CATACLYSM_HOME}"
-	# doins -r data
-    #
-	# # If enabling ncurses, install the ncurses-based executable.
-	# if use ncurses; then
-	# 	# The "cataclysm" binary expects to be executed from its home directory.
-	# 	# Install a shell script "cataclysm-dda-ncurses" ensuring this. While
-	# 	# the tarball prebundles a similar wrapper "cataclysm-launcher", such
-	# 	# script is both trivial and *NOT* terribly helpful.
-	# 	games_make_wrapper "${PN}-ncurses" ./cataclysm "${CATACLYSM_HOME}"
-    #
-	# 	# Install such executable.
-	# 	exeinto "${CATACLYSM_HOME}"
-	# 	doexe cataclysm
-	# fi
-    #
-	# # If enabling SDL, install the SDL-based executable and support files.
-	# if use sdl; then
-	# 	# Install such executable and wrapper, as above.
-	# 	games_make_wrapper "${PN}-sdl" ./cataclysm-tiles "${CATACLYSM_HOME}"
-	# 	exeinto "${CATACLYSM_HOME}"
-	# 	doexe cataclysm-tiles
-    #
-	# 	# Install SDL support files.
-	# 	insinto "${CATACLYSM_HOME}"
-	# 	doins -r gfx
-	# fi
-
 	# Force game-specific user and group permissions.
 	prepgamesdirs
-
-	# Since playing Cataclysm requires write access to its home directory,
-	# forcefully grant such access to users in group "games". This is clearly
-	# non-ideal, but there's not much we can do about that... for the moment.
-	# fperms -R g+w "${CATACLYSM_HOME}"
-
-	# Install documentation.
-	# dodoc CONTRIBUTING.md README.md
 }
