@@ -17,8 +17,9 @@ In the course of your ordeal there will be opportunities and temptations to impr
 	</upstream>
 	<use>
 		<flag name="clang">Build with clang++ rather than g++ (experimental!)</flag>
-		<flag name="lua">Enable Lua scripting support (recommended)</flag>
+		<flag name="lua">Enable Lua scripting support (e.g., for modding)</flag>
 		<flag name="ncurses">Install ncurses-based terminal executable (recommended)</flag>
 		<flag name="sdl">Install SDL-based X11 executable (recommended)</flag>
+		<flag name="sound">Enable SDL-based sound support</flag>
 	</use>
 </pkgmetadata>

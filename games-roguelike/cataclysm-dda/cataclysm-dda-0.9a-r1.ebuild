@@ -31,8 +31,8 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="clang lua ncurses sdl"
 REQUIRED_USE="
-    lua? ( sdl )
-    || ( ncurses sdl )
+	lua? ( sdl )
+	|| ( ncurses sdl )
 "
 
 RDEPEND="
