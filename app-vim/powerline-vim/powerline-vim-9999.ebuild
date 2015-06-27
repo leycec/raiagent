@@ -1,24 +1,17 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 EAPI="5"
 
-# Enforce Bash scrictness.
-set -e
-
-EGIT_REPO_URI="https://github.com/powerline/powerline"
-EGIT_BRANCH="develop"
-
 # Since eclasses cannot be conditionally inherited, this ebuild remains distinct
 # from the top-level Powerline ebuild at "app-misc/powerline".
-inherit vim-plugin git-r3
+inherit vim-plugin
 
 DESCRIPTION="Vim plugin for Python-based Powerline"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
-LICENSE="MIT"
 
+LICENSE="MIT"
 SLOT="0"
-KEYWORDS=""
 IUSE=""
 DEPEND="|| (
 	>=app-editors/vim-7.2[python]
@@ -31,23 +24,38 @@ RDEPEND="${DEPEND}
 # Basename of this plugin's help file.
 VIM_PLUGIN_HELPFILES="Powerline"
 
-# Note the lack of an assignment to ${S} here. Under live ebuilds, the default
-# ${S} suffices.
+if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+
+	EGIT_REPO_URI="https://github.com/powerline/powerline"
+	EGIT_BRANCH="develop"
+	KEYWORDS=""
+else
+	MY_PN="powerline-status"
+	MY_P="${MY_PN}-${PV}"
+	SRC_URI="mirror://pypi/p/${MY_PN}/${MY_P}.tar.gz"
+	KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+	S="${WORKDIR}/${MY_P}"
+fi
 
 src_prepare() {
-	# vim-plugin_src_install() expects ${S} to be the Vim plugin directory to be
-	# installed to "/usr/share/vim/vimfiles". Ensure this by temporarily moving
-	# such directory away, deleting everything remaining under ${S}, and moving
-	# such directory back to ${S}.
-	mkdir "${T}"/ignore
-	mv "${S}"/powerline/bindings/vim "${T}"
-	mv * "${T}"/ignore
-	mv "${T}"/vim/* "${S}"
+	# vim-plugin_src_install() expects that ${S} is the top-level directory for
+	# the Vim plugin to be installed to "/usr/share/vim/vimfiles". To guarantee
+	# this, that directory is moved to "${T}/vim", everything else
+	# under ${S} is moved to "${T}/ignore", and that directory is moved back
+	# directly into ${S}.
+	mkdir "${T}"/ignore || die '"mkdir" failed.'
+	mv "${S}"/powerline/bindings/vim "${T}" || die '"mv" failed.'
+	mv * "${T}"/ignore || die '"mv" failed.'
+	mv "${T}"/vim/* "${S}" || die '"mv" failed.'
 
-	# Remove all remaining Python files to prevent vim-plugin_src_install() from
-	# installing such files as documentation.
-	find . -type f -name '*.py' -delete
+	# Remove all remaining Java and Python files to prevent
+	# vim-plugin_src_install() from installing such files as documentation.
+	# Which, if you think about it, is a pretty terrible default behaviour.
+	find . -type f '(' -name '*.class' -o -name '*.py' ')' -delete ||
+		die '"find" failed.' 
 
-	# Remove nonstandard paths from the plugin's implementation.
-	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim
+	# Remove nonstandard paths from this plugin's implementation.
+	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim ||
+		die '"sed" failed.'
 }
