@@ -15,9 +15,9 @@ raiagent
 
 ## Motivation
 
-`raiagent` publishes well-documented ebuilds unabashedly biased toward technological self-empowerment.
+`raiagent` publishes well-documented ebuilds unabashedly biased toward technological self-empowerment.<sup>1</sup>
 
-Yes, we believe most of the specious doggerel underflowing the prior sentence.
+<sup>1. We *actually* believe most of the specious doggerel tastelessly defibrillating this sentence.</sup>
 
 ### CLI
 
