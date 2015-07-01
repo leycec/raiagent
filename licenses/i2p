@@ -1,0 +1,290 @@
+This product includes both public domain code and licensed code as described below.
+For all code, unless otherwise stated in the appropriate license, the following applies:
+
+
+                            NO WARRANTY
+
+  BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+REPAIR OR CORRECTION.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGES.
+
+
+
+LICENSES
+--------
+
+Core (i2p.jar):
+Public domain except as listed below:
+
+   ElGamal and DSA code:
+   Copyright (c) 2003, TheCrypto
+   See licenses/LICENSE-ElGamalDSA.txt
+
+   SHA256 and HMAC:
+   Copyright (c) 2000 - 2004 The Legion Of The Bouncy Castle
+   See licenses/LICENSE-SHA256.txt
+
+   AES code:
+   Copyright (c) 1995-2005 The Cryptix Foundation Limited.
+   See licenses/LICENSE-Cryptix.txt
+
+   Crypto filters:
+   From the xlattice app - http://xlattice.sourceforge.net/
+   See licenses/LICENSE-BSD.txt
+
+   SNTP code:
+   Copyright (c) 2004, Adam Buckley
+   See licenses/LICENSE-SNTP.txt
+
+   PRNG:
+   Copyright (C) 2001, 2002, Free Software Foundation, Inc.
+   See licenses/LICENSE-LGPLv2.1.txt
+
+   HashCash code:
+   Copyright 2006 Gregory Rubin grrubin@gmail.com
+   See licenses/LICENSE-HashCash.txt
+
+   GettextResource from gettext v0.18:
+   Copyright (C) 2001, 2007 Free Software Foundation, Inc.
+   See licenses/LICENSE-LGPLv2.1.txt
+
+   SSLEepGet:
+   Contains some code Copyright 2006 Sun Microsystems, Inc.
+   See licenses/LICENSE-InstallCert.txt
+
+   BlockFile:
+   Copyright (c) 2006, Matthew Estes
+   See licenses/LICENSE-BlockFile.txt
+
+   SipHashInline:
+   Copyright 2012  Hiroshi Nakamura <nahi@ruby-lang.org>
+   See licenses/LICENSE-Apache2.0.txt
+
+   Getopt:
+   Copyright (c) 1998 by Aaron M. Renn (arenn@urbanophile.com)
+   See licenses/LICENSE-LGPLv2.1.txt
+
+   HostnameVerifier:
+   From Apache HttpClient 4.4.1 and HttpCore 4.4.1
+   See licenses/LICENSE-Apache2.0.txt
+
+
+Router (router.jar):
+Public domain except as listed below:
+   UPnP.java:
+   From freenet
+   See licenses/LICENSE-GPLv2.txt
+
+   UPnP subsystem (CyberLink) 3.0:
+   Copyright (C) 2003-2010 Satoshi Konno
+   See licenses/LICENSE-UPnP.txt
+
+   GeoIP: GeoLite databases are licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
+   http://creativecommons.org/licenses/by-sa/3.0/
+   This product includes GeoLite data created by MaxMind, available from http://www.maxmind.com/
+
+
+Installer:
+   Launch4j 3.0.1:
+   Copyright (c) 2004, 2008 Grzegorz Kowal
+   See licenses/LICENSE-Launch4j.txt (in binary packages)
+   See installer/lib/launch4j/LICENSE.txt (in source packages)
+   The following projects are used by Launch4j...
+        MinGW binutils (http://www.mingw.org/)
+
+        Commons BeanUtils (http://jakarta.apache.org/commons/beanutils/)
+
+        Commons Logging (http://jakarta.apache.org/commons/logging/)
+        See licenses/LICENSE-Apache2.0.txt
+        See licenses/NOTICE-Commons-Logging.txt
+
+        XStream (http://xstream.codehaus.org/)
+        Copyright (c) 2003-2004, Joe Walnes
+        See licenses/LICENSE-XStream.txt
+
+        JGoodies Forms (http://www.jgoodies.com/freeware/forms/)
+        Copyright (c) 2002-2004 JGoodies Karsten Lentzsch. All rights reserved.
+        See licenses/LICENSE-JGoodies-Forms.txt
+
+        JGoodies Looks (http://www.jgoodies.com/freeware/looks/)
+        Copyright (c) 2003 JGoodies Karsten Lentzsch. All rights reserved.
+        See licenses/LICENSE-JGoodies-Looks.txt
+
+        Foxtrot (http://foxtrot.sourceforge.net/)
+        Copyright (c) 2002, Simone Bordet & Marco Cravero. All rights reserved.
+        See licenses/LICENSE-Foxtrot.txt
+
+        Nuvola Icon Theme (http://www.icon-king.com)
+        See licenses/LICENSE-LGPLv2.1.txt
+
+        Forms were created using Abeille Forms Designer (https://abeille.dev.java.net/)
+
+   Izpack 4.3.0:
+   Copyright (c) 2001-2008 Julien Ponge
+   See licenses/LICENSE-Apache2.0.txt
+
+
+
+Java Service Wrapper Community Edition 32-bit 3.5.25:
+   Copyright (C) 1999-2011 Tanuki Software, Ltd. All Rights Reserved.
+   See licenses/LICENSE-Wrapper.txt
+
+
+Jbigi Libraries (jbigi.jar):
+   JNI code public domain.
+
+   GMP 4.3.2 / 5.0.2:
+   Copyright 1991, 1996, 1999, 2000, 2007 Free Software Foundation, Inc.
+   See licenses/LICENSE-LGPLv3.txt
+
+
+Applications:
+
+   Addressbook:
+   Copyright (c) 2004 Ragnarok
+   See licenses/LICENSE-Addressbook.txt
+
+   BOB:
+   Copyright (C) sponge
+   See licenses/COPYING-BOB.txt
+
+   I2PSnark:
+   Copyright (C) 2003 Mark J. Wielaard
+   GPLv2 (or any later version)
+   See licenses/LICENSE-GPLv2.txt
+       Silk icons: See licenses/LICENSE-SilkIcons.txt
+
+   I2PTunnel:
+   (c) 2003 - 2004 mihi
+   GPLv2 (or any later version) with exception.
+   See licenses/LICENSE-I2PTunnel.txt
+   See licenses/LICENSE-GPLv2.txt
+
+   I2PTunnel SOCKS Proxy:
+   Copyright (c) 2004 by human
+   GPLv2 (or any later version) with exception.
+   See licenses/LICENSE-I2PTunnel.txt
+   See licenses/LICENSE-GPLv2.txt
+
+   I2PTunnel UDP and Streamr:
+   By welterde.
+   See licenses/LICENSE-GPLv2.txt
+
+   Jetty 8.1.17.v20150415:
+   See licenses/ABOUT-Jetty.html
+   See licenses/NOTICE-Jetty.html
+   See licenses/LICENSE-Apache2.0.txt
+   See licenses/LICENSE-ECLIPSE-1.0.html
+   See licenses/NOTICE-Commons-Logging.txt
+
+   JRobin 1.5.9.1:
+   See licenses/LICENSE-LGPLv2.1.txt
+
+   Ministreaming Lib:
+   By mihi.
+   See licenses/LICENSE-BSD.txt
+
+   Proxyscript:
+   By Cervantes.
+   Public domain.
+
+   Router console:
+   Public domain.
+       Flag icons:
+         - Jersey and EU flag icons: public domain, courtesy Xrmap flag
+           collection http://www.arvernes.com/wiki/index.php/Xrmap
+         - Guernsey and Isle of Man flags from the Open Clip Art Library, released into the public domain
+         - Curaçao, courtesy of David Benbennick, released into the public domain
+         - All other flag icons: public domain, courtesy mjames@gmail.com http://www.famfamfam.com/
+       Silk icons: See licenses/LICENSE-SilkIcons.txt
+       FatCow icons: See licenses/LICENSE-FatCowIcons.txt
+
+       GeoIP Data:
+       This product includes GeoLite data created by MaxMind, available from http://www.maxmind.com/
+       See licenses/LICENSE-GeoIP.txt
+
+   Router Console and I2PSnark themes:
+   "Man with hat over face" & related images licensed under a Creative Commons 2.0 license.
+   Original photos by Florian Kuhlmann. http://www.flickr.com/photos/floriankuhlmann/3117758155
+
+   I2PSnark light theme:
+   "Creative Commons Cat" licensed under a Creative Commons Attribution 3.0 Unported License.
+   Original photo by Boaz Arad. http://www.luxphile.com/2011/01/creative-commons-cat.html
+
+   SAM:
+   Public domain.
+
+   Streaming Lib:
+   Public domain.
+
+   SusiDNS:
+   Copyright (C) 2005 <susi23@mail.i2p>
+   GPLv2 (or any later version)
+   See licenses/LICENSE-GPLv2.txt
+       Uses Glassfish Standard Tag Library (JSTL) 1.2:
+       Common Development and Distribution License (CDDL) version 1.0 + GNU General Public License (GPL) version 2
+       See https://glassfish.dev.java.net/public/CDDL+GPL.html
+       See licenses/LICENSE-GPLv2.txt
+
+   SusiMail:
+   Copyright (C) 2004-2005  <susi23@mail.i2p>
+   GPLv2 (or any later version)
+   See licenses/LICENSE-GPLv2.txt
+
+   Systray:
+   Public domain.
+      Bundles systray4j-2.4.1:
+      See licenses/LICENSE-LGPLv2.1.txt
+
+   Tomcat 6.0.43:
+   Copyright 1999-2014 The Apache Software Foundation
+   See licenses/LICENSE-Apache2.0.txt
+   See licenses/NOTICE-Tomcat.txt
+
+
+Other Applications and Libraries
+--------------------------------
+The following applications and libraries are not used or bundled in
+binary packages, therefore the licenses are not included in binary
+distributions. See the source package for the additional license information.
+
+   Admin Manager:
+   Public domain
+
+   BOB Demos:
+   Copyright (C) sponge
+   DWTFYWTPL
+
+   Desktopgui
+   Copyright (c) Mathias De Maré
+   See apps/desktopgui/LICENSE
+
+   SAM C Library:
+   Copyright (c) 2004, Matthew P. Cashdollar <mpc@innographx.com>
+   See apps/sam/c/doc/license.txt
+
+   SAM C# Library:
+   Public domain.
+   See apps/sam/csharp/README
+
+   SAM Perl Library:
+   See licenses/LICENSE-GPLv2.txt
+
+   SAM Python Library:
+   Public domain.
