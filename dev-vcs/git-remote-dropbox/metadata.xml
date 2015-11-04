@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+git-remote-dropbox is a transparent bidirectional bridge between Git and Dropbox. It lets you use a Dropbox folder or a shared folder as a Git remote!
+
+This Git remote helper makes Dropbox act like a true Git remote. It maintains all guarantees that are provided by a traditional Git remote while using Dropbox as a backing store. This means that it works correctly even when there are multiple people operating on the repository at once, making it possible to use a Dropbox shared folder as a Git remote for collaboration.
+
+Once the helper is installed, using it is as simple as adding a remote like "dropbox://path/to/repo".
+</longdescription>
+	<upstream>
+		<doc lang="en">https://github.com/anishathalye/git-remote-dropbox</doc>
+        <bugs-to>https://github.com/anishathalye/git-remote-dropbox/issues</bugs-to>
+	</upstream>
+</pkgmetadata>
