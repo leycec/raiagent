@@ -1,13 +1,13 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 EAPI=5
 
 # This is the Python 3-specific branch of PyInstaller, the most active
 # development branch thereof. While such branch *MIGHT* be nominally compatible
 # with Python 2.7, this is unlikely to (stably) be the case. Hence, both
 # "python2_7" and "pypy" are omitted here.
-PYTHON_COMPAT=( python{3_3,3_4} pypy3 )
+PYTHON_COMPAT=( python{3_3,3_4,3_5} pypy3 )
 
 # "waf" requires a threading-enabled Python interpreter.
 PYTHON_REQ_USE='threads(+)'
@@ -68,16 +68,16 @@ python_prepare_all() {
 
 	# Install only the non-debug Linux bootloader specific to the architecture
 	# of the current machine.
-	sed\
-		-e '/.*bootloader\/\*\/*.*/s~\*/\*~Linux-'${arch_word_size}'bit/run~'\
-		-i setup.py || die '"sed" failed.'
+	sed -i \
+		-e '/.*bootloader\/\*\/*.*/s~\*/\*~Linux-'${arch_word_size}'bit/run~' \
+		setup.py || die '"sed" failed.'
 
 	# Avoid stripping bootloader binaries and prevent the bootloader from being
 	# compiled under "suboptimal" ${CFLAGS}.
-	sed\
-		-e "/features='strip',$/d"\
-		-e "s~\\(\\s*\\)ctx.env.append_value('CFLAGS', '-O2')$~\\1pass~"\
-		-i bootloader/wscript || die '"sed" failed.'
+	sed -i \
+		-e "/features='strip',$/d" \
+		-e "s~\\(\\s*\\)ctx.env.append_value('CFLAGS', '-O2')$~\\1pass~" \
+		bootloader/wscript || die '"sed" failed.'
 
 	# Continue with the default behaviour.
 	distutils-r1_python_prepare_all
