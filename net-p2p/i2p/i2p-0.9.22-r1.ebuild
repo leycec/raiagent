@@ -269,7 +269,25 @@ wrapper.java\.library\.path.3='${EROOT}'usr/lib/java-service-wrapper' \
 	readme.gentoo_create_doc
 }
 
-# On first installation, print Gentoo-specific documentation.
 pkg_postinst() {
+	# On first installation, print Gentoo-specific documentation.
 	readme.gentoo_print_elog
+
+	# On subsequent updates, print the following instructions.
+	if [[ -n ${REPLACING_VERSIONS} ]]; then
+		elog \
+'If I2P fails to properly start after this upgrade, check the I2P logfile at'
+		elog \
+'"/var/log/i2p/log-router-0.txt". When in doubt, the simplest solution is to'
+		elog \
+'remove your entire I2P configuration and begin anew: e.g.,'
+		elog
+		elog '    $ sudo mv '${I2P_STATE_DIR}' /tmp/.i2p.bad'
+		elog '    $ sudo rc-service i2p restart'
+		elog
+		elog \
+'While I2P does attempt to preserve backward compatibility across upgrades,'
+		elog \
+"Murphy's Law and personal experience suggests otherwise."
+	fi
 }
