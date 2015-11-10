@@ -3,37 +3,25 @@
 # $Id$
 EAPI=5
 
-# This is the Python 3-specific branch of PyInstaller, the most active
-# development branch thereof. While such branch *MIGHT* be nominally compatible
-# with Python 2.7, this is unlikely to (stably) be the case. Hence, both
-# "python2_7" and "pypy" are omitted here.
-PYTHON_COMPAT=( python{3_3,3_4,3_5} pypy3 )
+# PyInstaller assumes CPython internals and is hence currently incompatible with
+# alternative interpreters (e.g., PyPy).
+PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} )
 
 # "waf" requires a threading-enabled Python interpreter.
 PYTHON_REQ_USE='threads(+)'
 
 # Order of operations is significant here. Since we explicitly call "waf-utils"
-# but *NOT* "distutils-r1" phase functions, ensure that the latter remain the
-# default by inheriting the latter *AFTER* the former.
-inherit waf-utils distutils-r1 git-r3
+# but *NOT* "distutils-r1" phase functions, ensure the latter remain the default
+# by inheriting the latter *AFTER* the former.
+inherit waf-utils distutils-r1
 
 DESCRIPTION="Program converting Python programs into stand-alone executables"
 HOMEPAGE="http://www.pyinstaller.org"
-SRC_URI=""
-
-EGIT_REPO_URI="https://github.com/pyinstaller/pyinstaller"
-EGIT_BRANCH="python3"
 
 LICENSE="pyinstaller"
 SLOT="0"
-KEYWORDS=""
 
-#FIXME: Add support for command-line options accepted by "bootloader/wscript",
-#run by the call to waf-utils_src_configure() below (e.g., "--leak-detector",
-#"--clang"). Also add a "debug" USE flag for switching between release and
-#debug builds.
-
-IUSE="doc"
+IUSE="clang debug doc leak-detector"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 #FIXME: Interestingly, PyInstaller itself has no hard or soft dependencies
@@ -44,7 +32,11 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #exhaustive list of such dependencies, see "tests/test-requirements.txt".
 
 RDEPEND="${PYTHON_DEPS}"
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	leak-detector? ( dev-libs/boehm-gc )
+	 clang? ( sys-devel/clang )
+	!clang? ( sys-devel/gcc )
+"
 
 # While the typical "waf" project permits "waf" to be run from outside the
 # directory containing "waf", PyInstaller requires "waf" to be run from inside
@@ -54,6 +46,21 @@ WAF_BINARY="./waf"
 # Since the "waf" script bundled with PyInstaller does *NOT* support the
 # conventionel "--libdir" option, prevent such option from being passed.
 NO_WAF_LIBDIR=1
+
+if [[ ${PV} == 9999 ]]; then
+	inherit git-r3
+
+	EGIT_REPO_URI="https://github.com/pyinstaller/pyinstaller"
+	EGIT_BRANCH="develop"
+	SRC_URI=""
+	KEYWORDS=""
+else
+	MY_PN="PyInstaller"
+	MY_P="${MY_PN}-${PV}"
+	SRC_URI="https://github.com/pyinstaller/pyinstaller/releases/download/3.0/${MY_P}.tar.gz"
+	KEYWORDS="~amd64 ~x86"
+	S="${WORKDIR}/${MY_P}"
+fi
 
 python_prepare_all() {
 	# Word size for the current architecture. (There simply *MUST* be a more
@@ -66,17 +73,29 @@ python_prepare_all() {
 	*)     arch_word_size=32;;
 	esac
 
-	# Install only the non-debug Linux bootloader specific to the architecture
-	# of the current machine.
+	# Install only the Linux bootloader specific to:
+	#
+	# * The architecture of the current machine.
+	# * The release type requested for the current installation. Specifically:
+	#   * If the "debug" USE flag is enabled, only install the "run_d" binary.
+	#   * Else, only install the "run" binary.
+	local bootloader_basename='run'
+	use debug && bootloader_basename+='_d'
 	sed -i \
-		-e '/.*bootloader\/\*\/*.*/s~\*/\*~Linux-'${arch_word_size}'bit/run~' \
+		-e '/.*bootloader\/\*\/*.*/s~\*/\*~Linux-'${arch_word_size}'bit/'${bootloader_basename}'~' \
 		setup.py || die '"sed" failed.'
 
-	# Avoid stripping bootloader binaries and prevent the bootloader from being
-	# compiled under "suboptimal" ${CFLAGS}.
+	# Prevent badness during compilation. Specifically (in order):
+	# 
+	# * Avoid stripping bootloader binaries.
+	# * Prevent the bootloader from being compiled under:
+	#   * Hard-coded ${CFLAGS}.
+	#   * gcc option "-Werror", converting compiler warnings to errors and hence
+	#     failing on the first (inevitable) warning.
 	sed -i \
-		-e "/features='strip',$/d" \
+		-e "s~\\(\\s*\\)features\\s*=\\s*'strip'$~\\1pass~" \
 		-e "s~\\(\\s*\\)ctx.env.append_value('CFLAGS', '-O2')$~\\1pass~" \
+		-e "/'CFLAGS',\\s*'-Werror'/d" \
 		bootloader/wscript || die '"sed" failed.'
 
 	# Continue with the default behaviour.
@@ -84,13 +103,22 @@ python_prepare_all() {
 }
 
 python_configure() {
-	# Configure the Linux bootloader. Since Gentoo is *NOT* LSB-compliant, build
-	# a non-LSB-compliant bootloader. Unfortunately, this could reduce the
-	# cross-platform-portability of such bootloader and hence applications
-	# frozen with such bootloader. Until Gentoo supplies an ebuild for building
-	# at least version 4.0 of the LSB tools, there's little we can do here. 
+	# CLI options to be passed to the "waf configure" command run below.
+	local -a waf_configure_options; waf_configure_options=(
+		 # Since Gentoo is *NOT* LSB-compliant, a non-LSB-compliant bootloader
+		 # must be built. Sadly, doing so could reduce the portability of the
+		 # resulting bootloader and hence applications frozen under that
+		 # bootloader. Until Gentoo supplies an ebuild for building at least
+		 # version 4.0 of the LSB tools, there's little we can do here.
+		 --no-lsb
+	)
+	use debug && waf_configure_options+=( --debug )
+	use clang && waf_configure_options+=( --clang )
+	use leak-detector && waf_configure_options+=( --leak-detector )
+
+	# Configure the Linux bootloader.
 	cd bootloader
-	waf-utils_src_configure --no-lsb
+	waf-utils_src_configure "${waf_configure_options[@]}"
 
 	# Continue with the default behaviour.
 	cd "${S}"
@@ -99,10 +127,12 @@ python_configure() {
 
 python_compile() {
 	# Compile the non-debug Linux bootloader. Ideally, we would simply call
-	# waf-utils_src_compile() to do so. Unfortunately, such function attempts to
+	# waf-utils_src_compile() to do so. Unfortunately, that function attempts to
 	# run the "build" WAF task, which for PyInstaller *ALWAYS* fails with the
 	# following fatal error:
+	#
 	#     Call "python waf all" to compile all bootloaders.
+	#
 	# Since the "waf-utils" eclass does *NOT* support running of alternative
 	# tasks, we reimplement waf-utils_src_compile() to do so. (Since this is
 	# lame, we should probably file a feature request with the author of the
@@ -129,8 +159,10 @@ python_compile() {
 python_install_all() {
 	distutils-r1_python_install_all
 
-	# Install documentation.
-	dodoc README.rst TODO doc/*.txt
+	# Install plaintext documentation.
+	dodoc README.rst doc/*.rst
+
+	# If requested, install non-plaintext documentation as well.
 	if use doc; then
 		# Install HTML documentation.
 		dohtml -r doc/*
