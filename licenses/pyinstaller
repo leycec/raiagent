@@ -3,7 +3,7 @@
 ================================
  
 
-Copyright (c) 2010-2013, PyInstaller Development Team
+Copyright (c) 2010-2015, PyInstaller Development Team
 Copyright (c) 2005-2009, Giovanni Bajo
 Based on previous work under copyright (c) 2002 McMillan Enterprises, Inc.
 
@@ -41,14 +41,15 @@ About the PyInstaller Development Team
 The PyInstaller Development Team is the set of contributors
 to the PyInstaller project. A full list with details is kept
 in the documentation directory, in the file
-``doc/credits.txt``.
+``doc/CREDITS.rst``.
 
 The core team that coordinates development on GitHub can be found here:
-https://github.com/pyinstaller/pyinstaller.  As of 2013, it consists of:
+https://github.com/pyinstaller/pyinstaller.  As of 2015, it consists of:
 
-* Giovanni Bajo
 * Hartmut Goebel
 * Martin Zibricky
+* David Vierra
+* David Cortesi
 
 
 Our Copyright Policy
@@ -69,7 +70,7 @@ to indicate the copyright and license terms:
 
 
 #-----------------------------------------------------------------------------
-# Copyright (c) 2013, PyInstaller Development Team.
+# Copyright (c) 2005-20l5, PyInstaller Development Team.
 #
 # Distributed under the terms of the GNU General Public License with exception
 # for distributing bootloader.
@@ -81,6 +82,9 @@ to indicate the copyright and license terms:
 
 GNU General Public License
 --------------------------
+
+https://gnu.org/licenses/gpl-2.0.html
+
 
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
