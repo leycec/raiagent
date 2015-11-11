@@ -3,7 +3,7 @@
 # $Id$
 EAPI=5
 
-# Note that Python 3.4 is explicitly unsupported.
+# Note that Python 3.3 is explicitly unsupported.
 PYTHON_COMPAT=( python{2_7,3_4,3_5} pypy{,3} )
 
 inherit distutils-r1 git-r3

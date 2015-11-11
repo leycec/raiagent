@@ -29,8 +29,9 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_P}"
 DOCS="README.rst"
 
+# Run tests with verbose output failing on the first failing test.
 python_test() {
-	py.test test || die "Unit tests fail under ${EPYTHON}."
+	py.test -vvx test || die "Tests fail under ${EPYTHON}."
 }
 
 python_install_all() {
