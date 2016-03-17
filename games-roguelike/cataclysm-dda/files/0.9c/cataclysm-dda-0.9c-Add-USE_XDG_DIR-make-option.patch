@@ -1,0 +1,99 @@
+From b8afd4966c5c6e6496ce82b06bc77b44acdc4131 Mon Sep 17 00:00:00 2001
+From: Samir Benmendil <samir.benmendil@gmail.com>
+Date: Fri, 8 May 2015 07:51:30 +0100
+Subject: [PATCH] Add USE_XDG_DIR make option (fix #12315)
+
+This adds a make flag to follow the freedesktop.org XDG specs.
+---
+ Makefile          | 12 ++++++++++++
+ src/main.cpp      |  2 +-
+ src/path_info.cpp | 19 +++++++++++++++++++
+ 3 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 3de1a34..347e741 100644
+--- a/Makefile
++++ b/Makefile
+@@ -37,6 +37,8 @@
+ #  make install
+ # Enable lua support. Required only for full-fledged mods.
+ #  make LUA=1
++# Use user's XDG base directories for save files and configs.
++#  make USE_XDG_DIR=1
+ # Use user's home directory for save files.
+ #  make USE_HOME_DIR=1
+ # Use dynamic linking (requires system libraries).
+@@ -407,9 +409,19 @@ ifeq ($(TARGETSYSTEM), CYGWIN)
+ endif
+ 
+ ifeq ($(USE_HOME_DIR),1)
++  ifeq ($(USE_XDG_DIR),1)
++    $(error "USE_HOME_DIR=1 does not work with USE_XDG_DIR=1")
++  endif
+   DEFINES += -DUSE_HOME_DIR
+ endif
+ 
++ifeq ($(USE_XDG_DIR),1)
++  ifeq ($(USE_HOME_DIR),1)
++    $(error "USE_HOME_DIR=1 does not work with USE_XDG_DIR=1")
++  endif
++  DEFINES += -DUSE_XDG_DIR
++endif
++
+ all: version $(TARGET) $(L10N)
+ 	@
+ 
+diff --git a/src/main.cpp b/src/main.cpp
+index 756e36a..aafb244 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
+     PATH_INFO::init_base_path("");
+ #endif
+ 
+-#ifdef USE_HOME_DIR
++#if (defined USE_HOME_DIR || defined USE_XDG_DIR)
+     PATH_INFO::init_user_dir();
+ #else
+     PATH_INFO::init_user_dir("./");
+diff --git a/src/path_info.cpp b/src/path_info.cpp
+index 6c0410a..f40469c 100644
+--- a/src/path_info.cpp
++++ b/src/path_info.cpp
+@@ -34,6 +34,13 @@ void PATH_INFO::init_user_dir(const char *ud)
+ #elif defined MACOSX && defined TILES
+         user_dir = getenv( "HOME" );
+         dir = std::string( user_dir ) + "/Library/Application Support/Cataclysm/";
++#elif (defined USE_XDG_DIR)
++        if ( (user_dir = getenv("XDG_DATA_HOME")) ) {
++            dir = std::string(user_dir) + "/cataclysm-dda/";
++        } else {
++            user_dir = getenv("HOME");
++            dir = std::string(user_dir) + "/.local/share/cataclysm-dda/";
++        }
+ #else
+         user_dir = getenv("HOME");
+         dir = std::string(user_dir) + "/.cataclysm-dda/";
+@@ -144,7 +151,19 @@ void PATH_INFO::set_standard_filenames(void)
+     update_pathname("savedir", FILENAMES["user_dir"] + "save/");
+     update_pathname("memorialdir", FILENAMES["user_dir"] + "memorial/");
+     update_pathname("templatedir", FILENAMES["user_dir"] + "templates/");
++#ifdef USE_XDG_DIR
++    const char *user_dir;
++    std::string dir;
++    if ( (user_dir = getenv("XDG_CONFIG_HOME")) ) {
++        dir = std::string(user_dir) + "/cataclysm-dda/";
++    } else {
++        user_dir = getenv("HOME");
++        dir = std::string(user_dir) + "/.config/cataclysm-dda/";
++    }
++    update_pathname("config_dir", dir);
++#else
+     update_pathname("config_dir", FILENAMES["user_dir"] + "config/");
++#endif
+     update_pathname("graveyarddir", FILENAMES["user_dir"] + "graveyard/");
+ 
+     update_pathname("options", FILENAMES["config_dir"] + "options.txt");
+-- 
+2.7.3
+
