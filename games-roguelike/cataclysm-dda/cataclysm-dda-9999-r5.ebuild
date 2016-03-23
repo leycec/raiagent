@@ -1,6 +1,6 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 EAPI=5
 
 #FIXME: C:DDA ships with an undocumented and currently unsupported
@@ -15,7 +15,7 @@ HOMEPAGE="http://www.cataclysmdda.com"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
-IUSE="clang lua ncurses nls sdl sound"
+IUSE="clang lua ncurses nls sdl sound xdg kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	lua? ( sdl )
 	sound? ( sdl )
@@ -23,7 +23,7 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	app-arch/bzip2:= 
+	app-arch/bzip2:=
 	sys-libs/glibc:2.2=
 	sys-libs/zlib:=
 	lua? ( >=dev-lang/lua-5.1:0= )
@@ -35,9 +35,7 @@ RDEPEND="
 		media-libs/sdl2-image:0=[jpeg,png]
 		media-libs/freetype:2=
 	)
-	sound? (
-		media-libs/sdl2-mixer:0=
-	)
+	sound? ( media-libs/sdl2-mixer:0= )
 "
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
@@ -71,14 +69,20 @@ else
 fi
 
 src_prepare() {
+	# If this ebuild requires patching to support the compile-time
+	# ${USE_XDG_DIR} option, do so.
+	local xdg_patch="${FILESDIR}/${P}-USE_XDG_DIR.patch"
+	[[ -f "${xdg_patch}" ]] && epatch "${xdg_patch}"
+
 	# Strip the following from the the Makefile:
 	#
-	# * Hardcoded optimizations (e.g., "-O3").
+	# * Hardcoded optimization (e.g., "-O3", "-Os") and stripping (e.g., "-s").
 	# * g++ option "-Werror", converting compiler warnings to errors and hence
 	#   failing on the first (inevitable) warning.
 	sed -i\
-		-e '/OTHERS += /s~ -O3~~'\
+		-e '/LDFLAGS += /s~ -s~~'\
 		-e '/RELEASE_FLAGS = /s~ -Werror~~'\
+		-e '/\(CXXFLAGS\|OTHERS\) += /s~ -O.~~'\
 		Makefile || die '"sed" failed.'
 
 	# Replace the hardcoded home directory with our Gentoo-specific directory,
@@ -115,29 +119,42 @@ src_compile() {
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
-		# Write saves and configs to user-specific XDG base directories.
-		USE_XDG_DIR=1
+		# Conditionally set USE flag-dependent options. Note that Lua support
+		# requires SDL support but, paradoxically, appears to be supported when
+		# compiling both SDL *AND* ncurses binaries. Black magic is black.
+		CLANG=$(usex clang 1 0)
+		LOCALIZE=$(usex nls 1 0 )
+		LUA=$(usex lua 1 0 )
 	)
 
-	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
-	use lua   && CATACLYSM_EMAKE_NCURSES+=( LUA=1 )
-
-	# If enabling internationalization, do so.
-	if use nls; then
-		CATACLYSM_EMAKE_NCURSES+=( LOCALIZE=1 )
-
-		# If optional Gentoo-specific string global ${LINGUAS} is defined (e.g.,
-		# in "make.conf"), pass all such whitespace-delimited locales.
-		[[ -n "${LINGUAS+x}" ]] &&
-			CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
+	# Detect the current machine architecture and operating system.
+	local cataclysm_arch
+	if use kernel_linux; then
+		if use amd64; then
+			cataclysm_arch=linux64
+		elif use x86; then
+			cataclysm_arch=linux32
+		fi
+	elif use kernel_Darwin; then
+		cataclysm_arch=osx
 	else
-		CATACLYSM_EMAKE_NCURSES+=( LOCALIZE=0 )
+		die "Architecture \"${ARCH}\" unsupported."
+	fi
+	CATACLYSM_EMAKE_NCURSES+=( NATIVE=${cataclysm_arch} )
+
+	# If storing saves and settings in XDG base directories, do so.
+	if use xdg; then
+		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=0 USE_XDG_DIR=1 )
+	# Else, store saves and settings in home directories.
+	else
+		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=1 USE_XDG_DIR=0 )
 	fi
 
-	# Define SDL- *AFTER* ncurses-specific emake() options, as the former is a
-	# strict superset of the latter.
-	CATACLYSM_EMAKE_SDL=( TILES=1 "${CATACLYSM_EMAKE_NCURSES[@]}" )
-	use sound && CATACLYSM_EMAKE_SDL+=( SOUND=1 )
+	# If enabling internationalization *AND* the optional Gentoo-specific string
+	# global ${LINGUAS} is defined (e.g., in "make.conf"), pass all such
+	# whitespace-delimited locales.
+	use nls && [[ -n "${LINGUAS+x}" ]] &&
+		CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
 
 	# If enabling ncurses, compile the ncurses-based binary.
 	if use ncurses; then
@@ -147,6 +164,19 @@ src_compile() {
 
 	# If enabling SDL, compile the SDL-based binary.
 	if use sdl; then
+		# Define SDL- *AFTER* ncurses-specific emake() options. The former is a
+		# strict superset of the latter.
+		CATACLYSM_EMAKE_SDL=(
+			"${CATACLYSM_EMAKE_NCURSES[@]}"
+
+			# Enabling tiled output implicitly enables SDL.
+			TILES=1
+
+			# Conditionally set USE flag-dependent SDL options.
+			SOUND=$(usex sound 1 0)
+		)
+
+		# Compile us up the tiled bomb.
 		einfo 'Compiling SDL interface...'
 		emake "${CATACLYSM_EMAKE_SDL[@]}"
 	fi
@@ -154,15 +184,31 @@ src_compile() {
 
 src_install() {
 	# If enabling ncurses, install the ncurses-based binary.
-	if use ncurses; then
-		emake install "${CATACLYSM_EMAKE_NCURSES[@]}"
-	fi
+	use ncurses && emake install "${CATACLYSM_EMAKE_NCURSES[@]}"
 
 	# If enabling SDL, install the SDL-based binary.
-	if use sdl; then
-		emake install "${CATACLYSM_EMAKE_SDL[@]}"
-	fi
+	use sdl && emake install "${CATACLYSM_EMAKE_SDL[@]}"
 
 	# Force game-specific user and group permissions.
 	prepgamesdirs
+}
+
+pkg_preinst() {
+	if has_version "=games-roguelike/cataclysm-dda-0.9c-r2" ||
+	   has_version "=games-roguelike/cataclysm-dda-9999-r4"; then
+		BROKEN_SAVES_VERSION_INSTALLED=1
+	fi
+}
+
+pkg_postinst() {
+	games_pkg_postinst
+
+	if [[ -n $BROKEN_SAVES_VERSION_INSTALLED ]]; then
+		ewarn "The prior ebuild always stored saves and settings in the"
+		ewarn "\"\$XDG_CONFIG_HOME/${PN}\" directory. The current ebuild stores"
+		ewarn "saves and settings in that directory only when the \"xdg\" USE"
+		ewarn "flag is enabled or in the \"~/${PN}\" directory otherwise."
+		ewarn "Consider either manually moving existing saves and settings or"
+		ewarn "enabling this USE flag."
+	fi
 }

@@ -23,5 +23,6 @@ In the course of your ordeal there will be opportunities and temptations to impr
 		<flag name="ncurses">Install ncurses-based terminal executable (recommended)</flag>
 		<flag name="sdl">Install SDL-based X11 executable (recommended)</flag>
 		<flag name="sound">Enable SDL-based sound support</flag>
+        <flag name="xdg">Store saves and settings in $XDG_CONFIG_HOME/cataclysm-dda if enabled or ~/.cataclysm-dda otherwise</flag>
 	</use>
 </pkgmetadata>

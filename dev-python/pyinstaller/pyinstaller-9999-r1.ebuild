@@ -63,6 +63,18 @@ else
 fi
 
 python_prepare_all() {
+	#FIXME: This is almost certainly wrong. We almost certainly want to use
+	#actual USE flags instead: e.g.,
+	#
+	# local arch_word_size
+	# if use amd64; then
+	# 	  arch_word_size=64
+	# elif use x86; then
+	#     arch_word_size=32
+	# else
+	# 	  die "Architecture \"${ARCH}\" unsupported."
+	# fi
+	
 	# Word size for the current architecture. (There simply *MUST* be a more
 	# Gentooish way of determining this. I couldn't find it. While we should
 	# arguably test "[[ "$(getconf LONG_BIT)" == 64 ]]" instead, such magic is
