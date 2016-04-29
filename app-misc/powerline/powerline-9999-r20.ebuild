@@ -1,13 +1,13 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
-EAPI="5"
+EAPI="6"
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo", inherit the latter later.
-inherit eutils readme.gentoo distutils-r1
+# precedence over those defined by "readme.gentoo-r1", inherit the latter later.
+inherit eutils readme.gentoo-r1 distutils-r1
 
 DESCRIPTION="Python-based statusline/prompt utility"
 HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
@@ -366,6 +366,11 @@ python_install_all() {
 	# Install Powerline python modules.
 	distutils-r1_python_install_all
 }
+
+#FIXME: Documentation should also be printed on USE flag changes. Unfortunately,
+#it's unclear how exactly to detect such changes. If such changes are detected,
+#the ${FORCE_PRINT_ELOG} global variable should be conditionally set to a
+#non-empty value to force printing.
 
 # On first installation, print Gentoo-specific documentation.
 pkg_postinst() {

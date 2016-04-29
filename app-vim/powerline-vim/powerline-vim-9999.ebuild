@@ -1,7 +1,7 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
-EAPI="5"
+EAPI="6"
 
 # Since eclasses cannot be conditionally inherited, this ebuild remains distinct
 # from the top-level Powerline ebuild at "app-misc/powerline".
@@ -58,4 +58,7 @@ src_prepare() {
 	# Remove nonstandard paths from this plugin's implementation.
 	sed -i -e '/sys\.path\.append/d' "${S}"/plugin/powerline.vim ||
 		die '"sed" failed.'
+
+	# Apply user-specific patches *AFTER* all requisite patches above.
+	default_src_prepare
 }
