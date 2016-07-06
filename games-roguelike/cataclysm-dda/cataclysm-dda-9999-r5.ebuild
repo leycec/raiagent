@@ -4,18 +4,16 @@
 EAPI=5
 
 #FIXME: C:DDA ships with an undocumented and currently unsupported
-#"CMakeLists.txt" for building under CMake. Switch to such makefile when
+#"CMakeLists.txt" for building under CMake. Switch to this makefile when
 #confirmed to be reliably working.
 
 # See "COMPILING.md" in the C:DDA repository for compilation instructions.
-inherit games
-
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
 HOMEPAGE="http://www.cataclysmdda.com"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
-IUSE="clang lua ncurses nls sdl sound xdg kernel_linux kernel_Darwin"
+IUSE="clang lua ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	lua? ( sdl )
 	sound? ( sdl )
@@ -43,7 +41,7 @@ DEPEND="${RDEPEND}
 "
 
 # Absolute path of the directory containing C:DDA data files.
-CATACLYSM_HOME="${GAMES_DATADIR}/${PN}"
+CATACLYSM_HOME=/usr/share/"${PN}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -74,16 +72,26 @@ src_prepare() {
 	local xdg_patch="${FILESDIR}/${P}-USE_XDG_DIR.patch"
 	[[ -f "${xdg_patch}" ]] && epatch "${xdg_patch}"
 
-	# Strip the following from the the Makefile:
+	# Strip the following from all "Makefile" files:
 	#
 	# * Hardcoded optimization (e.g., "-O3", "-Os") and stripping (e.g., "-s").
 	# * g++ option "-Werror", converting compiler warnings to errors and hence
 	#   failing on the first (inevitable) warning.
+	# * The "tests" target from the "all" target, preventing tests from being
+	#   implicitly run when the "test" USE flag is disabled.
+	# * "astyle"-specific targets (e.g., "astyle-check") from the "all" target,
+	#   preventing style tests from being implicitly run.
+	# * The Makefile-specific ${BUILD_PREFIX} variable, conflicting with the 
+	#   Portage-specific variable of the same name. For disambiguity, this
+	#   variable is renamed to a Makefile-specific variable name.
 	sed -i\
+		-e '/\(CXXFLAGS\|OTHERS\) += /s~ -O.~~'\
 		-e '/LDFLAGS += /s~ -s~~'\
 		-e '/RELEASE_FLAGS = /s~ -Werror~~'\
-		-e '/\(CXXFLAGS\|OTHERS\) += /s~ -O.~~'\
-		Makefile || die '"sed" failed.'
+		-e '/^all:\s\+/s~\btests$~~'\
+		-e '/^all:\s\+/s~\s\+\$(ASTYLE)\s\+~ ~'\
+		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~'\
+		{tests/,}Makefile || die '"sed" failed.'
 
 	# Replace the hardcoded home directory with our Gentoo-specific directory,
 	# which *MUST* be suffixed by "/" here to satisfy code requirements.
@@ -91,7 +99,7 @@ src_prepare() {
 		src/path_info.cpp || die '"sed" failed.'
 
 	# The Makefile assumes subdirectories "obj" and "obj/tiles" both exist,
-	# which (of course) they do not. Create such subdirectories manually.
+	# which (...of course) they don't. Create these subdirectories manually.
 	mkdir -p obj/tiles || die '"mkdir" failed.'
 }
 
@@ -109,7 +117,7 @@ src_compile() {
 		# Install-time directories. Since ${PREFIX} does *NOT* refer to an
 		# install-time directory, all variables defined by the Makefile relative
 		# to ${PREFIX} *MUST* be redefined here relative to ${ED}.
-		BIN_PREFIX="${ED}/${GAMES_BINDIR}"
+		BIN_PREFIX="${ED}"/usr/bin
 		DATA_PREFIX="${ED}/${CATACLYSM_HOME}"
 		LOCALE_DIR="${ED}"/usr/share/locale
 
@@ -182,15 +190,16 @@ src_compile() {
 	fi
 }
 
+src_test() {
+	emake tests || die 'Tests failed.'
+}
+
 src_install() {
 	# If enabling ncurses, install the ncurses-based binary.
 	use ncurses && emake install "${CATACLYSM_EMAKE_NCURSES[@]}"
 
 	# If enabling SDL, install the SDL-based binary.
 	use sdl && emake install "${CATACLYSM_EMAKE_SDL[@]}"
-
-	# Force game-specific user and group permissions.
-	prepgamesdirs
 }
 
 pkg_preinst() {
