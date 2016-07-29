@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+        <description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<longdescription lang="en">
+Munt is a multi-platform software synthesiser emulating (currently inaccurately)
+pre-GM MIDI devices such as the Roland MT-32, CM-32L, CM-64 and LAPC-I. Munt is
+in no way endorsed by or affiliated with Roland Corp.
+</longdescription>
+	<upstream>
+		<bugs-to>https://sourceforge.net/p/munt/_list/tickets?source=navbar</bugs-to>
+	</upstream>
+	<use>
+		<flag name="alsa">Build the Qt-driven ALSA driver</flag>
+		<flag name="libsamplerate">Resample audio via Secret Rabbit Code (SRC)</flag>
+		<flag name="libsoxr">Resample audio via SoX Resampler (SoXR) (recommended)</flag>
+		<flag name="portaudio">Build the Qt-driven PortAudio driver</flag>
+		<flag name="pulseaudio">Build the Qt-driven PulseAudio driver</flag>
+		<flag name="qt4">Build the Qt4-based driver</flag>
+		<flag name="qt5">Build the Qt5-based driver (recommended)</flag>
+		<flag name="smf2wav">Build the "smf2wav" conversion utility</flag>
+	</use>
+</pkgmetadata>

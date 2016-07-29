@@ -27,6 +27,11 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/${MY_P}/${PN}"
 
+pkg_setup() {
+	ewarn 'Deprecation Warning: "media-libs/mt32emu" is now obsolete.'
+	ewarn 'Consider installing "media-libs/munt".'
+}
+
 src_prepare() {
     cmake-utils_src_prepare
 

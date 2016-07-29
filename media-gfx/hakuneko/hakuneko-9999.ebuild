@@ -43,8 +43,7 @@ src_prepare() {
 	#
 	# * Hard-coded optimizations from ${CFLAGS}.
 	# * Debug symbol stripping from ${LDFLAGS}.
-	sed \
-		-e '/-O2$/d' \
+	sed -e '/-O2$/d' \
 		-e '/^LDFLAGS=/s~-s~~' \
 		-i config_default.sh || die '"sed" failed.'
 

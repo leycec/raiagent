@@ -31,6 +31,11 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/${MY_P}/mt32emu_alsadrv"
 
+pkg_setup() {
+	ewarn 'Deprecation Warning: "media-libs/mt32emu-alsa" is now obsolete.'
+	ewarn 'Consider installing "media-libs/munt" with the "alsa" USE flag.'
+}
+
 src_prepare() {
 	# Install "mt32d" to the expected path, strip ${CXXFLAGS}, and prevent the
 	# makefile from failing on attempting to glob non-existent ROM files (i.e.,
@@ -42,10 +47,6 @@ src_prepare() {
 		-e "s~ /usr/~ ${D}/usr/~"\
 		"Makefile"
 }
-
-# src_compile() {
-# 	emake
-# }
 
 src_install() {
 	# Make paths expected by the makefile installer. (Thanks alot!)
