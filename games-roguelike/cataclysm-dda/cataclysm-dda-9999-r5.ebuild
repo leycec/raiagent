@@ -9,7 +9,7 @@ EAPI=5
 
 # See "COMPILING.md" in the C:DDA repository for compilation instructions.
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
-HOMEPAGE="http://www.cataclysmdda.com"
+HOMEPAGE="http://en.cataclysmdda.com"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
