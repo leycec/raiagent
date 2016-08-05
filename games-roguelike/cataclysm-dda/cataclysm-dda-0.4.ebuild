@@ -14,7 +14,7 @@ inherit games git-2
 # corresponding commit instead. See:
 # https://github.com/TheDarklingWolf/Cataclysm-DDA/issues/506
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
-HOMEPAGE="http://www.cataclysmdda.com"
+HOMEPAGE="http://en.cataclysmdda.com"
 EGIT_REPO_URI="git://github.com/TheDarklingWolf/Cataclysm-DDA.git"
 EGIT_COMMIT="0437a6a1dab77012e52667dedc7f39e53de3310e"
 

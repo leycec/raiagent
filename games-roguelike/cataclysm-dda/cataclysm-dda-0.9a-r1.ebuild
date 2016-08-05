@@ -23,7 +23,7 @@ MY_PV="${MY_PV^^}"
 inherit games
 
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
-HOMEPAGE="http://www.cataclysmdda.com"
+HOMEPAGE="http://en.cataclysmdda.com"
 SRC_URI="https://github.com/CleverRaven/Cataclysm-DDA/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="CC-BY-SA-3.0"
