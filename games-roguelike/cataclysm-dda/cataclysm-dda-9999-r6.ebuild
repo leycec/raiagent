@@ -1,7 +1,7 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
-EAPI=5
+EAPI=6
 
 #FIXME: C:DDA ships with an undocumented and currently unsupported
 #"CMakeLists.txt" for building under CMake. Switch to this makefile when
@@ -13,9 +13,11 @@ HOMEPAGE="http://en.cataclysmdda.com"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
-IUSE="clang lua ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
+IUSE="
+	clang lua luajit ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	lua? ( sdl )
+	luajit? ( lua )
 	sound? ( sdl )
 	|| ( ncurses sdl )
 "
@@ -25,6 +27,7 @@ RDEPEND="
 	sys-libs/glibc:2.2=
 	sys-libs/zlib:=
 	lua? ( >=dev-lang/lua-5.1:0= )
+	luajit? ( dev-lang/luajit:2= )
 	ncurses? ( sys-libs/ncurses:5= )
 	nls? ( sys-devel/gettext:0=[nls] )
 	sdl? (
@@ -68,9 +71,9 @@ fi
 
 src_prepare() {
 	# If this ebuild requires patching to support the compile-time
-	# ${USE_XDG_DIR} option, do so.
+	# ${USE_XDG_DIR} option, do so on calling default_src_prepare() below.
 	local xdg_patch="${FILESDIR}/${P}-USE_XDG_DIR.patch"
-	[[ -f "${xdg_patch}" ]] && epatch "${xdg_patch}"
+	[[ -f "${xdg_patch}" ]] && PATCHES+=( "${xdg_patch}" )
 
 	# Strip the following from all "Makefile" files:
 	#
@@ -101,6 +104,9 @@ src_prepare() {
 	# The Makefile assumes subdirectories "obj" and "obj/tiles" both exist,
 	# which (...of course) they don't. Create these subdirectories manually.
 	mkdir -p obj/tiles || die '"mkdir" failed.'
+
+	# Apply user-specific patches and all patches added to ${PATCHES} above.
+	default_src_prepare
 }
 
 src_compile() {
@@ -127,13 +133,22 @@ src_compile() {
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
-		# Conditionally set USE flag-dependent options. Note that Lua support
-		# requires SDL support but, paradoxically, appears to be supported when
-		# compiling both SDL *AND* ncurses binaries. Black magic is black.
-		CLANG=$(usex clang 1 0)
-		LOCALIZE=$(usex nls 1 0 )
-		LUA=$(usex lua 1 0 )
+		# Since Gentoo's ${L10N} USE_EXPAND flag conflicts with this Makefile's
+		# flag of the same name, temporarily prevent the former from being
+		# passed to this Makefile by overriding the current user-defined value
+		# of ${L10N} with the empty string. Failing to do so results in the
+		# following link-time fatal error:
+		#
+		#     make: *** No rule to make target 'en', needed by 'all'.  Stop.
+		L10N=
 	)
+
+	# Conditionally set USE flag-dependent options. Since the "Makefile" tests
+	# for the existence rather than the value of the corresponding environment
+	# variables, these variables must be left undefined rather than defined to
+	# some false value (e.g., 0, "False", the empty string) if the corresponding
+	# USE flags are disabled.
+	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
 
 	# Detect the current machine architecture and operating system.
 	local cataclysm_arch
@@ -150,6 +165,29 @@ src_compile() {
 	fi
 	CATACLYSM_EMAKE_NCURSES+=( NATIVE=${cataclysm_arch} )
 
+	# If enabling Lua support, do so. Note that Lua support requires SDL support
+	# but, paradoxically, appears to be supported when compiling both SDL *AND*
+	# ncurses binaries. (Black magic is black.)
+	if use lua; then
+		CATACLYSM_EMAKE_NCURSES+=( LUA=1 )
+
+		# If enabling LuaJIT support, do so.
+		if use luajit; then
+			CATACLYSM_EMAKE_NCURSES+=( LUA_BINARY=luajit )
+		fi
+	fi
+
+	# If enabling internationalization, do so.
+	if use nls; then
+		CATACLYSM_EMAKE_NCURSES+=( LOCALIZE=1 )
+
+		# If the optional Gentoo-specific string global ${LINGUAS} is defined
+		# (e.g., in "make.conf"), enable all such whitespace-delimited locales.
+		if [[ -n "${LINGUAS+x}" ]]; then
+			CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
+		fi
+	fi
+
 	# If storing saves and settings in XDG base directories, do so.
 	if use xdg; then
 		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=0 USE_XDG_DIR=1 )
@@ -157,12 +195,6 @@ src_compile() {
 	else
 		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=1 USE_XDG_DIR=0 )
 	fi
-
-	# If enabling internationalization *AND* the optional Gentoo-specific string
-	# global ${LINGUAS} is defined (e.g., in "make.conf"), pass all such
-	# whitespace-delimited locales.
-	use nls && [[ -n "${LINGUAS+x}" ]] &&
-		CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
 
 	# If enabling ncurses, compile the ncurses-based binary.
 	if use ncurses; then
