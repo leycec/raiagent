@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+This is a local server for preview rst document instantly.
+
+You can use it with instantRst.vim
+
+riv.vim (vim) + InstantRst (web server) + mars.css (theme)
+</longdescription>
+	<upstream>
+		<doc lang="en">https://github.com/Rykka/instant-rst.py/blob/master/README.rst</doc>
+		<bugs-to>https://github.com/Rykka/instant-rst.py/issues</bugs-to>
+	</upstream>
+	<!--use>
+		<flag name=""></flag>
+    </use-->
+</pkgmetadata>

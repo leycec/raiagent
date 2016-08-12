@@ -363,7 +363,7 @@ python_install_all() {
 	# Install Gentoo-specific documentation.
 	readme.gentoo_create_doc
 
-	# Install Powerline python modules.
+	# Install the "powerline' Python package.
 	distutils-r1_python_install_all
 }
 
