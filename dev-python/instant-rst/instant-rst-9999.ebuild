@@ -7,7 +7,9 @@ EAPI=6
 # never will be.
 PYTHON_COMPAT=( python2_7 )
 
-inherit distutils-r1
+# Since default phase functions defined by "distutils-r1" take absolute
+# precedence over those defined by "readme.gentoo-r1", inherit the latter later.
+inherit readme.gentoo-r1 distutils-r1
 
 DESCRIPTION="Lightweight web server for previewing reStructuredText documents"
 HOMEPAGE="https://github.com/rykka/instant-rst.py"
@@ -59,9 +61,8 @@ fi
 python_install_all() {
 	# Documentation to be printed on first installation.
 	DOC_CONTENTS="
-	To enable Vim support, install either NeoBundle (recommended) or Vundle and
-	add the following lines to your vimrc configuration file (e.g.,
-	\"~/.vimrc\"):\\n
+	To preview reStructuredText buffers in Vim, install NeoBundle and add the
+	following lines to your Vim configuration (e.g., \"~/.vimrc\"):\\n
 	\\n
 	\\tNeoBundle 'Rykka/riv.vim'\\n
 	\\tNeoBundle 'Rykka/InstantRst'\\n
