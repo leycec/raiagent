@@ -11,6 +11,7 @@ PYTHON_COMPAT=( python2_7 )
 # precedence over those defined by "readme.gentoo-r1", inherit the latter later.
 inherit readme.gentoo-r1 distutils-r1
 
+# Yes, the URL of this repository is actually suffixed by ".py". Just because.
 DESCRIPTION="Lightweight web server for previewing reStructuredText documents"
 HOMEPAGE="https://github.com/rykka/instant-rst.py"
 
@@ -51,11 +52,8 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	# MY_PN="PyInstaller"
-	# MY_P="${MY_PN}-${PV}"
 	SRC_URI="mirror://pypi/i/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
-	# S="${WORKDIR}/${MY_P}"
 fi
 
 python_install_all() {
