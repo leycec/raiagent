@@ -242,8 +242,6 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	games_pkg_postinst
-
 	if [[ -n $BROKEN_SAVES_VERSION_INSTALLED ]]; then
 		ewarn "The prior ebuild always stored saves and settings in the"
 		ewarn "\"\$XDG_CONFIG_HOME/${PN}\" directory. The current ebuild stores"
