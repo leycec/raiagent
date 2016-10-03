@@ -13,6 +13,7 @@ You can use it with instantRst.vim
 riv.vim (vim) + InstantRst (web server) + mars.css (theme)
 </longdescription>
 	<upstream>
+        <remote-id type="github">Rykka/instant-rst.py</remote-id>
 		<doc lang="en">https://github.com/Rykka/instant-rst.py/blob/master/README.rst</doc>
 		<bugs-to>https://github.com/Rykka/instant-rst.py/issues</bugs-to>
 	</upstream>

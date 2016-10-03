@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+    <longdescription>
+Python interface to Graphviz's Dot language.
+
+This module provides with a full interface to create handle modify and process graphs in Graphviz's dot language.
+</longdescription>
+    <upstream>
+        <remote-id type="github">erocarrera/pydot</remote-id>
+		<bugs-to>https://github.com/erocarrera/pydot/issues</bugs-to>
+    </upstream>
+</pkgmetadata>
