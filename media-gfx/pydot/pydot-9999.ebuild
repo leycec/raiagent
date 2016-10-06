@@ -29,8 +29,11 @@ DOCS=( "README.md" )
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
+	# Pydot leverages a GitFlow-based workflow. Pydot's "master" branch is much
+	# less frequently updated than its "dev" branch, which acts as the storehouse
+	# of official commits and hence the branch of most interest to end users.
 	EGIT_REPO_URI="${HOMEPAGE}"
-	EGIT_BRANCH="master"
+	EGIT_BRANCH="dev"
 	SRC_URI=""
 	KEYWORDS=""
 else
