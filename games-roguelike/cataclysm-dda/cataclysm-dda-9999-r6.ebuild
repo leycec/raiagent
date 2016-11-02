@@ -14,7 +14,7 @@ HOMEPAGE="http://en.cataclysmdda.com"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	clang lua luajit ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
+	clang debug lua luajit ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	lua? ( sdl )
 	luajit? ( lua )
@@ -127,9 +127,6 @@ src_compile() {
 		DATA_PREFIX="${ED}/${CATACLYSM_HOME}"
 		LOCALE_DIR="${ED}"/usr/share/locale
 
-		# For efficiency, prefer release to debug builds.
-		RELEASE=1
-
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
@@ -149,6 +146,9 @@ src_compile() {
 	# some false value (e.g., 0, "False", the empty string) if the corresponding
 	# USE flags are disabled.
 	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
+
+	# For efficiency, prefer release to debug builds.
+	use debug || CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 )
 
 	# Detect the current machine architecture and operating system.
 	local cataclysm_arch
