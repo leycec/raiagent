@@ -14,7 +14,9 @@ HOMEPAGE="http://en.cataclysmdda.com"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	clang debug lua luajit ncurses nls sdl sound test xdg kernel_linux kernel_Darwin"
+	clang debug lua luajit ncurses nls sdl sound test xdg
+	kernel_linux kernel_Darwin
+"
 REQUIRED_USE="
 	lua? ( sdl )
 	luajit? ( lua )
@@ -28,7 +30,7 @@ RDEPEND="
 	sys-libs/zlib:=
 	lua? ( >=dev-lang/lua-5.1:0= )
 	luajit? ( dev-lang/luajit:2= )
-	ncurses? ( sys-libs/ncurses:5= )
+	ncurses? ( >=sys-libs/ncurses-6.0:0= )
 	nls? ( sys-devel/gettext:0=[nls] )
 	sdl? (
 		media-libs/libsdl2:0=
@@ -145,7 +147,7 @@ src_compile() {
 	# variables, these variables must be left undefined rather than defined to
 	# some false value (e.g., 0, "False", the empty string) if the corresponding
 	# USE flags are disabled.
-	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
+	use clang  && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
 
 	# For efficiency, prefer release to debug builds.
 	use debug || CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 )
@@ -232,22 +234,22 @@ src_install() {
 
 	# If enabling SDL, install the SDL-based binary.
 	use sdl && emake install "${CATACLYSM_EMAKE_SDL[@]}"
-}
 
-pkg_preinst() {
-	if has_version "=games-roguelike/cataclysm-dda-0.9c-r2" ||
-	   has_version "=games-roguelike/cataclysm-dda-9999-r4"; then
-		BROKEN_SAVES_VERSION_INSTALLED=1
-	fi
-}
+	# Replace a symbolic link in the documentation directory to be installed
+	# below with the physical target file of that link. These operations are
+	# non-essential to the execution of installed binaries and are thus
+	# intentionally *NOT* suffixed by "|| die 'cp failed.'"-driven protection.
+	rm doc/LOADING_ORDER.md
+	cp data/json/LOADING_ORDER.md doc/
 
-pkg_postinst() {
-	if [[ -n $BROKEN_SAVES_VERSION_INSTALLED ]]; then
-		ewarn "The prior ebuild always stored saves and settings in the"
-		ewarn "\"\$XDG_CONFIG_HOME/${PN}\" directory. The current ebuild stores"
-		ewarn "saves and settings in that directory only when the \"xdg\" USE"
-		ewarn "flag is enabled or in the \"~/${PN}\" directory otherwise."
-		ewarn "Consider either manually moving existing saves and settings or"
-		ewarn "enabling this USE flag."
-	fi
+	# Replace a symbolic link in the documentation directory to be installed
+	# below with the physical target file of that link. These operations are
+	# non-essential to the execution of installed binaries and are thus
+	# intentionally *NOT* suffixed by "|| die 'cp failed.'"-driven protection.
+	rm doc/LOADING_ORDER.md
+	cp data/json/LOADING_ORDER.md doc/
+
+
+	# Recursively install all available documentation.
+	dodoc -r CONTRIBUTING.md README.md doc/*
 }

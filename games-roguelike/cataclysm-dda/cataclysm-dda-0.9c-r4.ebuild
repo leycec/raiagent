@@ -119,7 +119,9 @@ src_prepare() {
 }
 
 src_compile() {
-	# Options passed to all ncurses- and SDL-specific emake() calls below.
+	# Lists of all CLI options to be passed to all ncurses- and SDL-specific
+	# calls to the emake() function. To permit these options to be reused by
+	# subsequent phases (e.g., src_install()), these lists are globalized.
 	declare -ga CATACLYSM_EMAKE_NCURSES CATACLYSM_EMAKE_SDL
 
 	# Define ncurses-specific emake() options first.
@@ -241,22 +243,14 @@ src_install() {
 
 	# If enabling SDL, install the SDL-based binary.
 	use sdl && emake install "${CATACLYSM_EMAKE_SDL[@]}"
-}
 
-pkg_preinst() {
-	if has_version "=games-roguelike/cataclysm-dda-0.9c-r2" ||
-	   has_version "=games-roguelike/cataclysm-dda-9999-r4"; then
-		BROKEN_SAVES_VERSION_INSTALLED=1
-	fi
-}
+	# Replace a symbolic link in the documentation directory to be installed
+	# below with the physical target file of that link. These operations are
+	# non-essential to the execution of installed binaries and are thus
+	# intentionally *NOT* suffixed by "|| die 'cp failed.'"-driven protection.
+	rm doc/LOADING_ORDER.md
+	cp data/json/LOADING_ORDER.md doc/
 
-pkg_postinst() {
-	if [[ -n $BROKEN_SAVES_VERSION_INSTALLED ]]; then
-		ewarn "The prior ebuild always stored saves and settings in the"
-		ewarn "\"\$XDG_CONFIG_HOME/${PN}\" directory. The current ebuild stores"
-		ewarn "saves and settings in that directory only when the \"xdg\" USE"
-		ewarn "flag is enabled or in the \"~/${PN}\" directory otherwise."
-		ewarn "Consider either manually moving existing saves and settings or"
-		ewarn "enabling this USE flag."
-	fi
+	# Recursively install all available documentation.
+	dodoc -r CONTRIBUTING.md README.md doc/*
 }
