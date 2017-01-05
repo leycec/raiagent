@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Twine is a utility for interacting with PyPI.
+
+Currently it only supports registering projects and uploading distributions.
+</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/pypa/twine/issues</bugs-to>
+        <remote-id type="pypi">twine</remote-id>
+        <remote-id type="github">pypa/twine</remote-id>
+	</upstream>
+	<use>
+		<flag name="keyring">Cache PyPI passwords to the system keyring</flag>
+    </use>
+</pkgmetadata>
