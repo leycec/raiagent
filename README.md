@@ -36,6 +36,7 @@ Notable peer-to-peer (P2P) ebuilds include:
 
 Notable Python-centric ebuilds include:
 
+* **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue **S**imulation **E**ngine), a cross-platform Python-based finite volume simulator for 2D computational multiphysics problems in the life sciences coauthored by [the author](https://github.com/leycec) of this overlay. `raiagent` [officially hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE ebuilds.
 * [PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3 branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a cross-platform [Python freezing utility](http://docs.python-guide.org/en/latest/shipping/freezing). `raiagent` unofficially hosts PyInstaller ebuilds, as well as [frequently committing]((https://github.com/leycec/pyinstaller)) to the official PyInstaller codebase.
 
 ### Ricing

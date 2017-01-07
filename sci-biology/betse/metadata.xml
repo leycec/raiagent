@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+BETSE (BioElectric Tissue Simulation Engine) is an open-source cross-platform
+finite volume simulator for 2D computational multiphysics problems in the life
+sciences – including electrodiffusion, electro-osmosis, galvanotaxis,
+voltage-gated ion channels, gene regulatory networks, and biochemical reaction
+networks (e.g., metabolism). BETSE is associated with the Paul Allen Discovery
+Center at Tufts University and supported by a Paul Allen Discovery Center award
+from the Paul G. Allen Frontiers Group.
+
+BETSE is portably implemented in pure Python 3, continuously stress-tested with
+GitLab-CI × Appveyor + py.test, and permissively distributed under the BSD
+2-clause license. While a high-level graphical user interface (GUI) supporting
+all popular platforms is planned, BETSE currently only provides a low-level
+command line interface (CLI).
+</longdescription>
+	<upstream>
+		<bugs-to>https://gitlab.com/betse/betse/issues</bugs-to>
+        <remote-id type="pypi">betse</remote-id>
+        <remote-id type="gitlab">betse/betse</remote-id>
+	</upstream>
+	<use>
+		<flag name="ffmpeg">Support FFmpeg- or Libav-based animation encoding</flag>
+		<flag name="graph">Support gene regulatory and biochemical reaction networks</flag>
+		<flag name="profile">Support space and time usage profiling</flag>
+		<flag name="smp"   >Support multicore CBLAS-based simulation parallelization</flag>
+    </use>
+</pkgmetadata>

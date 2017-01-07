@@ -249,7 +249,6 @@ src_install() {
 	rm doc/LOADING_ORDER.md
 	cp data/json/LOADING_ORDER.md doc/
 
-
 	# Recursively install all available documentation.
 	dodoc -r CONTRIBUTING.md README.md doc/*
 }
