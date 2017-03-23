@@ -1,14 +1,13 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 EAPI="6"
 
-# "cmake-utils" phase functions take precedence over those defined by 
-# "readme.gentoo-r1" and is thus inherited last.
-inherit readme.gentoo-r1 cmake-utils
+# "cmake-utils" phase functions take precedence over those defined by all other
+# eclasses and are thus inherited last.
+inherit readme.gentoo-r1 multilib cmake-utils
 
 DESCRIPTION="Software synthesiser emulating pre-GM MIDI (e.g., Roland MT-32)"
-HOMEPAGE="http://munt.sourceforge.net"
+HOMEPAGE="https://github.com/munt/munt"
 
 # Munt components are licensed under component-specific licenses, including:
 #
@@ -21,14 +20,11 @@ SLOT="0"
 #FIXME: Add support for a new "clang" USE flag. Currently, Munt appears to
 #default to GCC and only fallback to clang in the absence of GCC.
 
-# While Qt support is technically optional, there exists no means of running the
-# Munt's userspace daemon without installing either the Qt4- or Qt5-based GUI.
-# Hence, either the "qt4" or "qt5" USE flags are requisite.
-IUSE="+alsa libsamplerate +libsoxr portaudio pulseaudio qt4 +qt5 smf2wav"
+IUSE="alsa c cpp libsamplerate libsoxr portaudio pulseaudio qt4 +qt5 smf2wav static"
 REQUIRED_USE="
 	|| ( alsa portaudio pulseaudio )
-	|| ( libsamplerate libsoxr )
-	|| ( qt4 qt5 )
+	?? ( libsamplerate libsoxr )
+	?? ( qt4 qt5 )
 "
 
 RDEPEND="
@@ -47,19 +43,32 @@ RDEPEND="
 		dev-qt/qtgui:5=
 		dev-qt/qtmultimedia:5=
 	)
+	smf2wav? ( dev-libs/glib:2= )
 "
 DEPEND="${RDEPEND}
 	|| ( sys-devel/clang sys-devel/gcc[cxx] )
 "
 
+# DOCS=(
+# 	README.txt
+# 	mt32emu{_qt,}/{AUTHORS,NEWS,README,TODO}.txt
+# 	mt32emu_smf2wav/{AUTHORS,README}.txt
+# )
+
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="https://github.com/munt/munt"
+	EGIT_REPO_URI="${HOMEPAGE}"
 	KEYWORDS=""
 else
-	SRC_URI="mirror://sourceforge/${PN}/${PV}/${P}.tar.gz"
+	MY_PV="${PV//./_}"
+	MY_P="libmt32emu_${MY_PV}"
+
+	SRC_URI="https://github.com/${PN}/${PN}/archive/${MY_P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
+
+	# Craziest top-level tarball directory evar.
+	S="${WORKDIR}/${PN}-${MY_P}"
 fi
 
 src_prepare() {
@@ -71,27 +80,6 @@ src_prepare() {
 		-e 's~COPYING\(.LESSER\)\?.txt ~~g' \
 		-i */CMakeLists.txt || die '"sed" failed.'
 
-	# Disable all attempts in the CMake makefile for the "mt32emu-qt" component
-	# to autodetect optional dependencies by calling find_package() and
-	# unconditionally enable support for those dependencies if detected. While
-	# this makefile does expose options pertaining to those dependencies (e.g.,
-	# "-Dmt32emu-qt_WITH_ALSA_MIDI_SEQUENCER"), these options govern only the
-	# enabling and disabling of dependency-specific features rather than the
-	# enabling and disabling of those dependencies.
-	#
-	# Note, however, that we *CANNOT* simply unconditionally disable these
-	# attempts. Doing so also prevents critical variables describing these
-	# dependencies (e.g., "${ALSA_LIBRARIES}") from being defined. To circumvent
-	# this, these attempts are moved from their default lines into the if
-	# conditionals testing the existence of these dependencies. (It works.)
-	sed -e '/^\s*find_package(\(ALSA\|PORTAUDIO\|PulseAudio\|LibSoxr\|LibSamplerate\))$/d' \
-		-e 's~^\(\s*if(ALSA_FOUND)\)$~\1\n  find_package(ALSA)~' \
-		-e 's~^\(\s*if(PORTAUDIO_FOUND)\)$~\1\n  find_package(PORTAUDIO)~' \
-		-e 's~^\(\s*if(PULSEAUDIO_FOUND)\)$~\1\n  find_package(PulseAudio)~' \
-		-e 's~^\(\s*if(LIBSOXR_FOUND)\)$~\1\n    find_package(LibSoxr)~' \
-		-e 's~^\(\s*if(LIBSAMPLERATE_FOUND)\)$~\1\n      find_package(LibSamplerate)~' \
-		-i mt32emu_qt/CMakeLists.txt || die '"sed" failed.'
-
 	# Apply user-specific patches.
 	eapply_user
 
@@ -100,35 +88,48 @@ src_prepare() {
 }
 
 src_configure() {
+	# Value of the ${PROJECT_NAME} variable expanded by the
+	# "mt32emu/CMakeLists.txt" makefile and required below.
+	if [[ ${PV} == 9999 ]]
+	then MY_PROJECT_NAME=libmt32emu
+	else MY_PROJECT_NAME=mt32emu-qt
+	fi
+
 	# Configuration options to be passed to CMake.
 	local mycmakeargs=(
 		# Options defined by the top-level "CMakeLists.txt" makefile.
 		-Dmunt_WITH_MT32EMU_QT=ON
-		-Dmunt_WITH_MT32EMU_SMF2WAV=$(usex smf2wav ON OFF)
+		-Dmunt_WITH_MT32EMU_SMF2WAV=$(usex smf2wav)
+
+		# Options defined by the "mt32emu/CMakeLists.txt" makefile.
+		-Dlibmt32emu_SHARED=$(usex static OFF ON)
+		-Dlibmt32emu_C_INTERFACE=$(usex c)
+		-Dlibmt32emu_CPP_INTERFACE=$(usex cpp)
+
+		# This makefile expects a non-standard option for specifying the desired
+		# library basename rather than the standard "CMAKE_INSTALL_LIBDIR" option.
+		-DLIB_INSTALL_DIR="${EPREFIX}/usr/$(get_libdir)"
+
+		# If an external audio resampling library is enabled, disable Munt's
+		# internal audio resampling library; else, enable this library.
+		# Unfortunately, the name of this option conditionally depends on
+		# whether this is a stable or live build.
+		-D${MY_PROJECT_NAME}_WITH_INTERNAL_RESAMPLER=$(
+			(use libsamplerate || use libsoxr) && echo 'off' || echo 'on')
 
 		# Options defined by the "mt32emu_qt/CMakeLists.txt" makefile.
-		-Dmt32emu-qt_WITH_ALSA_MIDI_SEQUENCER=$(usex alsa ON OFF)
-		-Dmt32emu-qt_USE_PULSEAUDIO_DYNAMIC_LOADING=$(usex pulseaudio ON OFF)
-		-Dmt32emu-qt_WITH_QT5=$(usex qt5 ON OFF)
+		-Dmt32emu-qt_WITH_ALSA_MIDI_SEQUENCER=$(usex alsa)
+		-Dmt32emu-qt_USE_PULSEAUDIO_DYNAMIC_LOADING=$(usex pulseaudio)
+		-Dmt32emu-qt_WITH_QT5=$(usex qt5)
 
-		# Options internally tested by the "mt32emu_qt/CMakeLists.txt" makefile
-		# to enable or disable support for optional dependencies. These options
-		# are *NOT* intended to be passed externally, but no alternative exists.
-		-DALSA_FOUND=$(usex alsa ON OFF)
-		-DPORTAUDIO_FOUND=$(usex portaudio ON OFF)
-		-DPULSEAUDIO_FOUND=$(usex pulseaudio ON OFF)
-		-DLIBSOXR_FOUND=$(usex libsoxr ON OFF)
-		-DLIBSAMPLERATE_FOUND=$(usex libsamplerate ON OFF)
+		# Options implicitly defined by the "mt32emu_qt/CMakeLists.txt" makefile
+		# for use in conditionally disabling find_package() calls.
+		-DCMAKE_DISABLE_FIND_PACKAGE_ALSA=$(usex !alsa)
+		-DCMAKE_DISABLE_FIND_PACKAGE_PORTAUDIO=$(usex !portaudio)
+		-DCMAKE_DISABLE_FIND_PACKAGE_PulseAudio=$(usex !pulseaudio)
+		-DCMAKE_DISABLE_FIND_PACKAGE_LibSoxr=$(usex !libsoxr)
+		-DCMAKE_DISABLE_FIND_PACKAGE_LibSamplerate=$(usex !libsamplerate)
 	)
-
-	# If an external audio resampling library is enabled, disable Munt's
-	# internal audio resampling library.
-	if use libsamplerate || use libsoxr; then
-		mycmakeargs+=( -Dmt32emu-qt_WITH_INTERNAL_RESAMPLER=OFF )
-	# Else, enable Munt's internal audio resampling library.
-	else
-		mycmakeargs+=( -Dmt32emu-qt_WITH_INTERNAL_RESAMPLER=ON )
-	fi
 
 	# Perform default logic.
 	cmake-utils_src_configure
