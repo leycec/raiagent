@@ -245,7 +245,7 @@ python_install_all() {
 		insinto "${AWESOME_LIB_DIR}"
 		newins "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline.lua init.lua
 		exeinto "${AWESOME_LIB_DIR}"
-		doexe  "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline-awesome.py
+		doexe "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline-awesome.py
 
 		DOC_CONTENTS+="
 	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n

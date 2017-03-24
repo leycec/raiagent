@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+        <description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<longdescription lang="en">
+VGMPlay is the offical and always up-to-date command-line player for all video
+game music (VGM) files hosted at http://vgmrips.net.
+</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/vgmrips/vgmplay/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="opl">Support obsolete OPL sound chip hardware (AdLib, SoundBlaster)</flag>
+	</use>
+</pkgmetadata>

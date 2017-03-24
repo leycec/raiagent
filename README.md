@@ -36,8 +36,22 @@ Notable peer-to-peer (P2P) ebuilds include:
 
 Notable Python-centric ebuilds include:
 
-* **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue **S**imulation **E**ngine), a cross-platform Python-based finite volume simulator for 2D computational multiphysics problems in the life sciences coauthored by [the author](https://github.com/leycec) of this overlay. `raiagent` [officially hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE ebuilds.
-* [PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3 branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a cross-platform [Python freezing utility](http://docs.python-guide.org/en/latest/shipping/freezing). `raiagent` unofficially hosts PyInstaller ebuilds, as well as [frequently committing]((https://github.com/leycec/pyinstaller)) to the official PyInstaller codebase.
+* **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue
+  **S**imulation **E**ngine), a cross-platform Python-based finite volume
+  simulator for 2D computational multiphysics problems in the life sciences
+  coauthored by [the author](https://github.com/leycec) of this overlay.
+  `raiagent` [officially
+  hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE
+  ebuilds.
+* ~~[PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3
+  branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a
+  cross-platform [Python freezing
+  utility](http://docs.python-guide.org/en/latest/shipping/freezing). `raiagent`
+  unofficially hosts PyInstaller ebuilds, as well as [frequently
+  committing]((https://github.com/leycec/pyinstaller)) to the official
+  PyInstaller codebase.~~ See the **[pentoo
+  overlay](https://github.com/pentoo/pentoo-overlay)** instead for better
+  maintained PyInstaller ebuilds.
 
 ### Rertro
 
@@ -47,6 +61,12 @@ Notable "enthusiast" ebuilds include:
   synthesiser emulating pre-GM Roland MIDI devices (e.g.,
   [MT-32](https://en.wikipedia.org/wiki/Roland_MT-32)) commonly supported by
   MS-DOS-era games. `raiagent` unofficially hosts Munt ebuilds.
+* **[VGMPlay](http://vgmrips.net/forum/viewtopic.php?t=112)**, a cross-platform
+  audio player and converter effectively emulating all sequenced video game
+  sound chips and hence supporting all sequenced video game music – ever. As
+  [RetroArch](https://www.libretro.com/index.php/retroarch-2) is to game
+  emulation, VGMPlay is to game *audio* emulation. `raiagent` unofficially hosts
+  VGMPlay ebuilds.
 
 ### Ricing
 
