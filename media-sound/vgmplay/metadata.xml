@@ -14,6 +14,6 @@ game music (VGM) files hosted at http://vgmrips.net.
 		<bugs-to>https://github.com/vgmrips/vgmplay/issues</bugs-to>
 	</upstream>
 	<use>
-		<flag name="opl">Support obsolete OPL sound chip hardware (AdLib, SoundBlaster)</flag>
+		<flag name="opl">Enable playback on obsolete OPL hardware (AdLib, SoundBlaster)</flag>
 	</use>
 </pkgmetadata>

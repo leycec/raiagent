@@ -32,15 +32,21 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 LICENSE="GPL-2"
 SLOT="0"
 
-IUSE="ao debug opl"
+IUSE="alsa ao debug opl pulseaudio"
 REQUIRED_USE=""
 
-RDEPEND="
+DEPEND="
 	sys-libs/zlib:=
 	virtual/libc
 	ao? ( media-libs/libao:= )
 "
-DEPEND="${RDEPEND}"
+
+# VGMPlay indirectly supports ALSA and PulseAudio via OSS runtime emulation in
+# the high-level "vgm-player" script. (It's not the best... but it's something.)
+RDEPEND="${DEPEND}
+	alsa? ( media-libs/alsa-oss )
+	pulseaudio? ( media-sound/pulseaudio[oss] )
+"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -48,14 +54,8 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/vgmrips/vgmplay"
 	KEYWORDS=""
 else
-	# MY_PV="${PV//./_}"
-	# MY_P="libmt32emu_${MY_PV}"
-
 	SRC_URI="https://github.com/vgmrips/vgmplay/archive/${PV}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
-
-	# Craziest top-level tarball directory evar.
-	# S="${WORKDIR}/${PN}-${MY_P}"
 fi
 
 src_prepare() {
