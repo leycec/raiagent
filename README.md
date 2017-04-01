@@ -43,6 +43,15 @@ Notable Python-centric ebuilds include:
   `raiagent` [officially
   hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE
   ebuilds.
+* **[PySide2](https://wiki.qt.io/PySide2)**, [The Qt
+  Company](https://www.qt.io)'s official LGPL-licensed Qt 5 bindings for Python,
+  and **[Shiboken2](https://wiki.qt.io/PySide2),** [The Qt
+  Company](https://www.qt.io)'s official LGPL-licensed Qt 5 binding generator.
+  A [pull request](https://github.com/gentoo/qt/pull/142) publishing these
+  ebuilds with Gentoo's official [`qt` overlay](https://github.com/gentoo/qt)
+  has been opened… but has yet to be accepted.<sup>_I blame
+  [Pazazu](https://www.youtube.com/watch?v=YAw3Xr8r6TY)._</sup> In the interim,
+  `raiagent` temporarily hosts PySide2 and Shiboken2 ebuilds.
 * ~~[PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3
   branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a
   cross-platform [Python freezing
