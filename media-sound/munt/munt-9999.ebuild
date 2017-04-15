@@ -28,22 +28,22 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	alsa? ( media-libs/alsa-lib:= )
-	libsoxr? ( media-libs/soxr:= )
-	libsamplerate? ( media-libs/libsamplerate:= )
-	portaudio? ( media-libs/portaudio:= )
-	pulseaudio? ( media-sound/pulseaudio:= )
+	alsa? ( media-libs/alsa-lib )
+	libsoxr? ( media-libs/soxr )
+	libsamplerate? ( media-libs/libsamplerate )
+	portaudio? ( media-libs/portaudio )
+	pulseaudio? ( media-sound/pulseaudio )
 	qt4? (
-		>=dev-qt/qtcore-4.6.0:4=
-		>=dev-qt/qtgui-4.6.0:4=
-		>=dev-qt/qtmultimedia-4.6.0:4=
+		>=dev-qt/qtcore-4.6.0:4
+		>=dev-qt/qtgui-4.6.0:4
+		>=dev-qt/qtmultimedia-4.6.0:4
 	)
 	qt5? (
-		dev-qt/qtcore:5=
-		dev-qt/qtgui:5=
-		dev-qt/qtmultimedia:5=
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtmultimedia:5
 	)
-	smf2wav? ( dev-libs/glib:2= )
+	smf2wav? ( dev-libs/glib:2 )
 "
 DEPEND="${RDEPEND}
 	|| ( sys-devel/clang sys-devel/gcc[cxx] )
@@ -62,7 +62,7 @@ if [[ ${PV} == 9999 ]]; then
 	KEYWORDS=""
 else
 	MY_PV="${PV//./_}"
-	MY_P="libmt32emu_${MY_PV}"
+	MY_P="${PN}_${MY_PV}"
 
 	SRC_URI="https://github.com/${PN}/${PN}/archive/${MY_P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
@@ -90,10 +90,10 @@ src_prepare() {
 src_configure() {
 	# Value of the ${PROJECT_NAME} variable expanded by the
 	# "mt32emu/CMakeLists.txt" makefile and required below.
-	if [[ ${PV} == 9999 ]]
-	then MY_PROJECT_NAME=libmt32emu
-	else MY_PROJECT_NAME=mt32emu-qt
-	fi
+	# if [[ ${PV} == 9999 ]]
+	# then MY_PROJECT_NAME=libmt32emu
+	# else MY_PROJECT_NAME=mt32emu-qt
+	# fi
 
 	# Configuration options to be passed to CMake.
 	local mycmakeargs=(
@@ -114,7 +114,9 @@ src_configure() {
 		# internal audio resampling library; else, enable this library.
 		# Unfortunately, the name of this option conditionally depends on
 		# whether this is a stable or live build.
-		-D${MY_PROJECT_NAME}_WITH_INTERNAL_RESAMPLER=$(
+		# -D${MY_PROJECT_NAME}_WITH_INTERNAL_RESAMPLER=$(
+		# 	(use libsamplerate || use libsoxr) && echo 'off' || echo 'on')
+		-Dlibmt32emu_WITH_INTERNAL_RESAMPLER=$(
 			(use libsamplerate || use libsoxr) && echo 'off' || echo 'on')
 
 		# Options defined by the "mt32emu_qt/CMakeLists.txt" makefile.
@@ -122,7 +124,7 @@ src_configure() {
 		-Dmt32emu-qt_USE_PULSEAUDIO_DYNAMIC_LOADING=$(usex pulseaudio)
 		-Dmt32emu-qt_WITH_QT5=$(usex qt5)
 
-		# Options implicitly defined by the "mt32emu_qt/CMakeLists.txt" makefile
+		# Options implicitly defined by the "mt32emu/CMakeLists.txt" makefile
 		# for use in conditionally disabling find_package() calls.
 		-DCMAKE_DISABLE_FIND_PACKAGE_ALSA=$(usex !alsa)
 		-DCMAKE_DISABLE_FIND_PACKAGE_PORTAUDIO=$(usex !portaudio)
