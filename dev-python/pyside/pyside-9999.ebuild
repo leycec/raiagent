@@ -78,11 +78,9 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	# Fix generated pkgconfig file to require the shiboken
-	# library suffixed with the correct python version.
-	sed -i -e '/^Requires:/ s/shiboken$/&@SHIBOKEN_PYTHON_SUFFIX@/' \
-		libpyside/${PN}2.pc.in || die
-
+	#FIXME: Since this fixes an open PySide2 issue, submit an upstream PySide2
+	#patch fixing this permanently... for everyone.
+	
 	# Force the optional "Qt5Concurrent", "Qt5Gui", "Qt5Network",
 	# "Qt5PrintSupport", "Qt5Sql", "Qt5Test", and "Qt5Widgets" packages
 	# erroneously marked as mandatory to be optional.
@@ -125,6 +123,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Svg=$(usex !svg)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Test=$(usex !testlib)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebChannel=$(usex !webchannel)
+		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebEngine=$(usex !webengine)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebEngineWidgets=$(usex !webengine)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebKit=$(usex !webkit)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebKitWidgets=$(usex !webkit)
