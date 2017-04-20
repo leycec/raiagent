@@ -54,13 +54,10 @@ RDEPEND="
 	>=dev-python/shiboken-${PV}:${SLOT}=[${PYTHON_USEDEP}]
 	>=dev-qt/qtcore-${QT_PV}
 	>=dev-qt/qtxml-${QT_PV}
-	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
 	declarative? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
 	designer? ( >=dev-qt/designer-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV} )
 	help? ( >=dev-qt/qthelp-${QT_PV} )
 	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[widgets?] )
-	network? ( >=dev-qt/qtnetwork-${QT_PV} )
 	opengl? ( >=dev-qt/qtopengl-${QT_PV} )
 	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
 	script? ( >=dev-qt/qtscript-${QT_PV} )
@@ -71,16 +68,19 @@ RDEPEND="
 	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
 	webkit? ( >=dev-qt/qtwebkit-${QT_PV}[printsupport] )
 	websockets? ( >=dev-qt/qtwebsockets-${QT_PV} )
-	widgets? ( >=dev-qt/qtwidgets-${QT_PV} )
 	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
 	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV} )
+	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
+	gui? ( >=dev-qt/qtgui-${QT_PV} )
+	network? ( >=dev-qt/qtnetwork-${QT_PV} )
+	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
+	sql? ( >=dev-qt/qtsql-${QT_PV} )
+	testlib? ( >=dev-qt/qttest-${QT_PV} )
+	widgets? ( >=dev-qt/qtwidgets-${QT_PV} )
 "
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	#FIXME: Since this fixes an open PySide2 issue, submit an upstream PySide2
-	#patch fixing this permanently... for everyone.
-	
 	# Force the optional "Qt5Concurrent", "Qt5Gui", "Qt5Network",
 	# "Qt5PrintSupport", "Qt5Sql", "Qt5Test", and "Qt5Widgets" packages
 	# erroneously marked as mandatory to be optional.
@@ -106,7 +106,6 @@ src_configure() {
 		-DBUILD_TESTS=$(usex test)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Concurrent=$(usex !concurrent)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Gui=$(usex !gui)
-		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Test=$(usex !gui)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Designer=$(usex !designer)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5UiTools=$(usex !designer)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Help=$(usex !help)
@@ -128,6 +127,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebKit=$(usex !webkit)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebKitWidgets=$(usex !webkit)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebSockets=$(usex !websockets)
+		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=$(usex !widgets)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5X11Extras=$(usex !x11extras)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5XmlPatterns=$(usex !xmlpatterns)
 	)
