@@ -51,7 +51,7 @@ QT_PV="5.3.0:5"
 
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-python/shiboken-${PV}:${SLOT}=[${PYTHON_USEDEP}]
+	>=dev-python/shiboken-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	>=dev-qt/qtcore-${QT_PV}
 	>=dev-qt/qtxml-${QT_PV}
 	declarative? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
@@ -96,8 +96,6 @@ src_prepare() {
 }
 
 src_configure() {
-	append-cxxflags -std=c++11
-
 	# For each line of the form "CHECK_PACKAGE_FOUND(${PACKAGE_NAME} opt)" in
 	# "PySide2/CMakeLists.txt" defining an optional dependency, an option of the
 	# form "-DCMAKE_DISABLE_FIND_PACKAGE_${PACKAGE_NAME}=$(usex !${USE_FLAG})"

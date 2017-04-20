@@ -20,13 +20,9 @@ KEYWORDS=""
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# Minimum Qt version required, shiboken2 requires the qAsConst() function first
-# introduced by Qt 5.7.
-#
-# For safety, shiboken2 is automatically rebuilt on all Qt bumps. Even minor Qt
-# bumps could break backward compatibility or introduce new functionality.
-# Moreover, shiboken2 appears to violate Qt's privacy encapsulation.
-QT_PV="5.7.1:5="
+# Minimum Qt version required. Shiboken2 requires the qAsConst() function first
+# introduced by Qt 5.7.0.
+QT_PV="5.7.1:5"
 
 #FIXME: Update the "clang" dependency to require some minimum and possibly
 #maximum range of CLang versions. Due to insufficient upstream documentation and
