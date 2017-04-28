@@ -14,6 +14,9 @@ EGIT_REPO_URI=(
 	"https://code.qt.io/git/pyside/pyside.git"
 )
 
+#FIXME: Switch to the clang-enabled "dev" branch once stable.
+EGIT_BRANCH="5.6"
+
 LICENSE="LGPL-2.1"
 SLOT="2"
 KEYWORDS=""
@@ -45,42 +48,45 @@ REQUIRED_USE="
 	xmlpatterns? ( network )
 "
 
-# Minimum Qt version required, derived from the "CMakeLists.txt" line:
+# Minimum version of Qt required, derived from the "CMakeLists.txt" line:
 #      find_package(Qt5 ${QT_PV} REQUIRED COMPONENTS Core)
-QT_PV="5.3.0:5"
+QT_PV=":5/5.6"
 
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/shiboken-${PV}:${SLOT}[${PYTHON_USEDEP}]
-	>=dev-qt/qtcore-${QT_PV}
-	>=dev-qt/qtxml-${QT_PV}
-	declarative? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
-	designer? ( >=dev-qt/designer-${QT_PV} )
-	help? ( >=dev-qt/qthelp-${QT_PV} )
-	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[widgets?] )
-	opengl? ( >=dev-qt/qtopengl-${QT_PV} )
-	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
-	script? ( >=dev-qt/qtscript-${QT_PV} )
-	sql? ( >=dev-qt/qtsql-${QT_PV} )
-	svg? ( >=dev-qt/qtsvg-${QT_PV} )
-	testlib? ( >=dev-qt/qttest-${QT_PV} )
-	webchannel? ( >=dev-qt/qtwebchannel-${QT_PV} )
-	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
-	webkit? ( >=dev-qt/qtwebkit-${QT_PV}[printsupport] )
-	websockets? ( >=dev-qt/qtwebsockets-${QT_PV} )
-	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
-	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV} )
-	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV} )
-	network? ( >=dev-qt/qtnetwork-${QT_PV} )
-	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
-	sql? ( >=dev-qt/qtsql-${QT_PV} )
-	testlib? ( >=dev-qt/qttest-${QT_PV} )
-	widgets? ( >=dev-qt/qtwidgets-${QT_PV} )
+	dev-qt/qtcore${QT_PV}
+	dev-qt/qtxml${QT_PV}
+	declarative? ( dev-qt/qtdeclarative${QT_PV}[widgets?] )
+	designer? ( dev-qt/designer${QT_PV} )
+	help? ( dev-qt/qthelp${QT_PV} )
+	multimedia? ( dev-qt/qtmultimedia${QT_PV}[widgets?] )
+	opengl? ( dev-qt/qtopengl${QT_PV} )
+	printsupport? ( dev-qt/qtprintsupport${QT_PV} )
+	script? ( dev-qt/qtscript${QT_PV} )
+	sql? ( dev-qt/qtsql${QT_PV} )
+	svg? ( dev-qt/qtsvg${QT_PV} )
+	testlib? ( dev-qt/qttest${QT_PV} )
+	webchannel? ( dev-qt/qtwebchannel${QT_PV} )
+	webengine? ( dev-qt/qtwebengine${QT_PV}[widgets?] )
+	webkit? ( dev-qt/qtwebkit${QT_PV}[printsupport] )
+	websockets? ( dev-qt/qtwebsockets${QT_PV} )
+	x11extras? ( dev-qt/qtx11extras${QT_PV} )
+	xmlpatterns? ( dev-qt/qtxmlpatterns${QT_PV} )
+	concurrent? ( dev-qt/qtconcurrent${QT_PV} )
+	gui? ( dev-qt/qtgui${QT_PV} )
+	network? ( dev-qt/qtnetwork${QT_PV} )
+	printsupport? ( dev-qt/qtprintsupport${QT_PV} )
+	sql? ( dev-qt/qtsql${QT_PV} )
+	testlib? ( dev-qt/qttest${QT_PV} )
+	widgets? ( dev-qt/qtwidgets${QT_PV} )
 "
 DEPEND="${RDEPEND}"
 
 src_prepare() {
+	#FIXME: Remove the following "sed" patch after this upstream issue is closed:
+	#    https://bugreports.qt.io/browse/PYSIDE-502
+	
 	# Force the optional "Qt5Concurrent", "Qt5Gui", "Qt5Network",
 	# "Qt5PrintSupport", "Qt5Sql", "Qt5Test", and "Qt5Widgets" packages
 	# erroneously marked as mandatory to be optional.

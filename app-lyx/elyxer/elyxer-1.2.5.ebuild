@@ -1,9 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python2_{6,7} pypy )
+PYTHON_COMPAT=( python2_7 pypy )
 
 # While eLyXer does bundle both an ad-hoc Python installer ("install.py") and
 # ad-hoc Bourne shell installer ("make"), neither are suitable for running with
@@ -15,14 +14,14 @@ PYTHON_COMPAT=( python2_{6,7} pypy )
 #
 # eLyXer also bundles numerous distutils-based "setup.py" scripts for installing
 # eLyXer as a module into the current Python distribution tree. Since the
-# function in "install.py" leveraging such scripts has been effectively
-# disabled, we surmise such functionality to be broken.
+# function in "install.py" leveraging these scripts has been effectively
+# disabled, we surmise this functionality to be broken.
 #
 # It remains unclear just why the author attempted (and failed) to reinvent the
 # installer wheel. Proven methods exist, including notable Python-based build
 # tools (e.g., buildit, setuptools).
 #
-# In the end, we elect to install eLyXer manually.
+# In the end, we elect to install eLyXer manually. *sigh*
 inherit python-single-r1
 
 DESCRIPTION="LyX to HTML converter"

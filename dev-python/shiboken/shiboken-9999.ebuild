@@ -14,41 +14,40 @@ EGIT_REPO_URI=(
 	"https://code.qt.io/git/pyside/shiboken.git"
 )
 
+#FIXME: Switch to the clang-enabled "dev" branch once stable.
+EGIT_BRANCH="5.6"
+
 LICENSE="LGPL-2.1"
 SLOT="2"
 KEYWORDS=""
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# Minimum Qt version required. Shiboken2 requires the qAsConst() function first
-# introduced by Qt 5.7.0.
-QT_PV="5.7.1:5"
+# Minimum version of Qt required.
+QT_PV=":5/5.6"
 
-#FIXME: Update the "clang" dependency to require some minimum and possibly
-#maximum range of CLang versions. Due to insufficient upstream documentation and
-#ongoing development, this range is currently unknown.
+#FIXME: Add "sys-devel/clang:*" after switching to the "dev" branch.
 RDEPEND="
 	${PYTHON_DEPS}
-	sys-devel/clang:*
 	>=dev-libs/libxml2-2.6.32
 	>=dev-libs/libxslt-1.1.19
-	>=dev-qt/qtcore-${QT_PV}
-	>=dev-qt/qtxml-${QT_PV}
-	>=dev-qt/qtxmlpatterns-${QT_PV}
+	dev-qt/qtcore${QT_PV}
+	dev-qt/qtxml${QT_PV}
+	dev-qt/qtxmlpatterns${QT_PV}
 "
 DEPEND="${RDEPEND}
 	test? (
-		>=dev-qt/qtgui-${QT_PV}
-		>=dev-qt/qttest-${QT_PV}
+		dev-qt/qtgui${QT_PV}
+		dev-qt/qttest${QT_PV}
 	)
 "
 
 DOCS=( AUTHORS )
 
 src_prepare() {
-	#FIXME: If ${CLANG_INSTALL_DIR} is removed below, remove this patch too.
-	sed -i -e '/^find_library(CLANG_LIBRARY/ s~/lib)$~/'$(get_libdir)')~' \
-		CMakeLists.txt || die
+	#FIXME: Uncomment after switching to the "dev" branch.
+	# sed -i -e '/^find_library(CLANG_LIBRARY/ s~/lib)$~/'$(get_libdir)')~' \
+	# 	CMakeLists.txt || die
 
 	if use prefix; then
 		cp "${FILESDIR}"/rpath.cmake . || die
@@ -72,11 +71,14 @@ src_configure() {
 			)
 		fi
 
+		#FIXME: Uncomment after switching to the "dev" branch.
 		#FIXME: "CMakeLists.txt" currently requires that callers manually set
 		#this environment variable to the absolute path of the directory
-		#containing CLang libraries rather than magically finding this path
+		#containing clang libraries rather than magically finding this path
 		#(e.g., via "find_package(CLang)"). If this changes, remove this option.
-		CLANG_INSTALL_DIR="$(get_llvm_prefix)" cmake-utils_src_configure
+		# CLANG_INSTALL_DIR="$(get_llvm_prefix)" cmake-utils_src_configure
+
+		cmake-utils_src_configure
 	}
 	python_foreach_impl configuration
 }
