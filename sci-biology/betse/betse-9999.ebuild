@@ -134,5 +134,5 @@ python_install_all() {
 	distutils-r1_python_install_all
 
 	# Recursively install all available documentation.
-	dodoc -r AUTHORS.md README.rst doc/*
+	dodoc -r README.rst doc/*
 }
