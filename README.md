@@ -45,7 +45,7 @@ Notable peer-to-peer (P2P) ebuilds include:
   unofficially hosts **0-day I2P ebuilds** (i.e., ebuilds *ideally* updated the
   same day as official I2P updates). For quality assurance, our ebuilds are
   routinely synchronized against [Portage's older I2P
-  ebuilds](https://packages.gentoo.org/package/net-p2p/i2p).~~See Portage
+  ebuilds](https://packages.gentoo.org/package/net-p2p/i2p).~~ See Portage
   instead, which now [officially hosts](https://wiki.gentoo.org/wiki/I2P) all
   [I2P](https://geti2p.net) ebuilds in a 0-day manner. <sup>_Excellent… for we
   are lazy._</sup>
