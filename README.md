@@ -23,14 +23,32 @@ raiagent
 
 Notable command-line interface (CLI) ebuilds include:
 
-* [Powerline](https://github.com/powerline/powerline), a general-purpose CLI statusline theme with cross-application support (e.g., `bash`, `tmux`, `vim`, `zsh`). `raiagent` [officially hosts](https://powerline.readthedocs.org/en/latest/installation/linux.html) Powerline ebuilds, co-maintained by a [frequent Powerline committer](https://github.com/ZyX-I).
+* **[Powerline](https://github.com/powerline/powerline)**, a general-purpose CLI statusline theme with cross-application support (e.g., `bash`, `tmux`, `vim`, `zsh`). `raiagent` [officially hosts](https://powerline.readthedocs.org/en/latest/installation/linux.html) Powerline ebuilds, co-maintained by a [frequent Powerline committer](https://github.com/ZyX-I).
 * [fishman](https://github.com/fishman)'s [exuberant-ctags fork](https://github.com/fishman/ctags), an actively maintained [ctags](https://en.wikipedia.org/wiki/Ctags) variant with modern language support (e.g., CSS, Objective-C). `raiagent` unofficially hosts live ctags ebuilds in lieu of an official release.
 
 ### P2P
 
 Notable peer-to-peer (P2P) ebuilds include:
 
-* [The Invisible Internet Project (I2P)](https://geti2p.net), an anonymous peer-to-peer communication layer colloquially referred to as a "[darknet](https://en.wikipedia.org/wiki/Darknet_\(networking\))." (Think [Tor hidden services](https://en.wikipedia.org/wiki/List_of_Tor_hidden_services) on illict performance-enhancing stimulants.) To safeguard users against deanonymization attacks specific to obsolete I2P releases, `raiagent` unofficially hosts **0-day I2P ebuilds** (i.e., ebuilds *ideally* updated the same day as official I2P updates). For quality assurance, our ebuilds are routinely synchronized against [Portage's older I2P ebuilds](https://packages.gentoo.org/package/net-p2p/i2p). 
+* **[ZeroNet](https://zeronet.io)**, a peer-to-peer web hosting network brokered
+  with demonetized [BitCoin](https://en.wikipedia.org/wiki/Bitcoin) blockchain
+  semantics distributed over the decentralized
+  [BitTorrent](https://en.wikipedia.org/wiki/BitTorrent) protocol complete with
+  optional Tor-based traffic anonymization. *Yeah.* It's pretty special.
+  `raiagent` unofficially hosts ZeroNet ebuilds.
+* ~~[The Invisible Internet Project (I2P)](https://geti2p.net), an anonymous
+  peer-to-peer communication layer colloquially referred to as a
+  "[darknet](https://en.wikipedia.org/wiki/Darknet_\(networking\))." (Think [Tor
+  hidden services](https://en.wikipedia.org/wiki/List_of_Tor_hidden_services) on
+  illict performance-enhancing stimulants.) To safeguard users against
+  deanonymization attacks specific to obsolete I2P releases, `raiagent`
+  unofficially hosts **0-day I2P ebuilds** (i.e., ebuilds *ideally* updated the
+  same day as official I2P updates). For quality assurance, our ebuilds are
+  routinely synchronized against [Portage's older I2P
+  ebuilds](https://packages.gentoo.org/package/net-p2p/i2p).~~See Portage
+  instead, which now [officially hosts](https://wiki.gentoo.org/wiki/I2P) all
+  [I2P](https://geti2p.net) ebuilds in a 0-day manner. <sup>_Excellent… for we
+  are lazy._</sup>
 
 ### Python
 
@@ -52,7 +70,7 @@ Notable Python-centric ebuilds include:
   has been opened… but has yet to be accepted.<sup>_I blame
   [Pazazu](https://www.youtube.com/watch?v=YAw3Xr8r6TY)._</sup> In the interim,
   `raiagent` temporarily hosts PySide2 and Shiboken2 ebuilds.~~ See the
-  **[official `qt` overlay](https://github.com/gentoo/qt)** instead, which
+  [official `qt` overlay](https://github.com/gentoo/qt) instead, which
   now officially hosts all [PySide2](https://wiki.qt.io/PySide2) and
   [Shiboken2](https://wiki.qt.io/PySide2) ebuilds. <sup>_Praise be to
   [Pesa](https://github.com/Pesa) for he is a Qt king among men._</sup>
@@ -62,9 +80,9 @@ Notable Python-centric ebuilds include:
   utility](http://docs.python-guide.org/en/latest/shipping/freezing). `raiagent`
   unofficially hosts PyInstaller ebuilds, as well as [frequently
   committing]((https://github.com/leycec/pyinstaller)) to the official
-  PyInstaller codebase.~~ See the **[pentoo
-  overlay](https://github.com/pentoo/pentoo-overlay)** instead for better
-  maintained PyInstaller ebuilds.
+  PyInstaller codebase.~~ See the [pentoo
+  overlay](https://github.com/pentoo/pentoo-overlay) instead for well-maintained
+  PyInstaller ebuilds.
 
 ### Rertro
 
