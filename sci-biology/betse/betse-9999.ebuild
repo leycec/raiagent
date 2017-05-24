@@ -1,6 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
+
 EAPI=6
 
 PYTHON_COMPAT=( python3_{4,5,6} )
@@ -20,7 +21,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # BETSE runtime and hence guaranteed to be authorative.
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/dill-0.2.3[${PYTHON_USEDEP}]
-	>=dev-python/matplotlib-1.4.0[${PYTHON_USEDEP}]
+	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.8.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
