@@ -18,7 +18,7 @@ HOMEPAGE="https://zeronet.io https://github.com/HelloZeroNet/ZeroNet"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="tor"
+IUSE="debug tor"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 #FIXME: Unbundle all bundled Python dependencies in the "src/lib" directory.
@@ -60,12 +60,26 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #can reasonably do here.
 
 # Dependencies derive from the following sources:
+#
 # * The top-level "requirements.txt" file.
 # * The "src/lib" directory, containing all bundled dependencies.
+# * The "src/Debug/DebugMedia.py" file, dynamically forking the optional
+#   "dev-lang/coffee-script" dependency when merging Coffee- to JavaScript..
+# * The "src/Debug/DebugReloader.py" file, dynamically importing the optional
+#   "dev-python/fs" dependency when passed the "--debug" option.
+# * The "src/Ui/UiServer.py" file, dynamically importing the optional
+#   "dev-python/werkzeug" dependency when passed the "--debug" option.
+#
+# Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}
 	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
+	debug? (
+		>=dev-lang/coffee-script-1.9.3
+		>=dev-python/fs-0.5.4[${PYTHON_USEDEP}]
+		>=dev-python/werkzeug-0.11.11[${PYTHON_USEDEP}]
+	)
 	tor? ( >=net-vpn/tor-0.2.7.5 )
 "
 

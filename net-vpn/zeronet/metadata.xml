@@ -37,6 +37,7 @@ Features
         <remote-id type="github">HelloZeroNet/ZeroNet</remote-id>
 	</upstream>
 	<use>
-		<flag name="tor">Support Tor-based anonymization</flag>
+		<flag name="debug">Enable optional "--debug" functionality recommended for site creation (e.g., codebase autoreloading, CoffeeScript compiling, interactive debugging)</flag>
+		<flag name="tor">Enable Tor-based anonymization</flag>
     </use>
 </pkgmetadata>
