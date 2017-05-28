@@ -116,7 +116,7 @@ src_prepare() {
 	default_src_prepare
 
 	#FIXME: File an upstream issue requesting this be resolved.
-	
+
 	# To avoid consuming all disk space, reduce ZeroNet's logfile logging level
 	# from the insane default of "DEBUG" to the sane default of "INFO".
 	sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py
@@ -133,8 +133,11 @@ src_install() {
 		ZERONET_CONF_OPTIONS=''
 		ZERONET_OPENRC_DEPENDENCIES=''
 		ZERONET_SYSTEMD_DEPENDENCIES=''
-	fi 
+	fi
 
+	#FIXME: Consider passing ${PYTHON} the "-O" option to optimize bytecode
+	#generation. For safety, this option has been omitted until tested.
+	
 	# Dynamically create and install a shell script launching ZeroNet with the
 	# current Python version.
 	cat <<EOF > "${T}"/${PN}
@@ -216,12 +219,12 @@ EOF
 
 	# Install ZeroNet's Python codebase.
 	python_moduleinto "${ZERONET_MODULE_DIR}"
-    python_domodule ${PN}.py plugins src tools
+	python_domodule ${PN}.py plugins src tools
 
 	# Create ZeroNet's logging and state directories.
 	keepdir                "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
 	fowners -R ${PN}:${PN} "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
-	
+
 	# Install all Markdown files as documentation.
 	dodoc *.md
 
