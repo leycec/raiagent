@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+BETSEE (BioElectric Tissue Simulation Engine Environment) is the open-source
+cross-platform graphical user interface (GUI) for BETSE, a finite volume
+simulator for 2D computational multiphysics problems in the life sciences –
+including electrodiffusion, electro-osmosis, galvanotaxis, voltage-gated ion
+channels, gene regulatory networks, and biochemical reaction networks (e.g.,
+metabolism). BETSEE and BETSE are both associated with the Paul Allen Discovery
+Center at Tufts University and supported by a Paul Allen Discovery Center award
+from the Paul G. Allen Frontiers Group.
+
+Like BETSE, BETSEE is portably implemented in pure Python 3, continuously
+stress-tested with GitLab-CI × Appveyor + py.test, and permissively distributed
+under the BSD 2-clause license.
+</longdescription>
+	<upstream>
+		<bugs-to>https://gitlab.com/betse/betsee/issues</bugs-to>
+        <remote-id type="pypi">betsee</remote-id>
+        <remote-id type="gitlab">betse/betsee</remote-id>
+	</upstream>
+	<!--use>
+		<flag name="ffmpeg">Support FFmpeg- or Libav-based animation encoding</flag>
+    </use-->
+</pkgmetadata>

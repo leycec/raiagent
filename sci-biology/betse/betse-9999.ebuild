@@ -33,21 +33,20 @@ DEPEND="${COMMON_DEPEND}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 "
 
-# If the "smp" USE flag is enabled, increase the likelihood that the CBLAS
-# implementation against which NumPy is linked is multicore-aware by requiring
-# that at least one such implementation be installed. Note, however, that this
-# does *NOT* guarantee NumPy to be linked against this implementation, as there
-# appears to be no sane means of enforcing this constraint from within a simple
-# Bash shell script. Instead, we log a post-installation message advising the
-# end user to do so manually.
+# If the "smp" USE flag is enabled, increase the likelihood of multicore-aware
+# NumPy operation by requiring that at least one CBLAS implementation be
+# currently installed. Note, however, that this does *NOT* guarantee NumPy to be
+# linked against this implementation; there appears to be no sane means of
+# enforcing this constraint from within an ebuild. Instead, a post-installation
+# message is subsequently logged advising the user to do so manually.
 #
 # All of the multicore-aware CBLAS implementations listed below are *ONLY*
 # available from the third-party "science" overlay, which also publishes a
 # custom "eselect" implementation. To link NumPy against such an implementation:
 #
-# * That implementation must be manually installed (e.g., to ensure that the
+# * This implementation must be manually installed (e.g., to ensure that the
 #   desired implementation is installed).
-# * That implementation must be manually enabled by "eselect blas".
+# * This implementation must be manually selected via "eselect blas".
 # * NumPy must be manually reinstalled.
 #
 # In short, these steps *CANNOT* be automated by this ebuild. This list of
@@ -87,8 +86,6 @@ if [[ ${PV} == 9999 ]]; then
 else
 	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
-
-	# S="${WORKDIR}"/${MY_P}
 fi
 
 # Notify users of how to properly enable multicore support. See comments above.
