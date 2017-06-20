@@ -115,11 +115,17 @@ pkg_setup() {
 src_prepare() {
 	default_src_prepare
 
-	#FIXME: File an upstream issue requesting this be resolved.
+	#FIXME: File an upstream issue requesting:
+	#
+	#* The default logfile logging level be reduced from "DEBUG" to "INFO".
+	#* A command-line option be added permitting this level to be configured at
+	#  runtime rather than manually patched into the codebase at build time.
 
-	# To avoid consuming all disk space, reduce ZeroNet's logfile logging level
-	# from the insane default of "DEBUG" to the sane default of "INFO".
-	sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py
+	# If debugging is disabled, reduce ZeroNet's default logfile logging level
+	# of "DEBUG" to "INFO" to avoid consuming all available disk space.
+	if ! use debug; then
+		sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py
+	fi
 }
 
 # ZeroNet provides no "setup.py" script and hence requires manual installation.
@@ -135,14 +141,22 @@ src_install() {
 		ZERONET_SYSTEMD_DEPENDENCIES=''
 	fi
 
+	# If debugging is enabled, produce unoptimized and hence debuggable
+	# bytecode; else, produce slightly optimized bytecode.
+	if use debug; then
+		ZERONET_PYTHON_OPTIONS=''
+	else
+		ZERONET_PYTHON_OPTIONS='-O'
+	fi
+
 	#FIXME: Consider passing ${PYTHON} the "-O" option to optimize bytecode
 	#generation. For safety, this option has been omitted until tested.
-	
+
 	# Dynamically create and install a shell script launching ZeroNet with the
 	# current Python version.
 	cat <<EOF > "${T}"/${PN}
 ##!/usr/bin/env sh
-exec ${PYTHON} "${ZERONET_MODULE_DIR}/${PN}.py" --config_file "${ZERONET_CONF_FILE}" "\${@}"
+exec ${PYTHON} ${ZERONET_PYTHON_OPTIONS} "${ZERONET_MODULE_DIR}/${PN}.py" --config_file "${ZERONET_CONF_FILE}" "\${@}"
 EOF
 	dobin "${T}"/${PN}
 
