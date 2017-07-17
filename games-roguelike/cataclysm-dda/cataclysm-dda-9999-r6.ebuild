@@ -242,13 +242,6 @@ src_install() {
 	rm doc/LOADING_ORDER.md
 	cp data/json/LOADING_ORDER.md doc/
 
-	# Replace a symbolic link in the documentation directory to be installed
-	# below with the physical target file of that link. These operations are
-	# non-essential to the execution of installed binaries and are thus
-	# intentionally *NOT* suffixed by "|| die 'cp failed.'"-driven protection.
-	rm doc/LOADING_ORDER.md
-	cp data/json/LOADING_ORDER.md doc/
-
 	# Recursively install all available documentation.
-	dodoc -r CONTRIBUTING.md README.md doc/*
+	dodoc -r README.md doc/*
 }
