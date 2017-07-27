@@ -1,0 +1,84 @@
+# ====================[ .travis.yml                        ]====================
+#
+# --------------------( SYNOPSIS                           )--------------------
+# Overlay-wide Travis Continuous Integration (CI) configuration.
+#
+# Specifically, this configuration:
+#
+# * Clones a current snapshot of Gentoo's main tree and a reasonably recent
+#   stable Portage release.
+# * Validates the current state of this overlay with "repoman".
+# * Redirects the resulting log to this Travis build's report.
+#
+# --------------------( SEE ALSO                           )--------------------
+# * https://github.com/mrueg/repoman-travis
+#   Pseudo-official Travis CI configuration for Gentoo overlays from which this
+#   configuration is strongly inspired.
+
+# ....................{ COPY-AND-PASTE JOB                 }....................
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# WARNING: All following text is copy-and-pasted directly from the corresponding
+# upstream ".travis.yml" file at:
+#     https://github.com/mrueg/repoman-travis/blob/master/.travis.yml
+#
+# Since we currently lack sufficient time, blood, sweat, and salty tears to
+# maintain an actual fork of this file, no modifications should be made to any
+# of the following text with the following exception:
+#
+# * The upstream file clones itself into the local Travis CI build directory to
+#   test whether this downstream file is outdated. This test is a brute-force
+#   filesize comparison and hence always fails for this repository, as the
+#   preamble you are currently reading changes the filesize. Hence, such logic
+#   should typically be commented out on each copy-and-paste. To do so reliably,
+#   simply grep for the substring ".upstream". *sigh*
+#
+# Since upstream actively maintains their repository, the following text should
+# be routinely "synchronized" (by which we mean "blindly replaced") with the
+# current contents of the upstream file -- at least several times a year.
+#
+# Ideally, this violation of the Don't Repeat Yourself (DRY) principle could be 
+# circumvented by including this upstream ".travis.yml" file explicitly within
+# this downstream ".travis.yml" file, which would then simply defer to the
+# current upstream configuration (with presumably only minor modifications).
+# Sadly, Travis CI developers have repeatedly voiced opposition to such
+# functionality -- claiming that: "As for the other ideas like 'includes' and
+# 'conventions', I'm sorry but this is not something we are looking at adding
+# this year. We would like to use the .travis.yml file less, and not have it
+# link to other files."
+#
+# For further details, see:
+#     https://github.com/travis-ci/travis-ci/issues/5385#issuecomment-169306763
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Run repoman via travis
+# See https://github.com/mrueg/repoman-travis
+#
+language: python
+python:
+    - pypy
+env:
+    - PORTAGE_VER="2.3.6"
+before_install:
+    - sudo apt-get -qq update
+    - pip install lxml
+before_script:
+    - sudo chmod a+rwX /etc/passwd /etc/group /etc /usr
+    - mkdir -p travis-overlay /etc/portage /usr/portage/distfiles
+    - mv !(travis-overlay) travis-overlay/
+    - mv .git travis-overlay/
+    # - wget "https://raw.githubusercontent.com/mrueg/repoman-travis/master/.travis.yml" -O .travis.yml.upstream
+    - wget "https://raw.githubusercontent.com/mrueg/repoman-travis/master/spinner.sh"
+    - wget -qO - "https://github.com/gentoo/portage/archive/portage-${PORTAGE_VER}.tar.gz" | tar xz
+    - wget -qO - "https://github.com/gentoo-mirror/gentoo/archive/master.tar.gz" | tar xz -C /usr/portage --strip-components=1
+    - chmod a+rwx spinner.sh
+    - echo "portage:x:250:250:portage:/var/tmp/portage:/bin/false" >> /etc/passwd
+    - echo "portage::250:portage,travis" >> /etc/group
+    - wget "https://www.gentoo.org/dtd/metadata.dtd" -O /usr/portage/distfiles/metadata.dtd
+    - ln -s portage-portage-${PORTAGE_VER}/cnf/repos.conf /etc/portage/repos.conf
+    - ln -s /usr/portage/profiles/default/linux/amd64/13.0 /etc/portage/make.profile
+    # - SIZE=$(stat -c %s .travis.yml.upstream)
+    # - if ! cmp -n $SIZE -s .travis.yml .travis.yml.upstream; then echo -e "\e[31m !!! .travis.yml outdated! Update available https://github.com/mrueg/repoman-travis \e[0m" > /tmp/update ; fi
+    - cd travis-overlay
+script:
+    - ./../spinner.sh "python ../portage-portage-${PORTAGE_VER}/repoman/bin/repoman full -d"
+# You can append own scripts after this line

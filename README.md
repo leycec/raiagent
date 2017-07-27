@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/leycec/raiagent.svg?branch=master)](https://travis-ci.org/leycec/raiagent)
+
 raiagent
 ===========
 
@@ -35,7 +37,8 @@ Notable peer-to-peer (P2P) ebuilds include:
   semantics distributed over the decentralized
   [BitTorrent](https://en.wikipedia.org/wiki/BitTorrent) protocol complete with
   optional Tor-based traffic anonymization. *Yeah.* It's pretty special.
-  `raiagent` unofficially hosts ZeroNet ebuilds.
+  `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet) ZeroNet
+  ebuilds.
 * ~~[The Invisible Internet Project (I2P)](https://geti2p.net), an anonymous
   peer-to-peer communication layer colloquially referred to as a
   "[darknet](https://en.wikipedia.org/wiki/Darknet_\(networking\))." (Think [Tor
