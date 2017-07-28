@@ -1,7 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI="6"
+
+EAPI=6
 
 PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
 
@@ -69,7 +69,7 @@ else
 	MY_PN="powerline-status"
 	MY_P="${MY_PN}-${PV}"
 	SRC_URI="mirror://pypi/p/${MY_PN}/${MY_P}.tar.gz"
-	KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
+	KEYWORDS="~amd64 ~x86 ~x86-fbsd"
 	S="${WORKDIR}/${MY_P}"
 fi
 
