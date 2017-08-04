@@ -42,10 +42,14 @@ DEPEND="
 "
 
 # VGMPlay indirectly supports ALSA and PulseAudio via OSS runtime emulation in
-# the high-level "vgm-player" script. (It's not the best... but it's something.)
+# the high-level "vgm-player" script. Something is better than nothing.
+#
+# Note that, although the "pulseaudio' package provides an "oss" USE flag, this
+# flag has been deprecated; since this package now unconditionally installs
+# "padsp", the PulseAudio OSS wrapper, merely installing "pulseaudio" suffices.
 RDEPEND="${DEPEND}
 	alsa? ( media-libs/alsa-oss )
-	pulseaudio? ( media-sound/pulseaudio[oss] )
+	pulseaudio? ( media-sound/pulseaudio )
 "
 
 if [[ ${PV} == 9999 ]]; then
