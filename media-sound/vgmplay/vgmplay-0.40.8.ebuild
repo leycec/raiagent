@@ -67,14 +67,16 @@ src_prepare() {
 	# Remove the bundled "zlib" directory.
 	rm -r VGMPlay/zlib || die '"rm" failed.'
 
-	# Strip hardcoded ${CFLAGS}.
+	# Patch the makefile as follows:
+	#
+	# * Strip hardcoded ${CFLAGS}.
+	# * Prevent options from being forcefully enabled.
 	sed -e '/CFLAGS := -O3/s~ -O3~~' \
+	    -e '/^DISABLE_HWOPL_SUPPORT = 1$/d' \
+	    -e '/^USE_LIBAO = 1$/d' \
 		-i VGMPlay/Makefile || die '"sed" failed.'
 
-	# Apply user-specific patches.
-	eapply_user
-
-	# Perform default logic.
+	# Apply user-specific patches *AFTER* applying requisite patches above.
 	default_src_prepare
 }
 

@@ -124,7 +124,8 @@ src_prepare() {
 	# If debugging is disabled, reduce ZeroNet's default logfile logging level
 	# of "DEBUG" to "INFO" to avoid consuming all available disk space.
 	if ! use debug; then
-		sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py
+		sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py ||
+			die '"sed" failed.'
 	fi
 }
 

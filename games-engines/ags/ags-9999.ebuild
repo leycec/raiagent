@@ -59,11 +59,12 @@ AGS_INSTALL_DIR="usr/share/${PN}"
 AGS_PATCHES_DAT="${AGS_INSTALL_DIR}/patches.dat"
 
 src_prepare() {
-	default_src_prepare
-
 	# Strip hard-coded ${CFLAGS}.
 	sed -i -e "s~-O2 -g -fsigned-char~~" Engine/Makefile-defs.linux ||
 		die '"sed" failed.'
+
+	# Apply user-specific patches *AFTER* applying requisite patches above.
+	default_src_prepare
 }
 
 src_compile() {
