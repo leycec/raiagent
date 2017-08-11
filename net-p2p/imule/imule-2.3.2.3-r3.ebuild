@@ -1,15 +1,11 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
+
+EAPI=6
 
 # Since iMule is a recent aMule fork, this ebuild is strongly inspired by the
 # most recent "net-p2p/amule" ebuild. Thanks, all Portage contributors!
-
-# Enable Bash strictness.
-set -e
-
-inherit eutils flag-o-matic readme.gentoo wxwidgets user
+inherit eutils flag-o-matic readme.gentoo-r1 wxwidgets user
 
 MY_PNV="iMule-${PV}"
 
@@ -32,21 +28,21 @@ KEYWORDS="~amd64 ~x86"
 IUSE="daemon geoip kde linkcreator mmap nls stats upnp +X"
 
 COMMON_DEPEND="
-	>=dev-libs/crypto++-5:0=
-	>=sys-libs/zlib-1.2.1:0=
-	sys-devel/binutils:=
-	virtual/libiconv:0=
-	virtual/libintl:0=
-	geoip? ( dev-libs/geoip:0= )
-	kde?   ( kde-base/kdelibs:4= )
-	stats? ( >=media-libs/gd-2.0.26:2=[jpeg] )
-	upnp?  ( >=net-libs/libupnp-1.6.6:0= )
+	>=dev-libs/crypto++-5:0
+	>=sys-libs/zlib-1.2.1:0
+	sys-devel/binutils:2.25.1
+	virtual/libiconv:0
+	virtual/libintl:0
+	geoip? ( dev-libs/geoip:0 )
+	kde?   ( kde-frameworks/kdelibs:4 )
+	stats? ( >=media-libs/gd-2.0.26:2[jpeg] )
+	upnp?  ( >=net-libs/libupnp-1.6.6:0 )
 	X?     (
-		>=x11-libs/wxGTK-2.8.12:2.8=[X]
-		dev-qt/qtcore:4=
-		dev-qt/qtgui:4=
+		>=x11-libs/wxGTK-2.8.12:2.8[X]
+		dev-qt/qtcore:4
+		dev-qt/qtgui:4
 	)
-	!X? ( >=x11-libs/wxGTK-2.8.12:2.8= )
+	!X? ( >=x11-libs/wxGTK-2.8.12:2.8 )
 "
 	#remote? (
 	#	>=media-libs/gd-2.0.26:2=
@@ -57,7 +53,7 @@ DEPEND="${COMMON_DEPEND}
 	sys-devel/flex
 "
 RDEPEND="${COMMON_DEPEND}
-	net-p2p/i2p
+	net-vpn/i2p
 "
 
 S="${WORKDIR}/${MY_PNV}-src"
@@ -67,8 +63,8 @@ src_prepare() {
 	# from installing files already installed with KDE. (While we technically
 	# only need to patch "Makefile.in", patch both for good measure.)
 	if use kde; then
-		sed -i -e 's~ ed2k.protocol magnet.protocol~~'\
-			src/utils/plasmamule/Makefile.*
+		sed -i -e 's~ ed2k.protocol magnet.protocol~~' \
+			src/utils/plasmamule/Makefile.* || die '"sed" failed.'
 	fi
 
 	# Technically, we should also patch the following non-fatal installation
@@ -173,10 +169,12 @@ src_install() {
 
 	# Since the makefile installs documentation to "/usr/share/doc/${PN}",
 	# move such directory to the expected "/usr/share/doc/${PNV}".
-	mv "${D}/usr/share/doc/${PN}" "${D}/usr/share/doc/${P}"
+	mv "${D}/usr/share/doc/${PN}" "${D}/usr/share/doc/${P}" ||
+		die '"cp" failed.'
 
 	# Install the downloaded "nodes.dat" seed database for bootstrapping iMule.
-	cp "${DISTDIR}/${IMULE_NODES_BASE}" "${D}/${IMULE_NODES_FILE}"
+	cp "${DISTDIR}/${IMULE_NODES_BASE}" "${D}/${IMULE_NODES_FILE}" ||
+		die '"cp" failed.'
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="
@@ -184,7 +182,7 @@ src_install() {
 	database we have already provided for you, consider running:\\n
 	\\n
 	\\tmkdir ~/.iMule\\n
-	\\tcp ${EROOT}${IMULE_NODES_FILE} ~/.iMule\\n
+	\\tcp "${EROOT}${IMULE_NODES_FILE}" ~/.iMule\\n
 	\\n
 	iMule also requires the I2P SAM application bridge to be enabled. Since
 	such bridge is disabled under all default I2P installations, enable

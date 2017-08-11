@@ -18,7 +18,7 @@ LICENSE="
 	dejavusansmono? ( BitstreamVera )
 	droidsansmono? ( Apache-2.0 )
 	inconsolata? ( OFL )
-	inconsolatadz? ( OFL-1.0 )
+	inconsolatadz? ( OFL )
 	liberationmono? ( OFL-1.1 )
 	meslo? ( Apache-2.0 )
 	sourcecodepro? ( OFL-1.1 )
