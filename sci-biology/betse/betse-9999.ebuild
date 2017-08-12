@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -27,11 +26,14 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/setuptools-3.3[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
-	|| (
-		>=dev-python/ruamel-yaml-0.15.0[${PYTHON_USEDEP}]
-		>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
-	)
+	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
 "
+#FIXME: Insert above after officially supporting "ruamel.yaml".
+	# || (
+	# 	>=dev-python/ruamel-yaml-0.15.0[${PYTHON_USEDEP}]
+	# 	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
+	# )
+
 DEPEND="${COMMON_DEPEND}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 "
@@ -63,14 +65,11 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
-		>=media-gfx/pydot-1.2.2[${PYTHON_USEDEP}]
+		>=media-gfx/pydot-1.2.3[${PYTHON_USEDEP}]
 		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
 		!=dev-python/networkx-1.11
 	)
-	profile? (
-		>=dev-python/pympler-1.4.2[${PYTHON_USEDEP}]
-		>=dev-python/pprofile-1.8[${PYTHON_USEDEP}]
-	)
+	profile? ( >=dev-python/pympler-1.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
 		sci-libs/acml
 		sci-libs/atlas[threads]

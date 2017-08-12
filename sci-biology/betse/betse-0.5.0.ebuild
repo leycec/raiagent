@@ -1,6 +1,6 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
+
 EAPI=6
 
 PYTHON_COMPAT=( python3_{4,5,6} )
@@ -60,14 +60,11 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
-		>=media-gfx/pydot-1.2.2[${PYTHON_USEDEP}]
+		>=media-gfx/pydot-1.2.3[${PYTHON_USEDEP}]
 		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
 		!=dev-python/networkx-1.11
 	)
-	profile? (
-		>=dev-python/pympler-1.4.2[${PYTHON_USEDEP}]
-		>=dev-python/pprofile-1.8[${PYTHON_USEDEP}]
-	)
+	profile? ( >=dev-python/pympler-1.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
 		sci-libs/acml
 		sci-libs/atlas[threads]

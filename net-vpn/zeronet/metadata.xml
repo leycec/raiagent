@@ -33,8 +33,8 @@ Features
   * Works with any browser/OS
 </longdescription>
 	<upstream>
-		<bugs-to>https://github.com/HelloZeroNet/ZeroNet/issues</bugs-to>
         <remote-id type="github">HelloZeroNet/ZeroNet</remote-id>
+		<bugs-to>https://github.com/HelloZeroNet/ZeroNet/issues</bugs-to>
 	</upstream>
 	<use>
 		<flag name="debug">Enable optional "--debug" functionality recommended for site creation (e.g., codebase autoreloading, CoffeeScript compiling, interactive debugging)</flag>
