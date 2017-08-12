@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
+	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
 	</maintainer>
@@ -11,10 +11,7 @@ Line-granularity, thread-aware deterministic and statistic pure-python profiler.
 Inspired from Robert Kern's line_profiler .
 </longdescription>
 	<upstream>
-		<doc lang="en">https://jiffyclub.github.io/snakeviz</doc>
-		<bugs-to>https://github.com/jiffyclub/snakeviz/issues</bugs-to>
+        <remote-id type="github">vpelletier/pprofile</remote-id>
+		<bugs-to>https://github.com/vpelletier/pprofile/issues</bugs-to>
 	</upstream>
-	<!--use>
-		<flag name=""></flag>
-    </use-->
 </pkgmetadata>
