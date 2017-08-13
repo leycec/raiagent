@@ -37,53 +37,6 @@ Notable peer-to-peer (P2P) ebuilds include:
   optional Tor-based traffic anonymization. *Yeah.* It's pretty special.
   `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet) ZeroNet
   ebuilds.
-* ~~[The Invisible Internet Project (I2P)](https://geti2p.net), an anonymous
-  peer-to-peer communication layer colloquially referred to as a
-  "[darknet](https://en.wikipedia.org/wiki/Darknet_\(networking\))." (Think [Tor
-  hidden services](https://en.wikipedia.org/wiki/List_of_Tor_hidden_services) on
-  illict performance-enhancing stimulants.) To safeguard users against
-  deanonymization attacks specific to obsolete I2P releases, `raiagent`
-  unofficially hosts **0-day I2P ebuilds** (i.e., ebuilds *ideally* updated the
-  same day as official I2P updates). For quality assurance, our ebuilds are
-  routinely synchronized against [Portage's older I2P
-  ebuilds](https://packages.gentoo.org/package/net-p2p/i2p).~~ See Portage
-  instead, which now [officially hosts](https://wiki.gentoo.org/wiki/I2P) all
-  [I2P](https://geti2p.net) ebuilds in a 0-day manner. <sup>_Excellent… for we
-  are lazy._</sup>
-
-### Python
-
-Notable Python-centric ebuilds include:
-
-* **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue
-  **S**imulation **E**ngine), a cross-platform Python-based finite volume
-  simulator for 2D computational multiphysics problems in the life sciences
-  coauthored by [the author](https://github.com/leycec) of this overlay.
-  `raiagent` [officially
-  hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE
-  ebuilds.
-* ~~**[PySide2](https://wiki.qt.io/PySide2)**, [The Qt
-  Company](https://www.qt.io)'s official LGPL-licensed Qt 5 bindings for Python,
-  and **[Shiboken2](https://wiki.qt.io/PySide2),** [The Qt
-  Company](https://www.qt.io)'s official LGPL-licensed Qt 5 binding generator.
-  A [pull request](https://github.com/gentoo/qt/pull/142) publishing these
-  ebuilds with Gentoo's official [`qt` overlay](https://github.com/gentoo/qt)
-  has been opened… but has yet to be accepted.<sup>_I blame
-  [Pazazu](https://www.youtube.com/watch?v=YAw3Xr8r6TY)._</sup> In the interim,
-  `raiagent` temporarily hosts PySide2 and Shiboken2 ebuilds.~~ See the
-  [official `qt` overlay](https://github.com/gentoo/qt) instead, which
-  now officially hosts all [PySide2](https://wiki.qt.io/PySide2) and
-  [Shiboken2](https://wiki.qt.io/PySide2) ebuilds. <sup>_Praise be to
-  [Pesa](https://github.com/Pesa) for he is a Qt king among men._</sup>
-* ~~[PyInstaller](https://github.com/pyinstaller/pyinstaller)'s [Python 3
-  branch](https://github.com/pyinstaller/pyinstaller/tree/python3), a
-  cross-platform [Python freezing
-  utility](http://docs.python-guide.org/en/latest/shipping/freezing). `raiagent`
-  unofficially hosts PyInstaller ebuilds, as well as [frequently
-  committing]((https://github.com/leycec/pyinstaller)) to the official
-  PyInstaller codebase.~~ See the [pentoo
-  overlay](https://github.com/pentoo/pentoo-overlay) instead for well-maintained
-  PyInstaller ebuilds.
 
 ### Rertro
 
@@ -112,6 +65,24 @@ Notable **roguelike** (i.e., games featuring permanent death as a prominent mech
 
 * [Cataclysm: Dark Days Ahead (C:DDA)](http://en.cataclysmdda.com), a post-apocalyptic survival horror roguelike. `raiagent` [officially hosts](http://www.wiki.cataclysmdda.com/index.php?title=How_to_compile#Gentoo) C:DDA ebuilds.
 * [UnReal World (URW)](http://www.unrealworld.fi), a Finnish Iron-Age wilderness survival roguelike. `raiagent` [unofficially hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
+
+### Science
+
+Notable scientifical ebuilds include:
+
+* **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue
+  **S**imulation **E**ngine), a cross-platform pure-Python CLI-based finite
+  volume simulator for 2D computational multiphysics problems in the life
+  sciences coauthored by [the author](https://github.com/leycec) of this
+  overlay.  Needless to say, `raiagent` [officially
+  hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE
+  ebuilds.
+* **[BETSEE](https://gitlab.com/betse/betsee)** (**B**io **E**lectric **T**issue
+  **S**imulation **E**ngine **E**nvironment), a cross-platform pure-Python
+  [PySide2](https://wiki.qt.io/PySide2)-based [Qt 5](https://www.qt.io) GUI for
+  [BETSE](https://gitlab.com/betse/betse) coauthored by [the
+  author](https://github.com/leycec) of this overlay. Again, `raiagent`
+  officially hosts BETSEE ebuilds.
 
 ## Installation
 

@@ -64,7 +64,7 @@ RDEPEND="${COMMON_DEPEND}
 		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
 		!=dev-python/networkx-1.11
 	)
-	profile? ( >=dev-python/pympler-1.4.2[${PYTHON_USEDEP}] )
+	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
 		sci-libs/acml
 		sci-libs/atlas[threads]

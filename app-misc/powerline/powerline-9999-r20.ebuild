@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_2,3_3,3_4} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo-r1", inherit the latter later.
@@ -69,7 +69,7 @@ else
 	MY_PN="powerline-status"
 	MY_P="${MY_PN}-${PV}"
 	SRC_URI="mirror://pypi/p/${MY_PN}/${MY_P}.tar.gz"
-	KEYWORDS="~amd64 ~x86 ~x86-fbsd"
+	KEYWORDS="~amd64 ~x86"
 	S="${WORKDIR}/${MY_P}"
 fi
 

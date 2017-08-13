@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -22,13 +21,15 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # This list of mandatory dependencies derives directly from the
 # "betsee.metadata.DEPENDENCIES_RUNTIME_MANDATORY" list, which is enforced at
 # BETSEE runtime and hence guaranteed to be authorative.
-COMMON_DEPEND="${PYTHON_DEPS}
+#
+# Note that the PySide2 "svg" USE flag implies the "widget" USE flag implies the
+# "gui" USE flag, which thus need not be explicitly listed.
+DEPEND="${PYTHON_DEPS}
 	dev-python/pyside:2[${PYTHON_USEDEP},svg]
 	dev-python/pyside-tools:2[${PYTHON_USEDEP}]
 	>=sci-biology/betse-${PV}[${PYTHON_USEDEP}]
 "
-DEPEND="${COMMON_DEPEND}"
-RDEPEND="${COMMON_DEPEND}"
+RDEPEND="${DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
