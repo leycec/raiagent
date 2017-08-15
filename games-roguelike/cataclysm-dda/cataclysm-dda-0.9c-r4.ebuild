@@ -1,6 +1,6 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
+
 EAPI=6
 
 #FIXME: C:DDA ships with an undocumented and currently unsupported
@@ -25,20 +25,20 @@ REQUIRED_USE="
 "
 
 RDEPEND="
-	app-arch/bzip2:=
-	sys-libs/glibc:2.2=
-	sys-libs/zlib:=
-	lua? ( >=dev-lang/lua-5.1:0= )
-	luajit? ( dev-lang/luajit:2= )
-	ncurses? ( >=sys-libs/ncurses-6.0:0= )
-	nls? ( sys-devel/gettext:0=[nls] )
+	app-arch/bzip2
+	sys-libs/glibc
+	sys-libs/zlib
+	lua? ( >=dev-lang/lua-5.1:0 )
+	luajit? ( dev-lang/luajit:2 )
+	ncurses? ( >=sys-libs/ncurses-6.0:0 )
+	nls? ( sys-devel/gettext:0[nls] )
 	sdl? (
-		media-libs/libsdl2:0=
-		media-libs/sdl2-ttf:0=
-		media-libs/sdl2-image:0=[jpeg,png]
-		media-libs/freetype:2=
+		media-libs/libsdl2:0
+		media-libs/sdl2-ttf:0
+		media-libs/sdl2-image:0[jpeg,png]
+		media-libs/freetype:2
 	)
-	sound? ( media-libs/sdl2-mixer:0= )
+	sound? ( media-libs/sdl2-mixer:0 )
 "
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )

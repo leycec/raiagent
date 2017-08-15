@@ -64,18 +64,14 @@ else
 fi
 
 src_prepare() {
+	default
+
 	# Remove the bundled "zlib" directory.
 	rm -r VGMPlay/zlib || die '"rm" failed.'
 
 	# Strip hardcoded ${CFLAGS}.
 	sed -e '/CFLAGS := -O3/s~ -O3~~' \
 		-i VGMPlay/Makefile || die '"sed" failed.'
-
-	# Apply user-specific patches.
-	eapply_user
-
-	# Perform default logic.
-	default_src_prepare
 }
 
 src_compile() {

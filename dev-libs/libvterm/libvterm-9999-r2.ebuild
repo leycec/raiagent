@@ -1,7 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
+
+EAPI=6
 
 inherit multilib bzr flag-o-matic
 
@@ -18,6 +18,8 @@ DEPEND=""
 RDEPEND="!dev-libs/libvterm-neovim"
 
 src_prepare() {
+	default
+
 	# Prevent "libtool" from emitting ignorable warnings during installation
 	# resembling:
 	#
@@ -31,25 +33,27 @@ src_prepare() {
 		die '"sed" failed.'
 }
 
+src_compile() {
+	# NeoVim requires the "-fPIC" CFLAG. See also:
+	#     https://github.com/neovim/neovim/pull/2076
+	append-cflags -fPIC
+	emake PREFIX="${EPREFIX}/usr" LIBDIR="${EPREFIX}/usr/$(get_libdir)"
+}
+
 src_test() {
 	# Ideally, valgrind-specific unit tests could be reliably enabled by
 	# passing "VALGRIND=1". Sadly, such tests currently fail with:
 	#     valgrind:  Fatal error at startup: a function redirection
 	#     valgrind:  which is mandatory for this platform-tool combination
 	#     valgrind:  cannot be set up.
-	emake test || die 'Functional tests failed.'
+	emake test
 }
 
 src_install() {
 	# By default, the Makefile installs to "/usr/local/lib". That's terrible.
-	emake PREFIX="${D}/usr" LIBDIR="${D}/usr/$(get_libdir)" install ||
-		die 'Installation failed.'
-	dodoc doc/URLs doc/seqs.txt
-}
+	emake PREFIX="${EPREFIX}/usr" LIBDIR="${EPREFIX}/usr/$(get_libdir)" \
+		DESTDIR="${D}" install
 
-src_compile() {
-	# NeoVim requires the "-fPIC" CFLAG. See also:
-	#     https://github.com/neovim/neovim/pull/2076
-	append-cflags -fPIC
-	emake || die 'Compilation failed.'
+	prune_libtool_files
+	dodoc doc/*
 }

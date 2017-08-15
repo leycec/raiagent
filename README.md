@@ -110,15 +110,21 @@ that *other* [disreputable fellow](http://paludis.exherbo.org)), this is:
 [issue reporters](https://github.com/leycec/raiagent/issues) – especially:
 
 * Nikolai Aleksandrovich Pavlov ([ZyX-I](https://github.com/ZyX-I)), whose
-  gracious contributions to the suite of [Powerline ebuilds](https://github.com/leycec/raiagent/tree/master/app-misc) has been unutterably invaluable. Thanks,
-  Nikolai. Your Sisyphean efforts will not go unremembered.
+  gracious contributions to the suite of [Powerline
+  ebuilds](https://github.com/leycec/raiagent/tree/master/app-misc) has been
+  immeasurably invaluable. Thanks, Nikolai. Your Sisyphean efforts will not go
+  unremembered.
 
 ## See Also
 
 [`leycec`](https://github.com/leycec), the principal maintainer of `raiagent`,
-actively contributes to numerous other third-party Gentoo overlays – especially:
+actively contributes to various other first- and third-party Gentoo overlays –
+including:
 
-* [stefan-gr](https://github.com/stefan-gr)'s
-  [`abendbrot`](https://github.com/stefan-gr/abendbrot) overlay, emphasizing
-  emulation frontends (e.g., [EmulationStation](http://www.emulationstation.org),
+* The [official Qt overlay](https://github.com/gentoo/qt), notably the
+  [PySide2](https://wiki.qt.io/PySide2), PySide2-tools, and shiboken2 packages.
+* [stefan-gr](https://github.com/stefan-gr)'s 
+  [unofficial `abendbrot` overlay](https://github.com/stefan-gr/abendbrot),
+  emphasizing emulation frontends (e.g.,
+  [EmulationStation](http://www.emulationstation.org),
   [RetroArch](http://www.libretro.com)).

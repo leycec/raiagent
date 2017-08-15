@@ -1,15 +1,9 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
 
-# Enforce Bash scrictness.
-set -e
+EAPI=6
 
-# While the installed "labelnation" script requires only Python 2.x, the
-# installed "csv_to_ln" script requires at least Python 2.3. Since python-r1
-# fails when passed less than "python2_5", don't.
-PYTHON_COMPAT=( python2_{5,6,7} )
+PYTHON_COMPAT=( python2_7 )
 
 inherit python-single-r1
 

@@ -1,10 +1,7 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
 
-# Enable Bash strictness.
-set -e
+EAPI=6
 
 inherit autotools cvs eutils
 
@@ -40,20 +37,21 @@ RDEPEND+="
 		x11-libs/libX11
 		x11-libs/libXrandr
 	)"
-DEPEND+="
+DEPEND+="${RDEPEND}
 	X? (
 		x11-proto/xextproto
 		x11-proto/xproto
-	)
-	${RDEPEND}"
+	)"
 
 S="${WORKDIR}/${PN}"
 
 src_prepare() {
+	default_src_prepare
+
 	# Remove the "install-data-hook" target from "Makefile.am" *BEFORE*
 	# generating "Makefile.in". While we could theoretically patch such target
 	# to work properly, it's much simpler to do so ourselves in src_install().
-	sed -i -e '/^install-data-hook:$/,+1d' Makefile.am
+	sed -i -e '/^install-data-hook:$/,+1d' Makefile.am || die '"sed" failed.'
 
 	# Regenerate autotools files. Although OpenGLide also provides a script
 	# "bootstrap" for doing so, such script is rather... hacky.
