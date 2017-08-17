@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
+	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
 	</maintainer>
@@ -9,7 +9,11 @@
 A schema and validator for YAML.
 </longdescription>
 	<upstream>
+        <remote-id type="github">HelloZeroNet/ZeroNet</remote-id>
 		<doc lang="en">https://github.com/23andMe/Yamale#usage</doc>
 		<bugs-to>https://github.com/23andMe/Yamale/issues</bugs-to>
 	</upstream>
+	<use>
+		<flag name="ruamel">Enable "ruamel.yaml"-based YAML 1.2 support</flag>
+    </use>
 </pkgmetadata>

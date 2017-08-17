@@ -7,6 +7,7 @@
         <description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
 	<upstream>
+        <remote-id type="github">powerline/powerline</remote-id>
 		<bugs-to>https://github.com/powerline/powerline/issues</bugs-to>
 	</upstream>
 </pkgmetadata>
