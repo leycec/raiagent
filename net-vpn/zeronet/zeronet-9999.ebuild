@@ -150,13 +150,10 @@ src_install() {
 		ZERONET_PYTHON_OPTIONS='-O'
 	fi
 
-	#FIXME: Consider passing ${PYTHON} the "-O" option to optimize bytecode
-	#generation. For safety, this option has been omitted until tested.
-
 	# Dynamically create and install a shell script launching ZeroNet with the
 	# current Python version.
 	cat <<EOF > "${T}"/${PN}
-##!/usr/bin/env sh
+#!/usr/bin/env sh
 exec ${PYTHON} ${ZERONET_PYTHON_OPTIONS} "${ZERONET_MODULE_DIR}/${PN}.py" --config_file "${ZERONET_CONF_FILE}" "\${@}"
 EOF
 	dobin "${T}"/${PN}
