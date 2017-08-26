@@ -1,11 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
+
 EAPI=6
 
-# InstantRst Server has yet to be ported to Python 3.x -- and, frankly, probably
-# never will be.
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo-r1", inherit the latter later.
@@ -31,7 +29,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #   installed alongside this package. Since Vim bundles are preferably installed
 #   via a Vim bundle manager (e.g., Vundle, NeoBundle) rather than Portage, this
 #   dependency is listed here instead. This should impose no hardships for non-
-#   Vim users, as "curl" is usually *ALWAYS* available on most systems.
+#   Vim users, as "curl" is typically available on most systems anyway.
 DEPEND="${PYTHON_DEPS}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
@@ -39,6 +37,7 @@ RDEPEND="${PYTHON_DEPS}
 	dev-python/docutils[${PYTHON_USEDEP}]
 	dev-python/flask[${PYTHON_USEDEP}]
 	dev-python/flask-socketio[${PYTHON_USEDEP}]
+	dev-python/future[${PYTHON_USEDEP}]
 	net-misc/curl
 "
 
@@ -59,8 +58,9 @@ fi
 python_install_all() {
 	# Documentation to be printed on first installation.
 	DOC_CONTENTS="
-	To preview reStructuredText buffers in Vim, install NeoBundle and add the
-	following lines to your Vim configuration (e.g., \"~/.vimrc\"):\\n
+	To preview reStructuredText buffers in Vim, consider installing NeoBundle
+	and add the following lines to your Vim configuration (e.g.,
+	\"~/.vimrc\"):\\n
 	\\n
 	\\tNeoBundle 'Rykka/riv.vim'\\n
 	\\tNeoBundle 'Rykka/InstantRst'\\n
