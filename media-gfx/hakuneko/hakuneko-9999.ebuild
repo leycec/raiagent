@@ -1,15 +1,15 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
+
 EAPI="6"
 
-# wxGTK version required by HakuNeko.
+# wxGTK version required by HakuNeko (Legacy).
 WX_GTK_VER=3.0
 
 inherit wxwidgets
 
-DESCRIPTION="Manga downloader"
-HOMEPAGE="https://sourceforge.net/projects/hakuneko"
+DESCRIPTION="HakuNeko (Legacy) manga downloader"
+HOMEPAGE="https://sourceforge.net/projects/legacy.hakuneko.p"
 
 LICENSE="MIT"
 SLOT="0"
@@ -17,9 +17,9 @@ IUSE="clang"
 REQUIRED_USE=""
 
 RDEPEND="
-	net-misc/curl:=[ssl]
-	dev-libs/openssl:=
-	x11-libs/wxGTK:3.0=[X]
+	net-misc/curl[ssl]
+	dev-libs/openssl:*
+	x11-libs/wxGTK:3.0[X]
 "
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
@@ -29,12 +29,15 @@ DEPEND="${RDEPEND}
 if [[ ${PV} == 9999 ]]; then
 	inherit mercurial
 
-	EHG_REPO_URI="http://hg.code.sf.net/p/hakuneko/code"
+	EHG_REPO_URI="http://hg.code.sf.net/p/hakuneko/legacy/code"
 	KEYWORDS=""
 else
+	MY_PN="legacy.hakuneko.p"
 	MY_P="${PN}_${PV}_src"
-	SRC_URI="mirror://sourceforge/${PN}/${MY_P}.tar.gz"
+
+	SRC_URI="mirror://sourceforge/${MY_PN}/${MY_P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
+
 	S="${WORKDIR}/${MY_P}"
 fi
 

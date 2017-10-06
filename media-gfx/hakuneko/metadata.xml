@@ -4,10 +4,10 @@
 	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
-        <description>Courtesy the third-party "raiagent" overlay.</description>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
 	<longdescription lang="en">
-HakuNeko allows you to download manga images from some selected online manga reader websites.
+HakuNeko (Legacy) allows you to download manga images from some selected online manga reader websites.
 
 Currently Supported:
 
