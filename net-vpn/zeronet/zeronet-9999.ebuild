@@ -131,6 +131,20 @@ src_prepare() {
 
 # ZeroNet provides no "setup.py" script and hence requires manual installation.
 src_install() {
+	# Remove testing-specific submodules from ZeroNet's Python codebase.
+	rm -rf src/Test || die '"rm" failed.'
+	
+	# Install ZeroNet's Python codebase.
+	python_moduleinto "${ZERONET_MODULE_DIR}"
+	python_domodule ${PN}.py plugins src tools
+
+	# Create ZeroNet's logging and state directories.
+	keepdir                "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+	fowners -R ${PN}:${PN} "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+
+	# Install all Markdown files as documentation.
+	dodoc *.md
+
 	# If Tor is enabled, require Tor in all files generated below.
 	if use tor; then
 		ZERONET_CONF_OPTIONS='tor = always'
@@ -228,17 +242,6 @@ WorkingDirectory=${ZERONET_STATE_DIR}
 WantedBy=multi-user.target
 EOF
 	systemd_dounit "${T}"/${PN}.service
-
-	# Install ZeroNet's Python codebase.
-	python_moduleinto "${ZERONET_MODULE_DIR}"
-	python_domodule ${PN}.py plugins src tools
-
-	# Create ZeroNet's logging and state directories.
-	keepdir                "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
-	fowners -R ${PN}:${PN} "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
-
-	# Install all Markdown files as documentation.
-	dodoc *.md
 
 	# URL of ZeroHello.
 	ZEROHELLO_URL="http://127.0.0.1:43110"
