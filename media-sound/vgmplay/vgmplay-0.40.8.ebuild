@@ -104,11 +104,18 @@ src_install() {
 	# Absolute path of the system-wide VGMPlay directory.
 	VGMPLAY_DIR="${EPREFIX}/usr/share/${PN}"
 
+	# Absolute path of the system-wide VGMPlay configuration file.
+	VGMPLAY_CFG_FILE="${EPREFIX}/etc/vgmplay.ini"
+
 	# Create all directories assumed to exist by this makefile.
 	exeinto usr/bin
 
 	# Install all VGMPlay commands (e.g., "vgm-player") and manpages.
 	emake --directory=VGMPlay play_install "${VGMPLAY_MAKE_OPTIONS[@]}"
+
+	# Link this configuration file from its default non-standard path into a
+	# more standard directory.
+	dosym "${VGMPLAY_DIR}/vgmplay.ini" "${VGMPLAY_CFG_FILE}"
 
 	# Install all remaining documentation.
 	dodoc VGMPlay/*.txt
@@ -138,8 +145,8 @@ src_install() {
 	\\n\\t# Convert VGZ to MP3 via \"lame\".
 	\\n\\tvgm2pcm bubbleman.vgz - | lame -r - -
 	\\n
-	\\nVGMPlay is configurable via the system-wide
-	\"${VGMPLAY_DIR}/vgmplay.ini\" file."
+	\\nVGMPlay is configurable via the system-wide \"${VGMPLAY_CFG_FILE}\"
+	file."
 
 	# Install this document.
 	readme.gentoo_create_doc
