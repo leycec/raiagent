@@ -60,7 +60,7 @@ DEPEND="${COMMON_DEPEND}
 RDEPEND="${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
-		>=media-gfx/pydot-1.2.3[${PYTHON_USEDEP}]
+		>=dev-python/pydot-1.2.3[${PYTHON_USEDEP}]
 		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
 		!=dev-python/networkx-1.11
 	)

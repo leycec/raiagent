@@ -22,13 +22,13 @@ command line interface (CLI).
 </longdescription>
 	<upstream>
 		<bugs-to>https://gitlab.com/betse/betse/issues</bugs-to>
-        <remote-id type="pypi">betse</remote-id>
-        <remote-id type="gitlab">betse/betse</remote-id>
+		<remote-id type="pypi">betse</remote-id>
+		<remote-id type="gitlab">betse/betse</remote-id>
 	</upstream>
 	<use>
 		<flag name="ffmpeg">Support FFmpeg- or Libav-based animation encoding</flag>
 		<flag name="graph">Support gene regulatory and biochemical reaction networks</flag>
 		<flag name="profile">Support space and time usage profiling</flag>
 		<flag name="smp"   >Support multicore CBLAS-based simulation parallelization</flag>
-    </use>
+	</use>
 </pkgmetadata>
