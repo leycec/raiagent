@@ -20,9 +20,9 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # BETSE runtime and hence guaranteed to be authorative.
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/dill-0.2.3[${PYTHON_USEDEP}]
+	>=dev-python/imageio-2.0.1[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.8.0[${PYTHON_USEDEP}]
-	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-3.3[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
