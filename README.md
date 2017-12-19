@@ -1,5 +1,13 @@
+raiagent
+===========
+
+<!---
+FIXME: Uncomment the following preferred document title, assuming we finally
+crush all outstanding Travis-CI issues -- a *VERY* large assumption, indeed.
+
 raiagent —————————[ [![Build Status](https://travis-ci.org/leycec/raiagent.svg?branch=master)](https://travis-ci.org/leycec/raiagent) ]—————————
 ===========
+--->
 
 **Welcome to `raiagent`,** the third-party Gentoo overlay where [Raia](https://en.wikipedia.org/wiki/Raja_%28genus%29) and gentlemanly conduct collide.
 

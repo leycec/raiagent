@@ -16,6 +16,7 @@ Currently it only supports registering projects and uploading distributions.
         <remote-id type="github">pypa/twine</remote-id>
 	</upstream>
 	<use>
+		<flag name="blake2">Support BLAKE2 hash-based encrypton</flag>
 		<flag name="keyring">Cache PyPI passwords to the system keyring</flag>
     </use>
 </pkgmetadata>
