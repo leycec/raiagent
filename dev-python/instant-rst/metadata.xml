@@ -17,7 +17,4 @@ riv.vim (vim) + InstantRst (web server) + mars.css (theme)
 		<doc lang="en">https://github.com/Rykka/instant-rst.py/blob/master/README.rst</doc>
 		<bugs-to>https://github.com/Rykka/instant-rst.py/issues</bugs-to>
 	</upstream>
-	<!--use>
-		<flag name=""></flag>
-    </use-->
 </pkgmetadata>
