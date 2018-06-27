@@ -214,8 +214,10 @@ src_compile() {
 			# Enabling tiled output implicitly enables SDL.
 			TILES=1
 
-			# Conditionally set USE flag-dependent SDL options.
-			SOUND=$(usex sound 1 0)
+			# Sound requires SDL
+			if use sound; then
+				SOUND=1
+			fi
 		)
 
 		# Compile us up the tiled bomb.
