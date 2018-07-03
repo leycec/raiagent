@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -14,7 +14,7 @@ HOMEPAGE="http://en.cataclysmdda.com"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	clang debug lua luajit ncurses nls sdl sound test xdg
+	clang debug lto lua luajit ncurses nls sdl sound test xdg
 	kernel_linux kernel_Darwin
 "
 REQUIRED_USE="
@@ -77,7 +77,7 @@ src_prepare() {
 	local xdg_patch="${FILESDIR}/${P}-USE_XDG_DIR.patch"
 	[[ -f "${xdg_patch}" ]] && PATCHES+=( "${xdg_patch}" )
 
-	# Strip the following from all "Makefile" files:
+	# Strip the following from all "makefile" files:
 	#
 	# * Hardcoded optimization (e.g., "-O3", "-Os") and stripping (e.g., "-s").
 	# * g++ option "-Werror", converting compiler warnings to errors and hence
@@ -86,9 +86,9 @@ src_prepare() {
 	#   implicitly run when the "test" USE flag is disabled.
 	# * "astyle"-specific targets (e.g., "astyle-check") from the "all" target,
 	#   preventing style tests from being implicitly run.
-	# * The Makefile-specific ${BUILD_PREFIX} variable, conflicting with the 
+	# * The makefile-specific ${BUILD_PREFIX} variable, conflicting with the 
 	#   Portage-specific variable of the same name. For disambiguity, this
-	#   variable is renamed to a Makefile-specific variable name.
+	#   variable is renamed to a makefile-specific variable name.
 	sed -i\
 		-e '/\(CXXFLAGS\|OTHERS\) += /s~ -O.~~'\
 		-e '/LDFLAGS += /s~ -s~~'\
@@ -96,14 +96,14 @@ src_prepare() {
 		-e '/^all:\s\+/s~\btests$~~'\
 		-e '/^all:\s\+/s~\s\+\$(ASTYLE)\s\+~ ~'\
 		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~'\
-		{tests/,}Makefile || die '"sed" failed.'
+		{tests/,}makefile || die '"sed" failed.'
 
 	# Replace the hardcoded home directory with our Gentoo-specific directory,
 	# which *MUST* be suffixed by "/" here to satisfy code requirements.
 	sed -i -e 's~^\(\s*update_pathname("datadir", \)[^)]*\(.*\)$~\1"'${CATACLYSM_HOME}'/"\2~g'\
 		src/path_info.cpp || die '"sed" failed.'
 
-	# The Makefile assumes subdirectories "obj" and "obj/tiles" both exist,
+	# The makefile assumes subdirectories "obj" and "obj/tiles" both exist,
 	# which (...of course) they don't. Create these subdirectories manually.
 	mkdir -p obj/tiles || die '"mkdir" failed.'
 
@@ -123,7 +123,7 @@ src_compile() {
 		PREFIX="${EROOT}"usr
 
 		# Install-time directories. Since ${PREFIX} does *NOT* refer to an
-		# install-time directory, all variables defined by the Makefile relative
+		# install-time directory, all variables defined by the makefile relative
 		# to ${PREFIX} *MUST* be redefined here relative to ${ED}.
 		BIN_PREFIX="${ED}"/usr/bin
 		DATA_PREFIX="${ED}/${CATACLYSM_HOME}"
@@ -132,9 +132,9 @@ src_compile() {
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
-		# Since Gentoo's ${L10N} USE_EXPAND flag conflicts with this Makefile's
+		# Since Gentoo's ${L10N} USE_EXPAND flag conflicts with this makefile's
 		# flag of the same name, temporarily prevent the former from being
-		# passed to this Makefile by overriding the current user-defined value
+		# passed to this makefile by overriding the current user-defined value
 		# of ${L10N} with the empty string. Failing to do so results in the
 		# following link-time fatal error:
 		#
@@ -142,15 +142,18 @@ src_compile() {
 		L10N=
 	)
 
-	# Conditionally set USE flag-dependent options. Since the "Makefile" tests
+	# Conditionally set USE flag-dependent options. Since the makefile tests
 	# for the existence rather than the value of the corresponding environment
 	# variables, these variables must be left undefined rather than defined to
 	# some false value (e.g., 0, "False", the empty string) if the corresponding
 	# USE flags are disabled.
-	use clang  && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
+	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
 
 	# For efficiency, prefer release to debug builds.
 	use debug || CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 )
+
+	# If enabling link time optimization, do so.
+	use lto && CATACLYSM_EMAKE_NCURSES+=( LTO=1 )
 
 	# Detect the current machine architecture and operating system.
 	local cataclysm_arch
@@ -174,9 +177,7 @@ src_compile() {
 		CATACLYSM_EMAKE_NCURSES+=( LUA=1 )
 
 		# If enabling LuaJIT support, do so.
-		if use luajit; then
-			CATACLYSM_EMAKE_NCURSES+=( LUA_BINARY=luajit )
-		fi
+		use luajit && CATACLYSM_EMAKE_NCURSES+=( LUA_BINARY=luajit )
 	fi
 
 	# If enabling internationalization, do so.
@@ -185,9 +186,8 @@ src_compile() {
 
 		# If the optional Gentoo-specific string global ${LINGUAS} is defined
 		# (e.g., in "make.conf"), enable all such whitespace-delimited locales.
-		if [[ -n "${LINGUAS+x}" ]]; then
+		[[ -n "${LINGUAS+x}" ]] &&
 			CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
-		fi
 	fi
 
 	# If storing saves and settings in XDG base directories, do so.
@@ -213,12 +213,10 @@ src_compile() {
 
 			# Enabling tiled output implicitly enables SDL.
 			TILES=1
-
-			# Sound requires SDL
-			if use sound; then
-				SOUND=1
-			fi
 		)
+
+		# If enabling SDL-dependent sound support, do so.
+		use sound && CATACLYSM_EMAKE_SDL+=( SOUND=1 )
 
 		# Compile us up the tiled bomb.
 		einfo 'Compiling SDL interface...'
