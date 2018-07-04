@@ -40,8 +40,14 @@ RDEPEND="
 	)
 	sound? ( media-libs/sdl2-mixer:0 )
 "
+
+# Note that, although GCC also supports LTO via the gold linker, Portage appears
+# to provide no means of validating the current GCC to link with gold. *shrug*
 DEPEND="${RDEPEND}
-	clang? ( sys-devel/clang )
+	clang? (
+		sys-devel/clang
+		lto? ( sys-devel/llvm[gold] )
+	)
 	!clang? ( sys-devel/gcc[cxx] )
 "
 
@@ -77,26 +83,31 @@ src_prepare() {
 	local xdg_patch="${FILESDIR}/${P}-USE_XDG_DIR.patch"
 	[[ -f "${xdg_patch}" ]] && PATCHES+=( "${xdg_patch}" )
 
-	# Strip the following from all "makefile" files:
+	# If "doc/JSON_LOADING_ORDER.md" is still a symbolic link, replace this
+	# link by a copy of its transitive target to avoid "QA Notice" complaints.
+	if [[ -L doc/JSON_LOADING_ORDER.md ]]; then
+		rm doc/JSON_LOADING_ORDER.md || die '"rm" failed.'
+		cp data/json/LOADING_ORDER.md doc/JSON_LOADING_ORDER.md ||
+			die '"cp" failed.'
+	fi
+
+	#FIXME: Makefiles have changed considerably since this ebuild was first
+	#authored. Revise or remove all "sed" operations below that no longer apply. 
+
+	# Strip the following from all makefiles:
 	#
 	# * Hardcoded optimization (e.g., "-O3", "-Os") and stripping (e.g., "-s").
 	# * g++ option "-Werror", converting compiler warnings to errors and hence
 	#   failing on the first (inevitable) warning.
-	# * The "tests" target from the "all" target, preventing tests from being
-	#   implicitly run when the "test" USE flag is disabled.
-	# * "astyle"-specific targets (e.g., "astyle-check") from the "all" target,
-	#   preventing style tests from being implicitly run.
 	# * The makefile-specific ${BUILD_PREFIX} variable, conflicting with the 
 	#   Portage-specific variable of the same name. For disambiguity, this
 	#   variable is renamed to a makefile-specific variable name.
 	sed -i\
-		-e '/\(CXXFLAGS\|OTHERS\) += /s~ -O.~~'\
+		-e '/\bOPTLEVEL = /s~ -O.~~'\
 		-e '/LDFLAGS += /s~ -s~~'\
 		-e '/RELEASE_FLAGS = /s~ -Werror~~'\
-		-e '/^all:\s\+/s~\btests$~~'\
-		-e '/^all:\s\+/s~\s\+\$(ASTYLE)\s\+~ ~'\
 		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~'\
-		{tests/,}makefile || die '"sed" failed.'
+		{tests/,}Makefile || die '"sed" failed.'
 
 	# Replace the hardcoded home directory with our Gentoo-specific directory,
 	# which *MUST* be suffixed by "/" here to satisfy code requirements.
@@ -131,6 +142,13 @@ src_compile() {
 
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
+
+		# Enable tests if requested.
+		RUNTESTS=$(usex test 1 0)
+
+		# Unconditionally disable all code style and JSON linting.
+		ASTYLE=0
+		LINTJSON=0
 
 		# Since Gentoo's ${L10N} USE_EXPAND flag conflicts with this makefile's
 		# flag of the same name, temporarily prevent the former from being
@@ -186,8 +204,21 @@ src_compile() {
 
 		# If the optional Gentoo-specific string global ${LINGUAS} is defined
 		# (e.g., in "make.conf"), enable all such whitespace-delimited locales.
-		[[ -n "${LINGUAS+x}" ]] &&
-			CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
+
+		#FIXME: This used to work, but currently causes installation to fail
+		#with fatal shell errors resembling:
+		#    mkdir -p /var/tmp/portage/games-roguelike/cataclysm-dda-9999-r6/image//usr/share/locale
+		#    LOCALE_DIR=/var/tmp/portage/games-roguelike/cataclysm-dda-9999-r6/image//usr/share/locale lang/compile_mo.sh en en_CA
+		#    msgfmt: error while opening "lang/po/en.po" for reading: No such file or directory
+		#    msgfmt: error while opening "lang/po/en_CA.po" for reading: No such file or directory
+		#Since the Cataclysm: DDA script compiling localizations (currently,
+		#"lang/compile_mo.sh") cannot be trusted to safely do so for explicitly
+		#passed locales, avoid explicitly passing locales for the moment.
+		#Uncomment the following statement after upstream resolves this issue.
+
+		#[[ -n "${LINGUAS+x}" ]] &&
+		#	CATACLYSM_EMAKE_NCURSES+=( LANGUAGES="${LINGUAS}" )
+		CATACLYSM_EMAKE_NCURSES+=( LANGUAGES='all' )
 	fi
 
 	# If storing saves and settings in XDG base directories, do so.
