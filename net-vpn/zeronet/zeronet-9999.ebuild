@@ -103,6 +103,13 @@ ZERONET_PID_FILE="/var/run/${PN}.pid"
 ZERONET_SCRIPT_FILE="/usr/bin/${PN}"
 ZERONET_STATE_DIR="/var/lib/${PN}"
 
+# Prevent the "readme.gentoo-r1" eclass from autoformatting documentation via
+# the external "fmt" and "echo -e" commands for readability.
+DISABLE_AUTOFORMATTING=1
+
+#FIXME: Uncomment this line to test "readme.gentoo-r1" documentation.
+#FORCE_PRINT_ELOG=1
+
 pkg_setup() {
 	python-single-r1_pkg_setup
 
@@ -248,17 +255,17 @@ EOF
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="
-	OpenRC users should typically add ZeroNet to the default runlevel:\\n
-	\\trc-update add ${PN} default\\n\\n
+OpenRC users should typically add ZeroNet to the default runlevel:
+   rc-update add ${PN} default
 
-	After starting ZeroNet, ZeroHello (the web interface bundled with ZeroNet)
-	may be locally browsed to at:\\n
-	\\t${ZEROHELLO_URL}\\n\\n
+After starting ZeroNet, ZeroHello (the web interface bundled with ZeroNet)
+may be locally browsed to at:
+   ${ZEROHELLO_URL}
 
-	ZeroNet sites should typically be edited while logged in as the \"${PN}\"
-	user: e.g.,\\n
-	\\tsudo su - ${PN}\\n
-	"
+ZeroNet zites are safely editable *ONLY* while logged in as the \"${PN}\"
+user: e.g.,
+	sudo su - ${PN}
+"
 
 	if use tor; then
 		# Absolute path of Tor's ZeroNet-specific authentication directory. By
@@ -271,43 +278,55 @@ EOF
 		# group may be granted read permissions without compromising security.
 		TOR_AUTH_DIR="/var/lib/tor/auth"
 
-		DOC_CONTENTS+="\\n
-	Manually enable Tor-based ZeroNet anonymization as follows:\\n
-	* Stop Tor if started:\\n
-	\\trc-service tor stop\\n
-	* Add the ZeroNet user to the Tor group:\\n
-	\\tusermod --append --groups=tor zeronet\\n
-	* Permit ZeroNet to read Tor's authentication cookie:\\n
-	\\tmkdir --mode=750 ${TOR_AUTH_DIR}\\n
-	\\tchown -R tor: ${TOR_AUTH_DIR}\\n
-	* Edit \"/etc/tor/torrc\" as follows:\\n
-	\\t* Uncomment the following commented lines:\\n
-	\\t\\t#ControlPort 9051\\n
-	\\t\\t#CookieAuthentication 1\\n
-	\\t* Add the following lines anywhere:\\n
-	\\t\\tCookieAuthFile ${TOR_AUTH_DIR}/control_auth_cookie\\n
-	\\t\\tCookieAuthFileGroupReadable 1\\n
-	* Restart Tor and ZeroNet:\\n
-	\\trc-service tor restart\\n
-	\\trc-service zeronet restart\\n
-	* Verify that your ZeroNet IP address is not your physical IP address at the
-	  ZeroHello Stats page:\\n
-	\\t${ZEROHELLO_URL}/Stats\\n\\n
+		DOC_CONTENTS+="
+Tor-based ZeroNet anonymization *MUST* be manually enabled as follows:
 
-	Manually enable Tor Browser-based ZeroNet support as follows:\\n
-	* Open Tor Browser.\\n
-	* Browse to:\\n
-	\\tabout:preferences#advanced\\n
-	* Click the \"Settings...\" button to the right of the \"Configure how Tor
-	  Browser connects to the Internet\" text label.\\n
-	* Enter the following text in the \"No Proxy for\" text area:\\n
-	\\t127.0.0.1\\n
-	* Click the \"OK\" button.\\n
-	* Browse to:\\n
-	\\t${ZEROHELLO_URL}\\n\\n
-	ZeroNet recommends browsing ZeroNet sites only with Tor Browser. Explicit
-	warnings will be displayed on detecting any other browser.
-	"
+   1. Stop Tor if started:
+      rc-service tor stop
+   2. Add the ZeroNet user to the Tor group:
+      usermod --append --groups=tor zeronet
+   3. Permit ZeroNet to read Tor's authentication cookie:
+      mkdir --mode=750 ${TOR_AUTH_DIR}
+      chown -R tor: ${TOR_AUTH_DIR}
+   4. Edit \"/etc/tor/torrc\" as follows:
+      1. Uncomment the following commented lines:
+         #ControlPort 9051
+         #CookieAuthentication 1
+      2. Add the following lines anywhere:
+         CookieAuthFile ${TOR_AUTH_DIR}/control_auth_cookie
+         CookieAuthFileGroupReadable 1
+   5. Restart Tor and ZeroNet:
+      rc-service tor restart
+      rc-service zeronet restart
+   6. Verify that your ZeroNet IP address is not your physical IP address at
+      the ZeroHello Stats page:
+      ${ZEROHELLO_URL}/Stats
+
+ZeroNet recommends browsing ZeroNet zites only with Tor Browser when Tor
+support is enabled. Warnings will be displayed on attempting to browse with any
+other browser. To do so:
+
+   1. Install Tor Browser, ideally via the "torbrowser" overlay as follows:
+      1. Install the "repository" subcommand for the "eselect" command:
+         emerge --ask eselect-repository
+      2. Enable the "torbrowser" overlay:
+         eselect repository enable torbrowser
+      3. Clone the "torbrowser" overlay:
+         emerge --sync
+      4. Install the Tor Browser Launcher:
+         emerge --ask torbrowser-launcher
+   2. Launch Tor Browser:
+      torbrowser-launcher &!
+   3. Browse to:
+      about:preferences#advanced
+   4. Click the \"Settings...\" button to the right of the \"Configure how Tor
+      Browser connects to the Internet\" text label.
+   5. Enter the following text in the \"No Proxy for\" text area:
+      127.0.0.1
+   6. Click the \"OK\" button.
+   7. Browse to:
+      ${ZEROHELLO_URL}
+"
 	fi
 
 	# Install the above Gentoo-specific documentation.
