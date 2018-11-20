@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python3_{4,5,6} )
+PYTHON_COMPAT=( python3_{5,6,7} )
 
 inherit distutils-r1
 
@@ -40,14 +40,14 @@ DEPEND="${COMMON_DEPEND}
 
 # If the "smp" USE flag is enabled, increase the likelihood of multicore-aware
 # NumPy operation by requiring that at least one CBLAS implementation be
-# currently installed. Note, however, that this does *NOT* guarantee NumPy to be
-# linked against this implementation; there appears to be no sane means of
+# currently installed. Note, however, that this does *NOT* guarantee NumPy to
+# be linked against this implementation; there appears to be no sane means of
 # enforcing this constraint from within an ebuild. Instead, a post-installation
 # message is subsequently logged advising the user to do so manually.
 #
 # All of the multicore-aware CBLAS implementations listed below are *ONLY*
 # available from the third-party "science" overlay, which also publishes a
-# custom "eselect" implementation. To link NumPy against such an implementation:
+# custom "eselect" package. To link NumPy against such an implementation:
 #
 # * This implementation must be manually installed (e.g., to ensure that the
 #   desired implementation is installed).
@@ -56,8 +56,8 @@ DEPEND="${COMMON_DEPEND}
 #
 # In short, these steps *CANNOT* be automated by this ebuild. This list of
 # multicore-aware CBLAS implementations derives from the docstring of the
-# "betse.lib.numpy.numpys._OPTIMIZED_BLAS_OPT_INFO_LIBRARY_REGEX" -- admittedly,
-# hardly the ideal location for such documentation.
+# "betse.lib.numpy.numpys._OPTIMIZED_BLAS_OPT_INFO_LIBRARY_REGEX" --
+# admittedly, hardly the ideal location for such documentation.
 #
 # The remaining list of optional dependencies derives directly from the
 # "betse.metadata.DEPENDENCIES_RUNTIME_OPTIONAL" list, which is enforced at
@@ -66,8 +66,7 @@ RDEPEND="${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
 		>=dev-python/pydot-1.2.3[${PYTHON_USEDEP}]
-		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
-		!=dev-python/networkx-1.11
+		>=dev-python/networkx-2.1[${PYTHON_USEDEP}]
 	)
 	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
@@ -94,9 +93,9 @@ fi
 pkg_pretend() {
 	# Ideally, the following warning would only be logged if both the "smp" USE
 	# flag is enabled *AND* the version of the "app-admin/eselect" ebuild
-	# provided by the "science" overlay is not installed. Unfortunately, Portage
-	# does not appear to provide a means of testing this. The following *SHOULD*
-	# work, as a valid atom is specified: e.g.,
+	# provided by the "science" overlay is not installed. Unfortunately,
+	# Portage does not appear to provide a means of testing this. The following
+	# *SHOULD* work, as a valid atom is specified: e.g.,
 	#
 	#     if use smp; then
 	#         if ! has_version '>=app-admin/eselect-1.4.8-r100::science'; then

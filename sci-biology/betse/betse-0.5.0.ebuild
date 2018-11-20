@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -61,8 +61,7 @@ RDEPEND="${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
 		>=dev-python/pydot-1.2.3[${PYTHON_USEDEP}]
-		>=dev-python/networkx-1.8[${PYTHON_USEDEP}]
-		!=dev-python/networkx-1.11
+		>=dev-python/networkx-2.1[${PYTHON_USEDEP}]
 	)
 	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
