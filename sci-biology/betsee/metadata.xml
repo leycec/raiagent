@@ -21,10 +21,10 @@ under the BSD 2-clause license.
 </longdescription>
 	<upstream>
 		<bugs-to>https://gitlab.com/betse/betsee/issues</bugs-to>
-        <remote-id type="pypi">betsee</remote-id>
-        <remote-id type="gitlab">betse/betsee</remote-id>
+		<remote-id type="pypi">betsee</remote-id>
+		<remote-id type="gitlab">betse/betsee</remote-id>
 	</upstream>
 	<!--use>
 		<flag name="ffmpeg">Support FFmpeg- or Libav-based animation encoding</flag>
-    </use-->
+	</use-->
 </pkgmetadata>
