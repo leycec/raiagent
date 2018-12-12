@@ -126,7 +126,7 @@ pkg_pretend() {
 
 # Run tests with verbose output failing on the first failing test.
 python_test() {
-	py.test -vvx betse_test || die "Tests fail under ${EPYTHON}."
+	py.test -vvx || die "Tests fail under ${EPYTHON}."
 }
 
 python_install_all() {

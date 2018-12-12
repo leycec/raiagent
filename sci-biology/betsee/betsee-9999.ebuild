@@ -12,7 +12,7 @@ HOMEPAGE="https://gitlab.com/betse/betsee"
 
 LICENSE="BSD-2"
 SLOT="0"
-IUSE=""
+IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 #FIXME: Constrain the following "pyside:2" and "pyside-tools:2" dependencies to
@@ -29,12 +29,18 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # * Each version of BETSEE requires at least the same version of BETSE,
 #   excluding the trailing version component of that version of BETSEE (e.g.,
 #   BETSEE 0.9.0.0 and 0.9.0.1 both require at least BETSE 0.9.0).
-DEPEND="${PYTHON_DEPS}
+COMMON_DEPEND="${PYTHON_DEPS}
 	dev-python/pyside:2[${PYTHON_USEDEP},svg]
 	dev-python/pyside-tools:2[${PYTHON_USEDEP}]
 	>=sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
 "
-RDEPEND="${DEPEND}"
+DEPEND="${COMMON_DEPEND}
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-xvfb[${PYTHON_USEDEP}]
+	)
+"
+RDEPEND="${COMMON_DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -48,10 +54,14 @@ else
 	KEYWORDS="~amd64 ~x86"
 fi
 
-#FIXME: Uncomment after documentation is actually added to BETSEE.
-# python_install_all() {
-# 	distutils-r1_python_install_all
-#
-# 	# Recursively install all available documentation.
-# 	dodoc -r README.rst doc/*
-# }
+# Run tests with verbose output failing on the first failing test.
+python_test() {
+	py.test -vvx || die "Tests fail under ${EPYTHON}."
+}
+
+python_install_all() {
+	distutils-r1_python_install_all
+
+	# Recursively install all available documentation.
+	dodoc -r README.rst doc/*
+}
