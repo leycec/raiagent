@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo-r1", inherit the latter later.
@@ -14,7 +14,7 @@ HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="awesome busybox bash dash doc extra fish fonts man mksh rc qtile tmux vim zsh"
+IUSE="awesome busybox bash dash doc extra fish fonts i3bar lemonbar man mksh rc qtile tmux vim zsh"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Some optional dependencies are only available for a limited subset of
@@ -39,6 +39,8 @@ RDEPEND="
 	)
 	fish? ( >=app-shells/fish-2.1 )
 	fonts? ( media-fonts/powerline-fonts )
+	i3bar? ( || ( x11-wm/i3 x11-wm/i3-gaps ) )
+	lemonbar? ( x11-misc/lemonbar )
 	mksh? ( app-shells/mksh )
 	qtile? ( >=x11-wm/qtile-0.6 )
 	rc? ( app-shells/rc )
@@ -78,7 +80,8 @@ fi
 POWERLINE_SRC_BINDINGS_PYTHON_DIR="${S}"/powerline/bindings
 
 # Temporary directory housing application-specific Powerline bindings, from
-# which all Python files will be removed. See python_prepare_all().
+# which most Python files except those explicitly matching a well-defined
+# whitelist will be removed. See python_prepare_all().
 POWERLINE_TMP_BINDINGS_NONPYTHON_DIR="${T}"/bindings
 
 # Temporary directory housing application-specific Powerline bindings, from
@@ -103,8 +106,8 @@ if [[ ${PV} == 9999 ]]; then
 		# 
 		# * "scripts/common/main.sh".
 		if use test; then
-			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}"\
-			EGIT_BRANCH="${TEST_EGIT_BRANCH}"\
+			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}" \
+			EGIT_BRANCH="${TEST_EGIT_BRANCH}" \
 				git-r3_src_fetch
 		fi
 	}
@@ -115,9 +118,9 @@ if [[ ${PV} == 9999 ]]; then
 		# If testing, clone the previously fetched repository directly into
 		# Powerline's test tree.
 		if use test; then
-			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}"\
-			EGIT_BRANCH="${TEST_EGIT_BRANCH}"\
-			EGIT_CHECKOUT_DIR="${S}/tests/bot-ci"\
+			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}" \
+			EGIT_BRANCH="${TEST_EGIT_BRANCH}" \
+			EGIT_CHECKOUT_DIR="${S}/tests/bot-ci" \
 				git-r3_src_unpack
 		fi
 	}
@@ -127,8 +130,9 @@ if [[ ${PV} == 9999 ]]; then
 		# only Python files with the temporary bindings directory containing all
 		# original files. Tests require unmodified bindings.
 		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
-		cp -R "${POWERLINE_TMP_BINDINGS_DIR}" "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" ||
-			die '"cp" failed.'
+		cp -R \
+			"${POWERLINE_TMP_BINDINGS_DIR}" \
+			"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"cp" failed.'
 
 		#FIXME: This is pretty terrible, and will definitely prevent Powerline
 		#from being added to Portage. Can the tests be improved so as not to
@@ -167,46 +171,51 @@ powerline_set_config_var_to_value() {
 
 python_prepare_all() {
 	# Replace nonstandard system paths in Powerline's Python configuration.
-	powerline_set_config_var_to_value\
+	powerline_set_config_var_to_value \
 		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}"etc/xdg
-	powerline_set_config_var_to_value\
+	powerline_set_config_var_to_value \
 		BINDINGS_DIRECTORY "${POWERLINE_HOME_EROOTED}"
 
 	# Copy application-specific Powerline bindings to a temporary directory.
-	# Since such bindings comprise both Python and non-Python files, failing to
-	# remove the latter causes distutils to install non-Python files into the
-	# Powerline Python module directory. To safely remove such files *AND*
-	# permit their installation after the main distutils-based installation,
-	# copy them to such directory and then remove them from the original
-	# directory that distutils operates on.
-	cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" ||
-		die '"cp" failed.'
+	# Since these bindings provide both Python and non-Python files, failing to
+	# remove the latter causes distutils to install non-Python files into
+	# Powerline's Python module directory. To safely remove these files *AND*
+	# permit their installation after the main distutils-based installation, we
+	# copy them to a temporary directory and remove them from the original
+	# directory that distutils operates upon.
+	cp -R \
+		"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" \
+		"${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" || die '"cp" failed.'
 
 	# If testing...
 	if [[ ${PV} == 9999 ]] && use test; then
-		# Additionally copy such bindings to a second temporary directory. Since
-		# tests require all bindings *AND* since subsequent logic removes files
-		# from the first such directory, no such files will be removed from the
-		# second such directory.
-		cp -R "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" "${POWERLINE_TMP_BINDINGS_DIR}" ||
-			die '"cp" failed.'
+		# Additionally copy these bindings to a second temporary directory.
+		# Since tests require all bindings *AND* since subsequent logic removes
+		# files from the first such directory, no such files will be removed
+		# from the second such directory. Ugh.
+		cp -R \
+			"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" \
+			"${POWERLINE_TMP_BINDINGS_DIR}" || die '"cp" failed.'
 	fi
 
 	# Remove all non-Python files from the original tree.
-	find "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"\
-		-type f\
-		-not -name '*.py'\
+	find "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" \
+		-type f \
+		-not -name '*.py' \
 		-delete
 
 	# Remove all Python files from the copied tree, for safety. Most such files
 	# relate to Powerline's distutils-based install process. Exclude the
-	# following unrelated Python files:
+	# unrelated Python files whose basename matches the glob "powerline-*.py",
+	# including:
 	#
 	# * "powerline-awesome.py", an awesome-specific integration script.
-	find "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"\
-		-type f\
-		-name '*.py'\
-		-not -name 'powerline-awesome.py'\
+	# * "powerline-i3.py", an i3bar-specific integration script.
+	# * "powerline-lemonbar.py", a lemonbar-specific integration script.
+	find "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" \
+		-type f \
+		-name '*.py' \
+		-not -name 'powerline-*.py' \
 		-delete
 
 	# Continue with the default behaviour.
@@ -248,7 +257,7 @@ python_install_all() {
 		doexe "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline-awesome.py
 
 		DOC_CONTENTS+="
-	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied such file from \"/etc/xdg/awesome/rc.lua\"):\\n
+	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied that file from \"/etc/xdg/awesome/rc.lua\"):\\n
 	\\trequire(\"powerline\")\\n
 	\\tright_layout:add(powerline_widget)\\n\\n"
 	fi
@@ -288,6 +297,29 @@ python_install_all() {
 		DOC_CONTENTS+="
 	To enable Powerline under fish, add the following line to \"~/.config/fish/config.fish\":\\n
 	\\tpowerline-setup\\n\\n"
+	fi
+
+	if use i3bar; then
+		insinto "${POWERLINE_HOME}"/i3
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/i3/powerline-i3.py
+
+		DOC_CONTENTS+="
+	To enable Powerline under i3bar, add the following to \"~/.config/i3/config\" after replacing the placeholder substrings \"\${POWERLINE_FONT_NAME}\" and \"\${POWERLINE_FONT_SIZE}\" with the pango-compatible name and size in pt (points) of a Powerline-patched font installed by the \"media-fonts/powerline-fonts\" package (e.g., \"font pango:Source Code Pro for Powerline 11\" after running \"USE='sourcecodepro' emerge powerline-fonts\"):\\n
+	\\tbar {\\n
+	\\t\\tstatus_command python ${POWERLINE_HOME_EROOTED}/i3/powerline-i3.py\\n
+	\\t\\tfont pango:\${POWERLINE_FONT_NAME} \${POWERLINE_FONT_SIZE}\\n
+	\\t}\\n\\n"
+	fi
+
+	if use lemonbar; then
+		insinto "${POWERLINE_HOME}"/lemonbar
+		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/lemonbar/powerline-lemonbar.py
+
+		DOC_CONTENTS+="
+	To enable Powerline under lemonbar, run lemonbar with the following command after replacing the placeholder substring \"\${LEMONBAR_HEIGHT}\" with the desired height in pixels for this lemonbar *AND* replacing the placeholder substrings \"\${POWERLINE_FONT_NAME}\" and \"\${POWERLINE_FONT_SIZE}\" with the pango-compatible name and size in pt (points) of a Powerline-patched font installed by the \"media-fonts/powerline-fonts\" package (e.g., \"Source Code Pro for Powerline-11\" after running \"USE='sourcecodepro' emerge powerline-fonts\"):\\n
+	\\tpython ${POWERLINE_HOME_EROOTED}/lemonbar/powerline-lemonbar.py -height \${LEMONBAR_HEIGHT} -- -f \"\${POWERLINE_FONT_NAME}-\${POWERLINE_FONT_SIZE}\"\\n
+	To enable Powerline under lemonbar under i3, add the following to \"~/.config/i3/config\":\\n
+	\\texec python ${POWERLINE_HOME_EROOTED}/lemonbar/powerline-lemonbar.py -i3 -height \${LEMONBAR_HEIGHT} -- -f \"\${POWERLINE_FONT_NAME}-\${POWERLINE_FONT_SIZE}\"\\n\\n"
 	fi
 
 	if use mksh; then
@@ -352,8 +384,8 @@ python_install_all() {
 	insinto /etc/xdg/powerline
 	doins -r "${S}"/powerline/config_files/*
 
-	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which case
-	# calling readme.gentoo_create_doc() throws the following fatal error:
+	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which
+	# case calling readme.gentoo_create_doc() throws the following fatal error:
 	#
 	#     "You are not specifying README.gentoo contents!"
 	#
