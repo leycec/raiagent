@@ -62,6 +62,10 @@ python_test() {
 python_install_all() {
 	distutils-r1_python_install_all
 
+	#FIXME: Uncomment the line containing "doc/*" *AFTER* we actually populate
+	#that subdirectory with meaningful documentation.
+
 	# Recursively install all available documentation.
-	dodoc -r README.rst doc/*
+	# dodoc -r README.rst doc/*
+	dodoc -r README.rst
 }
