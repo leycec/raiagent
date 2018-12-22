@@ -18,8 +18,10 @@ HOMEPAGE="https://zeronet.io https://github.com/HelloZeroNet/ZeroNet"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="debug tor"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+IUSE="debug meek tor"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	meek? ( tor )
+"
 
 #FIXME: Unbundle all bundled Python dependencies in the "src/lib" directory.
 #Doing so is complicated, however, by ZeroNet requiring:
@@ -119,80 +121,78 @@ pkg_setup() {
 	enewuser  ${PN} -1 /bin/sh "${ZERONET_STATE_DIR}" ${PN}
 }
 
-src_prepare() {
-	default_src_prepare
-
-	#FIXME: File an upstream issue requesting:
-	#
-	#* The default logfile logging level be reduced from "DEBUG" to "INFO".
-	#* A command-line option be added permitting this level to be configured at
-	#  runtime rather than manually patched into the codebase at build time.
-
-	# If debugging is disabled, reduce ZeroNet's default logfile logging level
-	# of "DEBUG" to "INFO" to avoid consuming all available disk space.
-	if ! use debug; then
-		sed -i -e '/\blevel=logging.DEBUG\b/ s~\bDEBUG\b~INFO~' src/main.py ||
-			die '"sed" failed.'
-	fi
-}
-
-# ZeroNet provides no "setup.py" script and hence requires manual installation.
+# ZeroNet offers no "setup.py" script and thus requires manual installation.
 src_install() {
-	# Remove testing-specific submodules from ZeroNet's Python codebase.
-	rm -rf src/Test || die '"rm" failed.'
+	# Newline-delimited string of all TOML-formatted options to be set by the 
+	# ZeroNet configuration file generated below.
+	ZERONET_CONF_OPTIONS=''
 
-	# Install ZeroNet's Python codebase.
-	python_moduleinto "${ZERONET_MODULE_DIR}"
-	python_domodule ${PN}.py plugins src tools
+	# Space-delimited string of all command-line options to be passed to the
+	# Python interpreter running ZeroNet generated below.
+	ZERONET_PYTHON_OPTIONS=''
 
-	# Create ZeroNet's logging and state directories.
-	keepdir                "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
-	fowners -R ${PN}:${PN} "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+	# Space-delimited string of all OpenRC dependencies required by the ZeroNet
+	# OpenRC startup script generated below.
+	ZERONET_OPENRC_DEPENDENCIES=''
 
-	# Install all Markdown files as documentation.
-	dodoc *.md
+	# Space-delimited string of all systemd dependencies required by the
+	# ZeroNet systemd startup script generated below.
+	ZERONET_SYSTEMD_DEPENDENCIES=''
 
-	# If Tor is enabled, require Tor in all files generated below.
+	# If debugging:
+	#
+	# * Increase logging verbosity to the maximum.
+	# * Generate unoptimized and hence debuggable bytecode.
+	if use debug; then
+		ZERONET_CONF_OPTIONS+='log_level = DEBUG'$'\n'
+	# Else:
+	#
+	# * Decrease logging verbosity from "DEBUG" to "INFO" to avoid consuming
+	#   all available disk space immediately.
+	# * Generate only slightly optimized bytecode.
+	else
+		ZERONET_CONF_OPTIONS+='log_level = INFO'$'\n'
+		ZERONET_PYTHON_OPTIONS+='-O'
+	fi
+
+	# If enabling Tor, do so in all ZeroNet files generated below.
 	if use tor; then
-		ZERONET_CONF_OPTIONS='tor = always'
+		ZERONET_CONF_OPTIONS+='tor = always'$'\n''trackers_proxy = tor'$'\n'
 		ZERONET_OPENRC_DEPENDENCIES='need tor'
 		ZERONET_SYSTEMD_DEPENDENCIES='After=tor.service'
-	else
-		ZERONET_CONF_OPTIONS=''
-		ZERONET_OPENRC_DEPENDENCIES=''
-		ZERONET_SYSTEMD_DEPENDENCIES=''
 	fi
 
-	# If debugging is enabled, produce unoptimized and hence debuggable
-	# bytecode; else, produce slightly optimized bytecode.
-	if use debug; then
-		ZERONET_PYTHON_OPTIONS=''
-	else
-		ZERONET_PYTHON_OPTIONS='-O'
+	# If enabling Tor meek integration, do so as well. Note that doing so
+	# necessarily incurs a bandwidth cost and hence is disabled by default.
+	if use meek; then
+		ZERONET_CONF_OPTIONS+='tor_use_bridges'$'\n'
 	fi
 
 	# Dynamically create and install a shell script launching ZeroNet with the
-	# current Python version.
+	# currently selected Python version, configured by the configuration file
+	# created below.
 	cat <<EOF > "${T}"/${PN}
 #!/usr/bin/env sh
 exec ${PYTHON} ${ZERONET_PYTHON_OPTIONS} "${ZERONET_MODULE_DIR}/${PN}.py" --config_file "${ZERONET_CONF_FILE}" "\${@}"
 EOF
 	dobin "${T}"/${PN}
 
-	# Dynamically create and install a ZeroNet configuration file. Since ZeroNet
-	# fails to provide a default template, a Gentoo-specific file is constructed.
-	# Sadly, this file's syntax is incompatible with that of "/etc/conf.d" files.
+	# Dynamically create and install a ZeroNet configuration file. As ZeroNet
+	# fails to provide a default template, a Gentoo-specific file is generated.
+	# Note that this file is TOML-formatted and hence technically incompatible
+	# with that of standard shell-formatted "/etc/conf.d/" files.
 	cat <<EOF > "${T}"/${PN}.conf
 # Configuration file for ZeroNet's "${ZERONET_SCRIPT_FILE}" launcher script.
 
 # For each "--"-prefixed command-line option accepted by the "${PN}" script
 # (e.g., "--data_dir"), a key of the same name excluding that prefix (e.g.,
-# "data_dir") permanently setting that option may be defined by this section.
-# Due to deficiencies in ZeroNet's configuration file parser, option values
-# should *NOT* be single- or double-quoted.
+# "data_dir") permanently setting that option may be defined in this section.
+# Due to flaws in ZeroNet's configuration file parser, option values should
+# *NOT* be single- or double-quoted.
 #
 # For a list of all supported options, see "${PN} --help".
 [global]
+config_file = ${ZERONET_CONF_FILE}
 data_dir = ${ZERONET_STATE_DIR}
 log_dir = ${ZERONET_LOG_DIR}
 ${ZERONET_CONF_OPTIONS}
@@ -203,7 +203,7 @@ EOF
 	# Dynamically create and install an OpenRC script.
 	cat <<EOF > "${T}"/${PN}.initd
 #!/sbin/openrc-run
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 depend() {
@@ -213,7 +213,9 @@ depend() {
 
 start() {
 	ebegin "Starting ZeroNet"
-	start-stop-daemon --start --user ${PN} --pidfile "${ZERONET_PID_FILE}" --quiet --background --make-pidfile --exec "${ZERONET_SCRIPT_FILE}" main
+	start-stop-daemon --start --user ${PN} --pidfile "${ZERONET_PID_FILE}" \
+		--quiet --background --make-pidfile \
+		--exec "${ZERONET_SCRIPT_FILE}" main
 
 	# Exit successfully only if a ZeroNet process with this PID is running.
 	sleep 2
@@ -223,7 +225,9 @@ start() {
 
 stop() {
 	ebegin "Stopping ZeroNet"
-	start-stop-daemon --stop --user ${PN} --pidfile "${ZERONET_PID_FILE}" --quiet --retry SIGTERM/20 SIGKILL/20 --progress --exec "${ZERONET_SCRIPT_FILE}"
+	start-stop-daemon --stop --user ${PN} --pidfile "${ZERONET_PID_FILE}" \
+		--quiet --retry SIGTERM/20 SIGKILL/20 --progress \
+		--exec "${ZERONET_SCRIPT_FILE}"
 	eend $?
 }
 
@@ -254,17 +258,16 @@ EOF
 	ZEROHELLO_URL="http://127.0.0.1:43110"
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
-	DOC_CONTENTS="
-OpenRC users should typically add ZeroNet to the default runlevel:
-   rc-update add ${PN} default
+	DOC_CONTENTS="OpenRC users should typically add ZeroNet to the default runlevel:
+	$ rc-update add ${PN} default
 
 After starting ZeroNet, ZeroHello (the web interface bundled with ZeroNet)
 may be locally browsed to at:
-   ${ZEROHELLO_URL}
+	${ZEROHELLO_URL}
 
 ZeroNet zites are safely editable *ONLY* while logged in as the \"${PN}\"
 user: e.g.,
-	sudo su - ${PN}
+	$ sudo su - ${PN}
 "
 
 	if use tor; then
@@ -281,56 +284,85 @@ user: e.g.,
 		DOC_CONTENTS+="
 Tor-based ZeroNet anonymization *MUST* be manually enabled as follows:
 
-   1. Stop Tor if started:
-      rc-service tor stop
-   2. Add the ZeroNet user to the Tor group:
-      usermod --append --groups=tor zeronet
-   3. Permit ZeroNet to read Tor's authentication cookie:
-      mkdir --mode=750 ${TOR_AUTH_DIR}
-      chown -R tor: ${TOR_AUTH_DIR}
-   4. Edit \"/etc/tor/torrc\" as follows:
-      1. Uncomment the following commented lines:
-         #ControlPort 9051
-         #CookieAuthentication 1
-      2. Add the following lines anywhere:
-         CookieAuthFile ${TOR_AUTH_DIR}/control_auth_cookie
-         CookieAuthFileGroupReadable 1
-   5. Restart Tor and ZeroNet:
-      rc-service tor restart
-      rc-service zeronet restart
-   6. Verify that your ZeroNet IP address is not your physical IP address at
-      the ZeroHello Stats page:
-      ${ZEROHELLO_URL}/Stats
+	1. Stop Tor if started:
+		$ rc-service tor stop
+	2. Add the ZeroNet user to the Tor group:
+		$ usermod --append --groups=tor zeronet
+	3. Permit ZeroNet to read Tor's authentication cookie:
+		$ mkdir --mode=750 ${TOR_AUTH_DIR}
+		$ chown -R tor: ${TOR_AUTH_DIR}
+	4. Append the following lines to \"/etc/tor/torrc\":
+		# ZeroNet-specific authentication cookie.
+		ControlPort 9051
+		CookieAuthentication 1
+		CookieAuthFile ${TOR_AUTH_DIR}/control_auth_cookie
+		CookieAuthFileGroupReadable 1
+	5. Restart ZeroNet and Tor:
+		$ rc-service zeronet restart
+	6. Verify that your ZeroNet IP address is not your physical IP address at
+	   the ZeroHello Stats page:
+		${ZEROHELLO_URL}/Stats
 
 ZeroNet recommends browsing ZeroNet zites only with Tor Browser when Tor
 support is enabled. Warnings will be displayed on attempting to browse with any
 other browser. To do so:
 
-   1. Install Tor Browser, ideally via the "torbrowser" overlay as follows:
-      1. Install the "repository" subcommand for the "eselect" command:
-         emerge --ask eselect-repository
-      2. Enable the "torbrowser" overlay:
-         eselect repository enable torbrowser
-      3. Clone the "torbrowser" overlay:
-         emerge --sync
-      4. Install the Tor Browser Launcher:
-         emerge --ask torbrowser-launcher
-   2. Launch Tor Browser:
-      torbrowser-launcher &!
-   3. Browse to:
-      about:preferences#advanced
-   4. Click the \"Settings...\" button to the right of the \"Configure how Tor
-      Browser connects to the Internet\" text label.
-   5. Enter the following text in the \"No Proxy for\" text area:
-      127.0.0.1
-   6. Click the \"OK\" button.
-   7. Browse to:
-      ${ZEROHELLO_URL}
+	1. Install Tor Browser, ideally via the "torbrowser" overlay as follows:
+		1. Install the "repository" subcommand for the "eselect" command:
+			$ emerge --ask eselect-repository
+		2. Enable the "torbrowser" overlay:
+			$ eselect repository enable torbrowser
+		3. Clone the "torbrowser" overlay:
+			$ emerge --sync
+		4. Install the Tor Browser Launcher:
+			$ emerge --ask torbrowser-launcher
+	2. Launch Tor Browser:
+		$ torbrowser-launcher &!
+	3. Browse to:
+		about:preferences#advanced
+	4. Click the \"Settings...\" button to the right of the \"Configure how Tor
+	   Browser connects to the Internet\" text label.
+	5. Enter the following text in the \"No Proxy for\" text area:
+		$ 127.0.0.1
+	6. Click the \"OK\" button.
+	7. Browse to:
+		${ZEROHELLO_URL}
+"
+	fi
+
+	if use meek; then
+		DOC_CONTENTS+="
+ZeroNet users subject to anonymity-hostile censorship regimes (e.g., the Great
+Firewall of China) may circumvent domestic Tor blocks by browsing ZeroNet with
+recent versions of Tor Browser. As you have enabled the \"meek\" USE flag,
+errors will be displayed on attempting to browse with any other browser.
 "
 	fi
 
 	# Install the above Gentoo-specific documentation.
 	readme.gentoo_create_doc
+
+	# Remove testing-specific submodules from ZeroNet's Python codebase.
+	rm -rf src/Test || die '"rm" failed.'
+
+	# Install ZeroNet's Python codebase.
+	python_moduleinto "${ZERONET_MODULE_DIR}"
+	python_domodule ${PN}.py plugins src tools
+
+	# Create ZeroNet's logging and state directories.
+	keepdir "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+
+	# Enable ZeroNet to modify all requisite paths. Note that this includes the
+	# configuration file generated above. Failure to do so induces the
+	# following runtime error on browsing to the local ZeroNet router console:
+	#     Unhandled exception: [Errno 13] Permission denied: '/etc/zeronet.conf'
+	fowners -R ${PN}:${PN} \
+		"${ZERONET_CONF_FILE}" \
+		"${ZERONET_LOG_DIR}" \
+		"${ZERONET_STATE_DIR}"
+
+	# Install all Markdown files as documentation.
+	dodoc *.md
 }
 
 pkg_postinst() {
