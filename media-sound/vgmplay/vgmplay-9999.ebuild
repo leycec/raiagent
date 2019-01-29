@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="7"
 
 inherit readme.gentoo-r1
 
@@ -10,10 +10,10 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 
 # VGMPlay licensing can only be referred to as "extreme." Frankly, the authors
 # themselves do not appear to particularly care about licensing or even know
-# which licenses apply and when to VGMPlay. The "VGMPlay/licenses/List.txt" file
-# purports to be the canonical list of all licenses associated with third-party
-# VGMPlay components but nonetheless lists three components for which the
-# license is literally unknown:
+# which licenses apply and when to VGMPlay. The "VGMPlay/licenses/List.txt"
+# file purports to be the canonical list of all licenses associated with
+# third-party VGMPlay components but nonetheless lists three components for
+# which the license is literally unknown:
 #
 #     Ootake - ?
 #     MEKA - ?
@@ -23,10 +23,13 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 #
 # I've never encountered a licensing scenario this painfully disfunctional. If
 # even the principal developers of VGMPlay cannot be bothered to either license
-# their software *OR* attribute third-party software embedded in their software,
-# we certainly cannot be expected to do so. We instead note that, since numerous
-# VGMPlay components are GPL 2-licensed, the infectious virality of the GPL
-# requires extending that license to VGMPlay itself. Ergo, GPL 2.
+# their software *OR* attribute third-party software embedded in their
+# software, we certainly cannot be expected to do so. We instead note that,
+# since numerous VGMPlay components are GPL 2-licensed, the infectious virality
+# of the GPL requires extending that license to VGMPlay itself. Ergo, GPL 2.
+#
+# See also the following outstanding VGMPlay issue:
+#     https://github.com/vgmrips/vgmplay/issues/47
 LICENSE="GPL-2"
 SLOT="0"
 
@@ -60,6 +63,13 @@ else
 	KEYWORDS="~amd64 ~x86"
 fi
 
+# Prevent the "readme.gentoo-r1" eclass from autoformatting documentation via
+# the external "fmt" and "echo -e" commands for readability.
+DISABLE_AUTOFORMATTING=1
+
+#FIXME: Uncomment this line to test "readme.gentoo-r1" documentation.
+#FORCE_PRINT_ELOG=1
+
 src_prepare() {
 	default
 
@@ -75,17 +85,13 @@ src_compile() {
 	# List of all options to be passed to VGMPlay's makefile, globalized to
 	# allow reuse in the src_install() phase.
 	declare -ga VGMPLAY_MAKE_OPTIONS
-
-	# Options to be unconditionally enabled.
-	VGMPLAY_MAKE_OPTIONS=( PREFIX="${EROOT}"usr DESTDIR="${D}" )
-
-	# Append all options to be enabled. Option values are ignored such that:
-	#
-	# * All passed options are considered to be enabled (regardless of value).
-	# * All unpassed options are considered to be disabled.
-	use ao    && VGMPLAY_MAKE_OPTIONS+=( USE_LIBAO=1 ) || VGMPLAY_MAKE_OPTIONS+=( USE_LIBAO=0 )
-	use debug && VGMPLAY_MAKE_OPTIONS+=( DEBUG=1 ) || VGMPLAY_MAKE_OPTIONS+=( DEBUG=0 )
-	use opl   && VGMPLAY_MAKE_OPTIONS+=( DISABLE_HWOPL_SUPPORT=0 ) || VGMPLAY_MAKE_OPTIONS+=( DISABLE_HWOPL_SUPPORT=1 )
+	VGMPLAY_MAKE_OPTIONS=(
+		PREFIX="${EROOT}/"usr
+		DESTDIR="${D}"
+		USE_LIBAO=$(usex ao 1 0)
+		DEBUG=$(usex debug 1 0)
+		DISABLE_HWOPL_SUPPORT=$(usex opl 0 1)
+	)
 
 	# VGMPlay only provides a GNU "Makefile"; notably, no autotools-based
 	# "configure" script is provided.
@@ -113,32 +119,30 @@ src_install() {
 	dodoc VGMPlay/VGMPlay*.txt
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
-	DOC_CONTENTS="
-	VGMPlay supports audio files of filetype \"vgm\" and \"vgz\"
-	(gzip-compressed \"vgm\") and \"m3u\" playlists of these files, available
-	for effectively all sequenced video game music from the online archive at:
-	\\n
-	\\n\\thttp://vgmrips.net
-	\\n
-	\\nTo enable support for files ripped from devices containing OPL4 sound chips
-	(e.g., MSX), manually download and copy the \"yrw801.rom\" file into the
-	system-wide \"${VGMPLAY_DIR}\" directory:
-	\\n
-	\\n\\tsudo mv yrw801.rom ${VGMPLAY_DIR}/
-	\\n
-	\\nTo play supported files, run the \"vgm-player\" wrapper:
-	\\n
-	\\n\\t# See the \"vgmplay\" manpage for key bindings.
-	\\n\\tvgm-player bubbleman.vgz
-	\\n
-	\\nTo convert supported files to another format, pipe the \"vgm2pcm\"
-	command into a suitable audio encoder:
-	\\n
-	\\n\\t# Convert VGZ to MP3 via \"lame\".
-	\\n\\tvgm2pcm bubbleman.vgz - | lame -r - -
-	\\n
-	\\nVGMPlay is configurable via the system-wide \"${VGMPLAY_CFG_FILE}\"
-	file."
+	DOC_CONTENTS="VGMPlay supports audio files of filetype \"vgm\" and \"vgz\"
+(gzip-compressed \"vgm\") and \"m3u\" playlists of these files, available for
+effectively all sequenced video game music from the online archive at:
+
+	http://vgmrips.net
+
+To enable support for files ripped from devices containing OPL4 sound chips
+(e.g., MSX), manually download and copy the \"yrw801.rom\" file into the
+system-wide \"${VGMPLAY_DIR}\" directory:
+
+	sudo mv yrw801.rom ${VGMPLAY_DIR}/
+
+To play supported files, run the \"vgm-player\" wrapper:
+
+    # See the \"vgmplay\" manpage for key bindings.
+    vgm-player bubbleman.vgz
+
+To convert supported files to another format, pipe the \"vgm2pcm\" command into
+a suitable audio encoder:
+
+    # Convert VGZ to MP3 via \"lame\".
+    vgm2pcm bubbleman.vgz - | lame -r - -
+
+VGMPlay is configurable via the system-wide \"${VGMPLAY_CFG_FILE}\" file."
 
 	# Install this document.
 	readme.gentoo_create_doc
