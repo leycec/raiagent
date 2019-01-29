@@ -12,14 +12,18 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 # themselves do not appear to particularly care about licensing or even know
 # which licenses apply and when to VGMPlay. The "VGMPlay/licenses/List.txt" file
 # purports to be the canonical list of all licenses associated with third-party
-# VGMPlay components but nonetheless lists three components for which the
-# license is literally unknown:
+# VGMPlay components but nonetheless lists four components for which the license
+# is literally unknown:
 #
 #     Ootake - ?
+#     in_vgm - ?
 #     MEKA - ?
 #     in_wsr - ?
 #
-# VGMPlay itself appears to remain unlicensed.
+# "in_vgm" from that list refers to the old in_vgm WinAmp plugin by Maxim.
+# Unfortunately the WinAmp plugin if VGMPlay that is contained in the same
+# repository is also called "in_vgm", despite the different codebase, causing
+# the license file to be confusing. VGMPlay itself appears to remain unlicensed.
 #
 # I've never encountered a licensing scenario this painfully disfunctional. If
 # even the principal developers of VGMPlay cannot be bothered to either license
@@ -66,8 +70,13 @@ src_prepare() {
 	# Remove the bundled "zlib" directory.
 	rm -r VGMPlay/zlib || die '"rm" failed.'
 
-	# Strip hardcoded ${CFLAGS}.
+	# Patch the makefile as follows:
+	#
+	# * Strip hardcoded ${CFLAGS}.
+	# * Prevent options from being forcefully enabled.
 	sed -e '/CFLAGS := -O3/s~ -O3~~' \
+	    -e '/^DISABLE_HWOPL_SUPPORT = 1$/d' \
+	    -e '/^USE_LIBAO = 1$/d' \
 		-i VGMPlay/Makefile || die '"sed" failed.'
 }
 
@@ -83,9 +92,9 @@ src_compile() {
 	#
 	# * All passed options are considered to be enabled (regardless of value).
 	# * All unpassed options are considered to be disabled.
-	use ao    && VGMPLAY_MAKE_OPTIONS+=( USE_LIBAO=1 ) || VGMPLAY_MAKE_OPTIONS+=( USE_LIBAO=0 )
-	use debug && VGMPLAY_MAKE_OPTIONS+=( DEBUG=1 ) || VGMPLAY_MAKE_OPTIONS+=( DEBUG=0 )
-	use opl   && VGMPLAY_MAKE_OPTIONS+=( DISABLE_HWOPL_SUPPORT=0 ) || VGMPLAY_MAKE_OPTIONS+=( DISABLE_HWOPL_SUPPORT=1 )
+	use ao    && VGMPLAY_MAKE_OPTIONS+=( USE_LIBAO=1 )
+	use debug && VGMPLAY_MAKE_OPTIONS+=( DEBUG=1 )
+	use opl   || VGMPLAY_MAKE_OPTIONS+=( DISABLE_HWOPL_SUPPORT=1 )
 
 	# VGMPlay only provides a GNU "Makefile"; notably, no autotools-based
 	# "configure" script is provided.
@@ -101,9 +110,13 @@ src_install() {
 
 	# Create all directories assumed to exist by this makefile.
 	exeinto usr/bin
+	insinto usr/share/man/man1
 
 	# Install all VGMPlay commands (e.g., "vgm-player") and manpages.
-	emake --directory=VGMPlay play_install "${VGMPLAY_MAKE_OPTIONS[@]}"
+	emake --directory=VGMPlay play_inst "${VGMPLAY_MAKE_OPTIONS[@]}"
+
+	# Install all executables *NOT* installed above. (Thanks alot, "Makefile".)
+	doexe VGMPlay/vgm2pcm VGMPlay/vgm2wav
 
 	# Link this configuration file from its default non-standard path into a
 	# more standard directory.

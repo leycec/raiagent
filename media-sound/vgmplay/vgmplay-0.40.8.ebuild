@@ -20,9 +20,10 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 #     MEKA - ?
 #     in_wsr - ?
 #
-# "in_vgm" is the Windows-specific analogue of VGMPlay as a WinAmp plugin and is
-# physically contained in the same repository as VGMPlay. Yet its license is
-# listed as unknown. Likewise, VGMPlay itself appears to remain unlicensed.
+# "in_vgm" from that list refers to the old in_vgm WinAmp plugin by Maxim.
+# Unfortunately the WinAmp plugin if VGMPlay that is contained in the same
+# repository is also called "in_vgm", despite the different codebase, causing
+# the license file to be confusing. VGMPlay itself appears to remain unlicensed.
 #
 # I've never encountered a licensing scenario this painfully disfunctional. If
 # even the principal developers of VGMPlay cannot be bothered to either license
@@ -113,12 +114,15 @@ src_install() {
 	# Install all VGMPlay commands (e.g., "vgm-player") and manpages.
 	emake --directory=VGMPlay play_install "${VGMPLAY_MAKE_OPTIONS[@]}"
 
+	# Install all executables *NOT* installed above. (Thanks alot, "Makefile".)
+	doexe VGMPlay/vgm2pcm VGMPlay/vgm2wav
+
 	# Link this configuration file from its default non-standard path into a
 	# more standard directory.
 	dosym "${VGMPLAY_DIR}/vgmplay.ini" "${VGMPLAY_CFG_FILE}"
 
 	# Install all remaining documentation.
-	dodoc VGMPlay/*.txt
+	dodoc VGMPlay/VGMPlay*.txt
 
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="
