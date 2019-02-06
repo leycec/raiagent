@@ -54,12 +54,22 @@ DEPEND="${RDEPEND}
 # Absolute path of the directory containing C:DDA data files.
 CATACLYSM_HOME=/usr/share/"${PN}"
 
-if [[ ${PV} == 9999 ]]; then
-	inherit git-r3
+if [[ ${PV} == *9999* ]]; then
+	inherit git-r3 versionator
 
 	EGIT_REPO_URI="https://github.com/CleverRaven/Cataclysm-DDA.git"
 	SRC_URI=""
 	KEYWORDS=""
+	src_unpack() {
+		case $(get_after_major_version) in
+			9999*)
+				EGIT_BRANCH=master;;
+			*)
+				MY_BRANCH="$(get_version_component_range 2).$(get_version_component_range 3)"
+				EGIT_BRANCH="${MY_BRANCH^^}-branch"
+		esac
+		git-r3_src_unpack
+	}
 else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
