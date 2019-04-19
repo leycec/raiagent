@@ -239,6 +239,9 @@ src_compile() {
 		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=1 USE_XDG_DIR=0 )
 	fi
 
+	# Do not strip the binaries, portage will handle it itself if needed
+	CATACLYSM_EMAKE_NCURSES+=( BACKTRACE=1 )
+
 	# If enabling ncurses, compile the ncurses-based binary.
 	if use ncurses; then
 		einfo 'Compiling ncurses interface...'
