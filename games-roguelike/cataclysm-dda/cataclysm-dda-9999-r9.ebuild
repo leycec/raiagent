@@ -72,9 +72,6 @@ else
 	S="${WORKDIR}/Cataclysm-DDA-${MY_PV}"
 fi
 
-# Absolute dirname of the system-wide directory containing C:DDA data files.
-CATACLYSM_DIRNAME=/usr/share/"${PN}"
-
 src_prepare() {
 	# If "doc/JSON_LOADING_ORDER.md" is still a symbolic link, replace this
 	# link by a copy of its transitive target to avoid "QA Notice" complaints.
@@ -123,7 +120,7 @@ src_compile() {
 		# install-time directory, all variables defined by the makefile
 		# relative to ${PREFIX} *MUST* be redefined here relative to ${ED}.
 		BIN_PREFIX="${ED}"/usr/bin
-		DATA_PREFIX="${ED}${CATACLYSM_DIRNAME}"
+		DATA_PREFIX="${ED}"/usr/share/${PN}
 		LOCALE_DIR="${ED}"/usr/share/locale
 
 		# Link against Portage-provided shared libraries.
