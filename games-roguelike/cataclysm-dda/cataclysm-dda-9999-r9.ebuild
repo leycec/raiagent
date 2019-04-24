@@ -14,12 +14,10 @@ HOMEPAGE="https://cataclysmdda.org/"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	astyle clang debug lintjson lto lua luajit ncurses nls sdl sound test xdg
+	astyle clang debug lintjson lto ncurses nls sdl sound test xdg
 	kernel_linux kernel_Darwin
 "
 REQUIRED_USE="
-	lua? ( sdl )
-	luajit? ( lua )
 	sound? ( sdl )
 	|| ( ncurses sdl )
 "
@@ -30,8 +28,6 @@ RDEPEND="
 	sys-libs/zlib
 	virtual/libc
 	astyle? ( dev-util/astyle )
-	lua? ( >=dev-lang/lua-5.1:0 )
-	luajit? ( dev-lang/luajit:2 )
 	ncurses? ( >=sys-libs/ncurses-6.0:0 )
 	nls? ( sys-devel/gettext:0[nls] )
 	sdl? (
@@ -200,16 +196,6 @@ src_compile() {
 	# Else, store saves and settings in standard home dot directories.
 	else
 		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=1 USE_XDG_DIR=0 )
-	fi
-
-	# If enabling Lua support, do so. Note that Lua support requires SDL
-	# support but, paradoxically, appears to be supported when compiling both
-	# SDL *AND* ncurses binaries. (Black magic is black.)
-	if use lua; then
-		CATACLYSM_EMAKE_NCURSES+=( LUA=1 )
-
-		# If enabling LuaJIT support, do so.
-		use luajit && CATACLYSM_EMAKE_NCURSES+=( LUA_BINARY=luajit )
 	fi
 
 	# If enabling internationalization, do so.
