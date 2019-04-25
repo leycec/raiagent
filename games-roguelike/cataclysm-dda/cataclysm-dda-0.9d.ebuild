@@ -48,9 +48,13 @@ RDEPEND="
 BDEPEND="${RDEPEND}
 	clang? (
 		sys-devel/clang
-		lto? ( sys-devel/llvm[gold] )
+		debug? ( sys-devel/clang-runtime[sanitize] )
+		lto?   ( sys-devel/llvm[gold] )
 	)
-	!clang? ( sys-devel/gcc[cxx] )
+	!clang? (
+		sys-devel/gcc[cxx]
+		debug? ( sys-devel/gcc[sanitize] )
+	)
 "
 
 if [[ ${PV} == 9999 ]]; then
@@ -130,6 +134,18 @@ src_compile() {
 		DATA_PREFIX="${ED}${CATACLYSM_DIRNAME}"
 		LOCALE_DIR="${ED}"/usr/share/locale
 
+		# Unconditionally enable backtrace support. Note that:
+		#
+		# * Enabling this functionality incurs no performance penalty.
+		# * Disabling this functionality has undesirable side effects,
+		#   including:
+		#   * Stripping of symbols, which Portage already does when requested.
+		#   * Disabling of crash reports on fatal errors, a tragically common 
+		#     occurence when installing the live version.
+		#
+		# Ergo, this support should *NEVER* be disabled.
+		BACKTRACE=1
+
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
@@ -183,15 +199,14 @@ src_compile() {
 	# * "SANITIZE=address", enabling Google's AddressSanitizer (ASan)
 	#   instrumentation for detecting memory corruption (e.g., buffer overrun).
 	if use debug; then
-		CATACLYSM_EMAKE_NCURSES+=(
-			RELEASE=0 BACKTRACE=1 DEBUG_SYMBOLS=1 SANITIZE=address )
+		CATACLYSM_EMAKE_NCURSES+=( RELEASE=0 DEBUG_SYMBOLS=1 SANITIZE=address )
 	# Else, enable release-specific optimizations.
 	#
 	# Note that, unlike superficially similar options, the "DEBUG_SYMBOLS"
 	# option does *NOT* support disabling via "DEBUG_SYMBOLS=0" and *MUST* thus
 	# be explicitly omitted. Likewise, sanitization is disabled by default.
 	else
-		CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 BACKTRACE=0 )
+		CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 )
 	fi
 
 	# If storing saves and settings in XDG-compliant base directories, do so.
