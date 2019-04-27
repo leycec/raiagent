@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 PYTHON_COMPAT=( python3_{5,6,7} )
 
@@ -23,10 +23,10 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.8.2[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-3.3[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
 "
 #FIXME: Insert above after officially supporting "ruamel.yaml".
 	# || (
@@ -35,7 +35,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	# )
 
 DEPEND="${COMMON_DEPEND}
-	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
+	test? ( >=dev-python/pytest-3.1.0[${PYTHON_USEDEP}] )
 "
 
 # If the "smp" USE flag is enabled, increase the likelihood of multicore-aware
@@ -95,7 +95,7 @@ pkg_pretend() {
 	# flag is enabled *AND* the version of the "app-admin/eselect" ebuild
 	# provided by the "science" overlay is not installed. Unfortunately,
 	# Portage does not appear to provide a means of testing this. The following
-	# *SHOULD* work, as a valid atom is specified: e.g.,
+	# *SHOULD* work, since we pass a valid atom name: e.g.,
 	#
 	#     if use smp; then
 	#         if ! has_version '>=app-admin/eselect-1.4.8-r100::science'; then
