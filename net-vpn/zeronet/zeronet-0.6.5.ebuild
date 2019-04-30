@@ -5,11 +5,6 @@ EAPI=7
 
 #FIXME: Adds Python 3.x support after the following upstream issue is resolved:
 #    https://github.com/HelloZeroNet/ZeroNet/issues/149
-#FIXME: An actively maintained monolithic pull request by HelloZeroNet now
-#appears to finally be on the cusp of adequately resolving this. My firm
-#suspicion is that ZeroNet 0.7.0 will support Python 3.x. See this more
-#relevant issue:
-#    https://github.com/HelloZeroNet/ZeroNet/issues/1773
 PYTHON_COMPAT=( python2_7 )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
