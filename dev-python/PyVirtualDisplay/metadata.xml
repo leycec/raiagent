@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+pyvirtualdisplay is a python wrapper for Xvfb, Xephyr and Xvnc.
+</longdescription>
+	<upstream>
+		<remote-id type="pypi">PyVirtualDisplay</remote-id>
+		<remote-id type="github">ponty/PyVirtualDisplay</remote-id>
+		<bugs-to>https://github.com/ponty/PyVirtualDisplay/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="xauth" >Install xauth to make Xauthority files at runtime</flag>
+		<flag name="xephyr">Install Xephyr as a runtime backend</flag>
+		<flag name="xvfb"  >Install Xvfb as a runtime backend</flag>
+		<flag name="xvnc"  >Install TigerVNC's Xvnc as a runtime backend</flag>
+	</use>
+</pkgmetadata>
