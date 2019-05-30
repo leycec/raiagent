@@ -1,5 +1,5 @@
-raiagent
-===========
+raiagent —————[ …it is possibly good ]—————
+===========================================
 
 <!---
 FIXME: Uncomment the following preferred document title, assuming we finally
@@ -11,15 +11,25 @@ raiagent —————————[ [![Build Status](https://travis-ci.org/ley
 
 **Welcome to `raiagent`,** the third-party Gentoo overlay where [Raia](https://en.wikipedia.org/wiki/Raja_%28genus%29) and gentlemanly conduct collide.
 
-![image](https://cloud.githubusercontent.com/assets/217028/7741975/ce3e814a-ff55-11e4-84d9-7fe8f2fab2f0.png)
+<img src="https://cloud.githubusercontent.com/assets/217028/7741975/ce3e814a-ff55-11e4-84d9-7fe8f2fab2f0.png" width="128" height="64"/> **+** <img src="https://cloud.githubusercontent.com/assets/217028/7742504/0d4c7394-ff5e-11e4-9352-9a30362fb37c.png" width="64" height="96"/> **=** `raiagent`
 
-**+**
+## Installation
 
-![image](https://cloud.githubusercontent.com/assets/217028/7742504/0d4c7394-ff5e-11e4-9352-9a30362fb37c.png)
+`raiagent` is trivially installable via the [post-modern `eselect repository`
+module](https://wiki.gentoo.org/wiki/Eselect/Repository), which now supersedes
+the [antiquated `layman` command](https://wiki.gentoo.org/wiki/Layman):
 
-**=**
+* Install the `eselect repository` module (*if needed*).
 
-`raiagent`
+        $ emerge --ask app-eselect/eselect-repository
+        $ mkdir -p /etc/portage/repos.conf
+
+* Add and synchronize this overlay.
+
+        $ eselect repository enable raiagent
+        $ emerge --sync raiagent
+
+* Prepare for Gentoo-based winnage.
 
 ## Motivation
 
@@ -46,7 +56,19 @@ Notable peer-to-peer (P2P) ebuilds include:
   `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet) ZeroNet
   ebuilds.
 
-### Rertro
+### Python
+
+Notable Python ebuilds include:
+
+* **[pytest-xvfb](https://github.com/The-Compiler/pytest-xvfb)**, a
+  third-party Python package integrating the [popular pytest
+  framework](https://pytest.org) with the [Xvfb (X virtual
+  framebuffer)](https://en.wikipedia.org/wiki/Xvfb) for automated headless
+  testing of graphical Python applications. `raiagent` officially hosts
+  ebuilds installing the full pytest-xvfb stack: i.e., `pytest-xvfb` **+**
+  `pytest` **+** `Xvfb` **+** `PyVirtualDisplay` **+** `EasyProcess`.
+
+### Retro
 
 Notable "enthusiast" ebuilds include:
 
@@ -91,25 +113,6 @@ Notable scientifical ebuilds include:
   [BETSE](https://gitlab.com/betse/betse) coauthored by [the
   author](https://github.com/leycec) of this overlay. Again, `raiagent`
   officially hosts BETSEE ebuilds.
-
-## Installation
-
-`raiagent` is installable in the usual way. Assuming use of `emerge` (and not
-that *other* [disreputable fellow](http://paludis.exherbo.org)), this is:
-
-* Install [`layman`](https://wiki.gentoo.org/wiki/Layman), Gentoo's official
-  overlay manager.
-
-        $ emerge layman
-        $ echo 'source /var/lib/layman/make.conf' >> /etc/portage/make.conf
-
-* Add the `raiagent` overlay.
-
-        $ layman -a raiagent
-
-* Synchronize overlays.
-
-        $ layman -S
 
 ## Contributors
 
