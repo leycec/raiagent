@@ -18,8 +18,17 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # This list of mandatory dependencies derives directly from the
 # "betse.metadata.DEPENDENCIES_RUNTIME_MANDATORY" list, which is enforced at
 # BETSE runtime and hence guaranteed to be authorative.
+#
+# For uniformity across *ALL* Python releases, the technically optional
+# "dev-python/distro" dependency replacing the deprecated
+# platform.linux_distribution() function removed by Python 3.8 is treated here
+# as a mandatory dependency. While a USE flag governing the installation of
+# this dependency could also be introduced (e.g., "distro"), doing so would be
+# complicated by the version-specific conditionality of this dependency --
+# which is optional only under Python <= 3.7 and is otherwise mandatory.
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/dill-0.2.3[${PYTHON_USEDEP}]
+	>=dev-python/distro-1.0.4[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
