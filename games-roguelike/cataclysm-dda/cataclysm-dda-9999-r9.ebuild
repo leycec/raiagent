@@ -139,6 +139,10 @@ src_compile() {
 		# Ergo, this support should *NEVER* be disabled.
 		BACKTRACE=1
 
+		# Unconditionally add debug symbols to executable binaries, which
+		# Portage then subsequently strips by default.
+		DEBUG_SYMBOLS=1
+
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
@@ -188,20 +192,17 @@ src_compile() {
 	#
 	# * "RELEASE=0", disabling release-specific optimizations.
 	# * "BACKTRACE=1", enabling backtrace support.
-	# * "DEBUG_SYMBOLS=1", adding debug symbols to executable binaries.
 	# * "SANITIZE=address", enabling Google's AddressSanitizer (ASan)
 	#   instrumentation for detecting memory corruption (e.g., buffer overrun).
 	if use debug; then
-		CATACLYSM_EMAKE_NCURSES+=( RELEASE=0 DEBUG_SYMBOLS=1 SANITIZE=address )
+		CATACLYSM_EMAKE_NCURSES+=( RELEASE=0 SANITIZE=address )
 	# Else, enable release-specific optimizations.
 	#
-	# Note that, unlike superficially similar options, the "DEBUG_SYMBOLS"
-	# option does *NOT* support disabling via "DEBUG_SYMBOLS=0" and *MUST* thus
-	# be explicitly omitted. Likewise, sanitization is disabled by default.
+	# Note that, unlike similar options, the "SANITIZE" option does *NOT*
+	# support disabling via "SANITIZE=0" and *MUST* thus be explicitly omitted.
 	else
 		CATACLYSM_EMAKE_NCURSES+=( RELEASE=1 )
 	fi
-
 
 	# If storing saves and settings in XDG-compliant base directories, do so.
 	if use xdg; then
