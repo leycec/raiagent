@@ -32,16 +32,11 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
+	>=dev-python/ruamel-yaml-0.15.35[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-3.3[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
 "
-#FIXME: Insert above after officially supporting "ruamel.yaml".
-	# || (
-	# 	>=dev-python/ruamel-yaml-0.15.0[${PYTHON_USEDEP}]
-	# 	>=dev-python/pyyaml-3.10[${PYTHON_USEDEP}]
-	# )
 
 DEPEND="${COMMON_DEPEND}
 	test? ( >=dev-python/pytest-3.1.0[${PYTHON_USEDEP}] )
