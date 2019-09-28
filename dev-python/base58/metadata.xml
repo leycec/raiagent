@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<longdescription>
+Base58 and Base58Check implementation compatible with what is used by the
+bitcoin network. Any other alternative alphabet (like the Ripple one) can be
+used.
+</longdescription>
+	<upstream>
+		<remote-id type="pypi">base58</remote-id>
+		<remote-id type="github">keis/base58</remote-id>
+		<bugs-to>https://github.com/keis/base58/issues</bugs-to>
+	</upstream>
+</pkgmetadata>
