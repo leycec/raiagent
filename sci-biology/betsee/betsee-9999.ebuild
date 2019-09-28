@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -26,18 +26,21 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #
 # * The PySide2 "svg" USE flag implies the "widget" USE flag, which implies the
 #   "gui" USE flag, which thus need not be explicitly listed.
-# * Each version of BETSEE requires at least the same version of BETSE,
-#   excluding the trailing version component of that version of BETSEE (e.g.,
-#   BETSEE 0.9.0.0 and 0.9.0.1 both require at least BETSE 0.9.0).
+# * Each version of BETSEE requires the same version of BETSE, excluding the
+#   trailing patch number of this version of BETSEE (e.g., BETSEE 0.9.0.0 and
+#   0.9.0.1 both require exactly BETSE 0.9.0). Since newer versions of BETSE
+#   typically break backward compatibility with older versions of BETSEE, this
+#   dependency does *NOT* extend to newer versions of BETSE.
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-python/pyside:2[${PYTHON_USEDEP},svg]
 	dev-python/pyside-tools:2[${PYTHON_USEDEP}]
-	>=sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
+	~sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
 "
 DEPEND="${COMMON_DEPEND}
 	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-qt[${PYTHON_USEDEP}]
 		dev-python/pytest-xvfb[${PYTHON_USEDEP}]
+		>=dev-python/pytest-3.7.0[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND="${COMMON_DEPEND}"
