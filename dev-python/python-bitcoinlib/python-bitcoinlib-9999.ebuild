@@ -3,22 +3,25 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6,7} pypy3 )
+# Note that the name of this package is intentionally *NOT* "bitcoinlib", an
+# unrelated project with its own unique PyPI package.
+
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy{,3} )
 
 inherit distutils-r1
 
-DESCRIPTION="Python MaxMind DB reader extension"
+DESCRIPTION="Easy interface to the Bitcoin data structures and protocol"
 HOMEPAGE="
-	https://pypi.org/project/maxminddb
-	https://github.com/maxmind/MaxMind-DB-Reader-python"
+	https://pypi.org/project/python-bitcoinlib
+	https://github.com/petertodd/python-bitcoinlib"
 
-LICENSE="Apache-2.0"
+LICENSE="LGPL-3+"
 SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="${PYTHON_DEPS}
-	dev-libs/libmaxminddb
+	dev-libs/openssl
 "
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -27,7 +30,7 @@ DEPEND="${RDEPEND}
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="https://github.com/maxmind/MaxMind-DB-Reader-python.git"
+	EGIT_REPO_URI="https://github.com/petertodd/python-bitcoinlib.git"
 	EGIT_BRANCH="master"
 	SRC_URI=""
 	KEYWORDS=""
@@ -37,7 +40,7 @@ else
 fi
 
 python_install_all() {
-	dodoc *.rst
+	dodoc *.md
 	[[ -d examples ]] && dodoc -r examples
 
 	distutils-r1_python_install_all
