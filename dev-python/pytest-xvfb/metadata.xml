@@ -5,12 +5,4 @@
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
 	</maintainer>
-	<longdescription>
-pytest-xvfb is a pytest plugin to run Xvfb for tests.
-</longdescription>
-	<upstream>
-		<remote-id type="pypi">pytest-xvfb</remote-id>
-		<remote-id type="github">The-Compiler/pytest-xvfb</remote-id>
-		<bugs-to>https://github.com/The-Compiler/pytest-xvfb/issues</bugs-to>
-	</upstream>
 </pkgmetadata>
