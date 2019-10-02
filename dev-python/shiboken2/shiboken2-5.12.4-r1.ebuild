@@ -77,17 +77,13 @@ src_configure() {
 		local mycmakeargs=(
 			-DBUILD_TESTS=$(usex test)
 			-DDISABLE_DOCSTRINGS=$(usex !docstrings)
-			-DENABLE_VERSION_SUFFIX=ON
 			-DPYTHON_CONFIG_SUFFIX="-${EPYTHON}"
 			-DPYTHON_EXECUTABLE="${PYTHON}"
 			-DUSE_PYTHON_VERSION="${EPYTHON#python}"
 
-			#FIXME: File an upstream issue. This is a bug. Recommend that
-			#upstream shift the conditional block internally setting this CMake
-			#variable from "shiboken2/libshiboken/CMakeLists.txt" to
-			#"shiboken2/CMakeLists.txt", which should (in theory) fix this.
-			# Install versioned "shiboken2-${PV}.pc" files. Enabling
-			# "ENABLE_VERSION_SUFFIX" above should suffice, but doesn't. Sad!
+			# Install Python-versioned files (e.g.,
+			# "/usr/bin/shiboken2-${EPYTHON}",
+			# "/usr/lib64/pkgconfig/shiboken2-${EPYTHON}.pc").
 			-Dshiboken2_SUFFIX="-${EPYTHON}"
 		)
 		# CMakeLists.txt expects LLVM_INSTALL_DIR as an environment variable.
