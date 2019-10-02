@@ -60,6 +60,12 @@ Notable peer-to-peer (P2P) ebuilds include:
 
 Notable Python ebuilds include:
 
+* **[PySide2](https://wiki.qt.io/Qt_for_Python)** (AKA, "Qt for
+  Python;" AKA, `pyside-setup-everywhere-src`; AKA, The Package Formerly Known
+  as PySide2),<sup>*don't ask*</sup> the official LGPL-licensed Qt bindings for
+  Python. `raiagent` [officially hosts](https://bugs.gentoo.org/624682) ebuilds
+  installing the full PySide2 stack: i.e., PySide2 **+** pyside2-tools **+**
+  shiboken2 **+** Qt.
 * **[pytest-xvfb](https://github.com/The-Compiler/pytest-xvfb)**, a
   third-party Python package integrating the [popular pytest
   framework](https://pytest.org) with the [Xvfb (X virtual
