@@ -1,2 +1,3 @@
 move dev-python/pyside dev-python/pyside2
+move dev-python/pyside-tools dev-python/pyside2-tools
 move dev-python/shiboken dev-python/shiboken2

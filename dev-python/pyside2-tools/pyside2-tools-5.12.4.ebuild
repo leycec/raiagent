@@ -3,6 +3,8 @@
 
 EAPI=7
 
+# Note that PySide2 and friends are currently PyPy-incompatible. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-535
 PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 CMAKE_IN_SOURCE_BUILD=1
 
@@ -32,7 +34,7 @@ DEPEND="${RDEPEND}
 	test? ( virtual/pkgconfig )
 "
 
-S=${WORKDIR}/${MY_P}/sources/pyside2-tools
+S=${WORKDIR}/${MY_P}/sources/${PN}
 DOCS=( AUTHORS README.md )
 
 src_prepare() {
@@ -100,4 +102,9 @@ src_install() {
 		CMAKE_USE_DIR="${BUILD_DIR}" cmake-utils_src_install
 	}
 	python_foreach_impl pyside-tools_install
+
+	# Remove the broken "pyside_tool.py" script. By inspection, this script
+	# reduces to a noop. Moreover, this script raises the following exception:
+	#     FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/../pyside_tool.py': '/usr/bin/../pyside_tool.py'
+	rm "${ED}/usr/bin/pyside_tool.py"
 }

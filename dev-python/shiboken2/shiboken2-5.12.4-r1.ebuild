@@ -11,6 +11,8 @@ EAPI=7
 # Once split, the PySide2 ebuild should be revised to require
 # "/usr/bin/shiboken2" at build time and "libshiboken2-*.so" at runtime.
 
+# Note that PySide2 and friends are currently PyPy-incompatible. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-535
 PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit cmake-utils llvm python-r1
