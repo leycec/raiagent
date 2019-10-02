@@ -16,6 +16,7 @@ SLOT="0"
 IUSE="doc"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}
 	>=dev-python/pytest-2.7.0[${PYTHON_USEDEP}]
 	|| (
@@ -27,9 +28,7 @@ RDEPEND="${PYTHON_DEPS}
 		dev-python/sphinx-py3doc-enhanced-theme[${PYTHON_USEDEP}]
 	)
 "
-DEPEND="${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
+DEPEND="${PYTHON_DEPS}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3

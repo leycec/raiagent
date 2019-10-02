@@ -9,19 +9,16 @@ inherit distutils-r1
 
 DESCRIPTION="Easy to use python subprocess interface"
 HOMEPAGE="
-	https://pypi.org/project/EasyProcess
-	https://github.com/ponty/EasyProcess
-"
+	https://pypi.org/project/EasyProcess https://github.com/ponty/EasyProcess"
 
 LICENSE="BSD-2"
 SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}"
-DEPEND="${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
+DEPEND="${PYTHON_DEPS}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3

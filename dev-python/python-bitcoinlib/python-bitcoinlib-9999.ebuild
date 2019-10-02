@@ -20,12 +20,11 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}
 	dev-libs/openssl
 "
-DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
+DEPEND="${RDEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3

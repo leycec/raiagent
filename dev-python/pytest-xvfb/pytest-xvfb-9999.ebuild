@@ -21,13 +21,12 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}
 	>=dev-python/PyVirtualDisplay-0.2.1[xvfb,${PYTHON_USEDEP}]
 	>=dev-python/pytest-2.8.1[${PYTHON_USEDEP}]
 "
-DEPEND="${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
+DEPEND="${PYTHON_DEPS}"
 
 DOCS=( CHANGELOG.rst README.rst )
 

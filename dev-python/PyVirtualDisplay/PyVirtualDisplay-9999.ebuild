@@ -23,6 +23,7 @@ SLOT="0"
 IUSE="xauth xephyr xvfb xvnc"
 REQUIRED_USE="|| ( xephyr xvfb xvnc ) ${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}
 	dev-python/EasyProcess[${PYTHON_USEDEP}]
 	xauth?  ( x11-apps/xauth )
@@ -30,9 +31,7 @@ RDEPEND="${PYTHON_DEPS}
 	xvfb?   ( x11-base/xorg-server[xvfb] )
 	xvnc?   ( net-misc/tigervnc[server] )
 "
-DEPEND="${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
+DEPEND="${PYTHON_DEPS}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
