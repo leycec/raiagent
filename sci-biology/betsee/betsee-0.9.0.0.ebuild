@@ -15,7 +15,7 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-#FIXME: Constrain the following "pyside:2" and "pyside-tools:2" dependencies to
+#FIXME: Constrain the following "pyside2" and "pyside-tools:2" dependencies to
 #minimum required versions *AFTER* a stable version of PySide2 is released.
 
 # This list of mandatory dependencies derives directly from the
@@ -30,8 +30,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #   excluding the trailing version component of that version of BETSEE (e.g.,
 #   BETSEE 0.9.0.0 and 0.9.0.1 both require at least BETSE 0.9.0).
 DEPEND="${PYTHON_DEPS}
-	dev-python/pyside:2[${PYTHON_USEDEP},svg]
-	dev-python/pyside-tools:2[${PYTHON_USEDEP}]
+	dev-python/pyside2[${PYTHON_USEDEP},svg]
+	dev-python/pyside2-tools[${PYTHON_USEDEP}]
 	>=sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
 "
 RDEPEND="${DEPEND}"
