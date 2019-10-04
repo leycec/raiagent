@@ -42,7 +42,7 @@ the [antiquated `layman` command](https://wiki.gentoo.org/wiki/Layman):
 Notable command-line interface (CLI) ebuilds include:
 
 * **[Powerline](https://github.com/powerline/powerline)**, a general-purpose CLI statusline theme with cross-application support (e.g., `bash`, `tmux`, `vim`, `zsh`). `raiagent` [officially hosts](https://powerline.readthedocs.org/en/latest/installation/linux.html) Powerline ebuilds, co-maintained by a [frequent Powerline committer](https://github.com/ZyX-I).
-* [fishman](https://github.com/fishman)'s [exuberant-ctags fork](https://github.com/fishman/ctags), an actively maintained [ctags](https://en.wikipedia.org/wiki/Ctags) variant with modern language support (e.g., CSS, Objective-C). `raiagent` unofficially hosts live ctags ebuilds in lieu of an official release.
+* [fishman](https://github.com/fishman)'s **[exuberant-ctags fork](https://github.com/fishman/ctags)**, an actively maintained [ctags](https://en.wikipedia.org/wiki/Ctags) variant with modern language support (e.g., CSS, Objective-C). `raiagent` unofficially hosts live ctags ebuilds in lieu of an official release.
 
 ### P2P
 
@@ -89,18 +89,12 @@ Notable "enthusiast" ebuilds include:
   emulation, VGMPlay is to game *audio* emulation. `raiagent` unofficially hosts
   VGMPlay ebuilds.
 
-### Ricing
-
-Notable **ricing** (i.e., soft- and/or hardware performance tweaking) ebuilds include:
-
-* [phc-k8](http://www.linux-phc.org/forum/viewtopic.php?f=13&t=2), an out-of-tree Linux kernel module supporting [undervolting](https://en.wikipedia.org/wiki/Dynamic_voltage_scaling) of AMD chipsets. Portage's [official `phc-k8` ebuilds](https://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-power/phc-k8/) are [several years out-of-date](https://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/sys-power/phc-k8/ChangeLog?view=markup) and, unsurprisingly, fail to build against modern Linux kernels. `raiagent` unofficially hosts well-maintained phc-k8 ebuilds successfully building against all stable [gentoo-sources](https://wiki.gentoo.org/wiki/Kernel/Overview#General_purpose:_gentoo-sources) kernels, complete with user-configurable OpenRC startup script and configuration file.
-
 ### Roguelike
 
 Notable **roguelike** (i.e., games featuring permanent death as a prominent mechanic) ebuilds include:
 
-* [Cataclysm: Dark Days Ahead (C:DDA)](https://cataclysmdda.org/), a post-apocalyptic survival horror roguelike. `raiagent` [officially hosts](https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo) C:DDA ebuilds.
-* [UnReal World (URW)](http://www.unrealworld.fi), a Finnish Iron-Age wilderness survival roguelike. `raiagent` [unofficially hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
+* **[Cataclysm: Dark Days Ahead (C:DDA)](https://cataclysmdda.org)**, a post-apocalyptic survival horror roguelike. `raiagent` [officially hosts](https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo) C:DDA ebuilds.
+* **[UnReal World (URW)](http://www.unrealworld.fi)**, a Finnish Iron-Age wilderness survival roguelike. `raiagent` [unofficially hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
 
 ### Science
 
