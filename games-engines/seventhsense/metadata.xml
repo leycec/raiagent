@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<use>
+		<flag name="data"  >Install all data for Lone Wolf books 1-18 (recommended)</flag>
+		<flag name="editor">Enable book editor (e.g., to modify existing books, create new books)</flag>
+	</use>
+</pkgmetadata>
