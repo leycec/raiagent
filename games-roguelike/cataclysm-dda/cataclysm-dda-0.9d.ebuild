@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,14 +9,13 @@ EAPI=7
 
 # See "COMPILING.md" in the C:DDA repository for compilation instructions.
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
-HOMEPAGE="https://cataclysmdda.org/"
+HOMEPAGE="https://cataclysmdda.org"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
 	astyle clang debug lintjson lto lua luajit ncurses nls sdl sound test xdg
-	kernel_linux kernel_Darwin
-"
+	kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	lua? ( sdl )
 	luajit? ( lua )

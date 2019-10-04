@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,20 +9,32 @@ EAPI=7
 
 # See "COMPILING.md" in the C:DDA repository for compilation instructions.
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
-HOMEPAGE="https://cataclysmdda.org/"
+HOMEPAGE="https://cataclysmdda.org"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
 	astyle clang debug lintjson lto ncurses nls sdl sound test xdg
-	kernel_linux kernel_Darwin
-"
+	kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	sound? ( sdl )
 	|| ( ncurses sdl )
 "
 
-RDEPEND="
+# Note that, while GCC also supports LTO via the gold linker, Portage appears
+# to provide no means of validating the current GCC to link with gold. *shrug*
+BDEPEND="
+	clang? (
+		sys-devel/clang
+		debug? ( sys-devel/clang-runtime[sanitize] )
+		lto?   ( sys-devel/llvm[gold] )
+	)
+	!clang? (
+		sys-devel/gcc[cxx]
+		debug? ( sys-devel/gcc[sanitize] )
+	)
+"
+DEPEND="
 	app-arch/bzip2
 	sys-libs/glibc
 	sys-libs/zlib
@@ -38,20 +50,7 @@ RDEPEND="
 	)
 	sound? ( media-libs/sdl2-mixer:0 )
 "
-
-# Note that, while GCC also supports LTO via the gold linker, Portage appears
-# to provide no means of validating the current GCC to link with gold. *shrug*
-BDEPEND="${RDEPEND}
-	clang? (
-		sys-devel/clang
-		debug? ( sys-devel/clang-runtime[sanitize] )
-		lto?   ( sys-devel/llvm[gold] )
-	)
-	!clang? (
-		sys-devel/gcc[cxx]
-		debug? ( sys-devel/gcc[sanitize] )
-	)
-"
+RDEPEND="${DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
