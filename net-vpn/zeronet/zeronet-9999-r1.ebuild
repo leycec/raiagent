@@ -1,16 +1,9 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-#FIXME: Adds Python 3.x support after the following upstream issue is resolved:
-#    https://github.com/HelloZeroNet/ZeroNet/issues/149
-#FIXME: An actively maintained monolithic pull request by HelloZeroNet now
-#appears to finally be on the cusp of adequately resolving this. My firm
-#suspicion is that ZeroNet 0.7.0 will support Python 3.x. See this more
-#relevant issue:
-#    https://github.com/HelloZeroNet/ZeroNet/issues/1773
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{5,6,7} )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
 #"setup.py"-based PyPI integration, tracked at the following issue:
@@ -28,44 +21,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	meek? ( tor )
 "
 
-#FIXME: Unbundle all bundled Python dependencies in the "src/lib" directory.
-#Doing so is complicated, however, by ZeroNet requiring:
-#
-#* Dependencies for which no Portage package currently exists, including:
-#  * "BitcoinECC".
-#  * "bencode". While a "dev-haskell/bencode" package exists, no corresponding
-#    "dev-python/bencode" exists.
-#  * "cssvendor".
-#  * "opensslVerify". This appears to be a ZeroNet-specific package rather than
-#    a bundled dependency, despite residing in the "src/lib" directory.
-#  * "pybitcointools".
-#  * "pyelliptic".
-#  * "subtl".
-#* Obsolete versions of packages no longer provided by Portage, including:
-#  * "=dev-python/PySocks-1.5.3". Due to Tor and gevent complications, ZeroNet
-#    explicitly reverted the bundled version of PySocks from a newer version
-#    back to 1.5.3. Ergo, this appears to be a hard requirement.
-#* Newer versions of packages not yet provided by Portage, including:
-#  * "=dev-python/gevent-websocket-0.10.1".
-#  * "=dev-python/pyasn1-0.2.4".
-#  * "=dev-python/rsa-3.4.2".
-#    
-#Note that any bundled Python dependency *NOT* internally modified for ZeroNet
-#may be safely unbundled once Portage provides a sufficient package version as
-#follows:
-#
-#* Remove the "src/lib" subdirectory containing this dependency (e.g.,
-#  "src/lib/pyasn1").
-#* Append an import statement to the "src/lib/__init__.py" submodule importing
-#  the system-wide version of this dependency (e.g., "import pyasn1").
-#
-#Tragically, numerous bundled dependencies are internally modified for ZeroNet,
-#as the git history for these dependencies' subdirectories trivially shows. For
-#each such dependency, submit an upstream issue requesting that this dependency
-#be officially unbundled from ZeroNet and dynamically monkey-patched at runtime
-#instead. Until ZeroNet itself unbundles these dependencies, there's little we
-#can reasonably do here.
-
 # Dependencies derive from the following sources:
 #
 # * The top-level "requirements.txt" file.
@@ -80,6 +35,17 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}
+	dev-python/PySocks
+	dev-python/base58
+	dev-python/bencode_py
+	dev-python/coincurve
+	dev-python/gevent-websocket
+	dev-python/maxminddb
+	dev-python/merkletools
+	dev-python/pyasn1
+	dev-python/python-bitcoinlib
+	dev-python/rsa
+	dev-python/websocket-client
 	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
 	debug? (
@@ -93,12 +59,14 @@ RDEPEND="${DEPEND}
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
+	# Note that the Python 2.7-specific "master" branch has been effectively
+	# discontinued in favour of the Python 3-specific "py3" branch.
 	EGIT_REPO_URI="https://github.com/HelloZeroNet/ZeroNet"
-	EGIT_BRANCH="master"
+	EGIT_BRANCH="py3"
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="https://github.com/HelloZeroNet/ZeroNet/archive/v${PV}.tar.gz"
+	SRC_URI="https://github.com/HelloZeroNet/ZeroNet/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 	S="${WORKDIR}/ZeroNet-${PV}"
 fi
