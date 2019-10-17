@@ -35,7 +35,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}
-	dev-python/PySocks
 	dev-python/base58
 	dev-python/bencode_py
 	dev-python/coincurve
@@ -47,6 +46,7 @@ RDEPEND="${DEPEND}
 	dev-python/rsa
 	dev-python/websocket-client
 	~dev-python/pyelliptic-1.5.6[${PYTHON_USEDEP}]
+	>=dev-python/PySocks-1.6.8[${PYTHON_USEDEP}]
 	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
 	debug? (

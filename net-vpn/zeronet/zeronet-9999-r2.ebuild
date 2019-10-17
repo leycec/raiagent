@@ -35,7 +35,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}
-	dev-python/PySocks
 	dev-python/base58
 	dev-python/bencode_py
 	dev-python/coincurve
@@ -46,6 +45,7 @@ RDEPEND="${DEPEND}
 	dev-python/python-bitcoinlib
 	dev-python/rsa
 	dev-python/websocket-client
+	>=dev-python/PySocks-1.6.8[${PYTHON_USEDEP}]
 	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
 	debug? (
@@ -129,8 +129,13 @@ src_install() {
 	fi
 
 	# If enabling Tor, do so in all ZeroNet files generated below.
+	#
+	# Note that setting "tor = always" suffices to unconditionally proxy *ALL*
+	# connections (including trackers) through Tor. For that reason, attempting 
+	# to set "trackers_proxy = tor" here would be ignored by ZeroNet. See also:
+	#     https://github.com/HelloZeroNet/ZeroNet/issues/2147#issuecomment-524147130
 	if use tor; then
-		ZERONET_CONF_OPTIONS+='tor = always'$'\n''trackers_proxy = tor'$'\n'
+		ZERONET_CONF_OPTIONS+='tor = always'$'\n'
 		ZERONET_OPENRC_DEPENDENCIES='need tor'
 		ZERONET_SYSTEMD_DEPENDENCIES='After=tor.service'
 	fi
@@ -160,7 +165,7 @@ EOF
 	# with that of standard shell-formatted "/etc/conf.d/" files.
 	cat <<EOF > "${T}"/${PN}.conf
 # Configuration file for ZeroNet's "${ZERONET_SCRIPT_FILE}" launcher script.
-
+#
 # For each "--"-prefixed command-line option accepted by the "${PN}" script
 # (e.g., "--data_dir"), a key of the same name excluding that prefix (e.g.,
 # "data_dir") permanently setting that option may be defined in this section.
