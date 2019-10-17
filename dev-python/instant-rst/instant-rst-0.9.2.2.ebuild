@@ -1,10 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-# InstantRst Server has yet to be ported to Python 3.x -- and, frankly, probably
-# never will be.
+# InstantRst Server has yet to be ported to Python 3.x. Since development has
+# largely ceased, it probably never will be.
 PYTHON_COMPAT=( python2_7 )
 
 # Since default phase functions defined by "distutils-r1" take absolute
@@ -13,32 +13,29 @@ inherit readme.gentoo-r1 distutils-r1
 
 # Yes, the URL of this repository is actually suffixed by ".py". Just because.
 DESCRIPTION="Lightweight web server for previewing reStructuredText documents"
-HOMEPAGE="https://github.com/rykka/instant-rst.py"
+HOMEPAGE="
+	https://pypi.org/project/instant-rst
+	https://github.com/gu-fan/instant-rst.py"
 
 LICENSE="MIT"
 SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# Note that:
-#
-# * Although the "install_requires" metadata key in this package's top-level
-#   "setup.py" script lists "pygments" as a mandatory dependency, this package
-#   does *NOT* appear to actually import or otherwise use Pygments. Hence,
-#   "dev-python/pygments" is *NOT* listed as a runtime dependency below.
-# * The mandatory "net-misc/curl" runtime dependency listed below is actually a
-#   mandatory runtime dependency of the "Rykka/InstantRst" Vim bundle usually
-#   installed alongside this package. Since Vim bundles are preferably installed
-#   via a Vim bundle manager (e.g., Vundle, NeoBundle) rather than Portage, this
-#   dependency is listed here instead. This should impose no hardships for non-
-#   Vim users, as "curl" is usually *ALWAYS* available on most systems.
+# Note that the mandatory "net-misc/curl" runtime dependency listed below is
+# actually a mandatory runtime dependency of the "Rykka/InstantRst" Vim bundle
+# usually installed alongside this package. Since Vim bundles are preferably
+# installed via a Vim bundle manager (e.g., Vundle, NeoBundle) rather than
+# Portage, this dependency is listed here instead. This should impose no
+# hardships for non-Vim users, as "curl" is usually available on most systems.
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 DEPEND="${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
-RDEPEND="${PYTHON_DEPS}
 	dev-python/docutils[${PYTHON_USEDEP}]
-	dev-python/flask[${PYTHON_USEDEP}]
 	dev-python/flask-socketio[${PYTHON_USEDEP}]
+	dev-python/pygments[${PYTHON_USEDEP}]
+	~dev-python/flask-0.12.2[${PYTHON_USEDEP}]
+"
+RDEPEND="${DEPEND}
 	net-misc/curl
 "
 
@@ -47,7 +44,7 @@ DOCS=( "README.rst" )
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="${HOMEPAGE}"
+	EGIT_REPO_URI="https://github.com/gu-fan/instant-rst.py.git"
 	EGIT_BRANCH="master"
 	SRC_URI=""
 	KEYWORDS=""
