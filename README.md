@@ -94,10 +94,16 @@ Notable "enthusiast" ebuilds include:
 Notable **roguelike** (i.e., games featuring permanent death as a prominent mechanic) ebuilds include:
 
 * **[Cataclysm: Dark Days Ahead (C:DDA)](https://cataclysmdda.org)**, a post-apocalyptic survival horror roguelike. `raiagent` [officially hosts](https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo) C:DDA ebuilds.
+* **[UnReal World (URW)](http://www.unrealworld.fi)**, a Finnish Iron-Age wilderness survival roguelike. `raiagent` [unofficially hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
+
+### Interactive Fiction (IF)
+
+Notable **interactive fiction** (i.e., parser games featuring text-based control schemes) ebuilds include:
+
+* **[Gargoyle (garglk)](http://ccxvii.net/gargoyle)**, the ultimate back- and frontend GUI supporting *most* (but inevitably not all) works of interactive fiction authored over the past several decades. Whereas Portage and the [equally awesome `interactive-fiction` overlay](https://repo.or.cz/w/gentoo-interactive-fiction.git) only host [Gargoyle's nearly decade-old 2011.1 release](https://github.com/garglk/garglk/releases), `raiagent` unofficially hosts ebuilds for the [most recent Gargoyle commit from October 6th, 2018](https://github.com/garglk/garglk/commits/master). In all likelihood, this also constitutes the last Gargoyle commit. *Gargoyle is dead; long live Gargoyle!*
 * **[Seventh Sense](https://www.projectaon.org/staff/david)**, [David Olsen](https://www.projectaon.org/staff/david/donate.php)'s phenomenal back- and frontend GUI for [Joe](https://en.wikipedia.org/wiki/Joe_Dever) and [Ben Dever](https://gamebooknews.com/tag/ben-dever)'s *[Lone Wolf](https://en.wikipedia.org/wiki/Lone_Wolf_\(gamebooks\))* franchise of 80's-era high-fantasy roguelike gamebooks. `raiagent` unofficially hosts Seventh Sense ebuilds. USE flags include:
   * `data` (enabled by default): automatically downloads and installs all data needed to play *Lone Wolf* 1—18. Thanks to [Joe's voluntary relinquishment of all prior copyright to Project Aon](https://www.projectaon.org/en/Main/Home), these gamebooks are freely (as in both beer and speech) playable... *for Sommerlund and the Kai!*
   * `editor` (*not* enabled by default): enables Seventh Sense's in-game WYSIWG editor for modifying existing gamebooks and creating new gamebooks under the *Lone Wolf* system.
-* **[UnReal World (URW)](http://www.unrealworld.fi)**, a Finnish Iron-Age wilderness survival roguelike. `raiagent` [unofficially hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
 
 ### Science
 
