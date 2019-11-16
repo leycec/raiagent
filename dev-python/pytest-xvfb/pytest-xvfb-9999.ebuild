@@ -6,7 +6,7 @@ EAPI=7
 #FIXME: Officially, "pytest-xvfb" only supports Python <= 3.5. Pragmatically,
 #"pytest-xvfb" appears to behave as expected on Python > 3.5 as well. See also:
 #    https://github.com/The-Compiler/pytest-xvfb/issues/20
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7,8} )
 
 inherit distutils-r1
 

@@ -13,7 +13,7 @@ EAPI=7
 
 # Note that PySide2 and friends are currently PyPy-incompatible. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
 
 inherit cmake-utils llvm python-r1
 

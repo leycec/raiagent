@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} pypy{,3} )
 
 inherit distutils-r1
 
@@ -19,9 +19,10 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 BDEPEND="
 	>=dev-python/pbr-1.9.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-17.1.0[${PYTHON_USEDEP}]"
-RDEPEND="${PYTHON_DEPS}"
+	>=dev-python/setuptools-17.1.0[${PYTHON_USEDEP}]
+"
 DEPEND="${PYTHON_DEPS}"
+RDEPEND="${PYTHON_DEPS}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
