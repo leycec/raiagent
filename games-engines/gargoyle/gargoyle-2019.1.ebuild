@@ -1,9 +1,6 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This ebuild provides the most recent (and, in all likelihood, last) Gargoyle
-# commit from October 6th, 2018.
-#
 # Regarding licenses: libgarglk is licensed under the GPLv2. Bundled
 # interpreters are licensed under GPLv2, BSD or MIT license, except:
 #   - glulxe: custom license, see "terps/glulxle/README"
@@ -12,16 +9,14 @@
 # don't apply. (Fonts are installed through dependencies instead.)
 
 EAPI=7
-inherit desktop flag-o-matic git-r3 multilib multiprocessing toolchain-funcs \
-	xdg
+inherit desktop flag-o-matic multilib multiprocessing toolchain-funcs xdg
+
+MY_PN=garglk
+MY_P=${MY_PN}-${PV}
 
 DESCRIPTION="An Interactive Fiction (IF) player supporting all major formats"
 HOMEPAGE="http://ccxvii.net/gargoyle"
-SRC_URI=""
-
-EGIT_REPO_URI="https://github.com/garglk/garglk.git"
-EGIT_BRANCH="master"
-EGIT_COMMIT="d03391563fa75942fbf8f8deeeacf3a8be9fc3b0"
+SRC_URI="https://github.com/${MY_PN}/${MY_PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD GPL-2 MIT Hugo Glulxe"
 SLOT="0"
@@ -32,6 +27,10 @@ BDEPEND="
 	dev-util/ftjam
 	virtual/pkgconfig
 "
+
+#FIXME: Consider switching these fonts for "media-fonts/noto" and whatever
+#package installs Google's "Go Mono", which upstream has since switched to.
+#Since no package appears to install "Go Mono", we leave this as is for now.
 DEPEND="
 	media-fonts/libertine
 	media-fonts/liberation-fonts
@@ -44,6 +43,8 @@ DEPEND="
 	x11-libs/gtk+:2
 "
 RDEPEND="${DEPEND}"
+
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	# Substitute custom CFLAGS/LDFLAGS.
