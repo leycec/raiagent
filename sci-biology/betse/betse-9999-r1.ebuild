@@ -37,10 +37,11 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/numpy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
 	>=dev-python/ruamel-yaml-0.15.35[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-3.3[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-38.2.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
 "
+	# >=dev-python/psutil-5.3.0[${PYTHON_USEDEP}]
 DEPEND="${COMMON_DEPEND}
 	test? ( >=dev-python/pytest-3.7.0[${PYTHON_USEDEP}] )
 "
@@ -61,10 +62,10 @@ RDEPEND="${COMMON_DEPEND}
 	)
 	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
+		sci-libs/openblas[eselect-ldso]
 		sci-libs/atlas[eselect-ldso,threads]
 		sci-libs/blis[eselect-ldso]
 		sci-libs/mkl-rt[eselect-ldso]
-		sci-libs/openblas[eselect-ldso]
 	) )
 "
 
