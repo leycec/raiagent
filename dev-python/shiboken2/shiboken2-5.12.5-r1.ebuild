@@ -75,7 +75,7 @@ src_prepare() {
 }
 
 src_configure() {
-	shiboken_configure() {
+	shiboken2_configure() {
 		local mycmakeargs=(
 			-DBUILD_TESTS=$(usex test)
 			-DDISABLE_DOCSTRINGS=$(usex !docstrings)
@@ -91,7 +91,7 @@ src_configure() {
 		# CMakeLists.txt expects LLVM_INSTALL_DIR as an environment variable.
 		LLVM_INSTALL_DIR="$(get_llvm_prefix)" cmake-utils_src_configure
 	}
-	python_foreach_impl shiboken_configure
+	python_foreach_impl shiboken2_configure
 }
 
 src_compile() {
@@ -103,7 +103,15 @@ src_test() {
 }
 
 src_install() {
-	python_foreach_impl cmake-utils_src_install
+	shiboken2_install() {
+		cmake-utils_src_install
+
+		# Preserve an unversioned "shiboken2.pc" file arbitrarily associated
+		# with the last Python target. See also:
+		#     https://github.com/leycec/raiagent/issues/73
+		cp "${ED}/usr/$(get_libdir)"/pkgconfig/${PN}{-${EPYTHON},}.pc || die
+	}
+	python_foreach_impl shiboken2_install
 
 	# CMakeLists.txt installs a "Shiboken2Targets-gentoo.cmake" file forcing
 	# downstream consumers (e.g., PySide2) to target one "libshiboken2-*.so"
