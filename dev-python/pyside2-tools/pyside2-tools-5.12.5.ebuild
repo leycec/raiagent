@@ -51,7 +51,7 @@ src_prepare() {
 
 			# Generate proper Python 3 test interfaces with the "-py3" option.
 			sed -i -e \
-				's:${PYSIDERCC_EXECUTABLE}:"${PYSIDERCC_EXECUTABLE} -py3":' \
+				's~${PYSIDERCC_EXECUTABLE}~"${PYSIDERCC_EXECUTABLE} -py3"~' \
 				tests/rcc/CMakeLists.txt || die
 		else
 			# Remove Python 3-specific paths.

@@ -115,9 +115,10 @@ src_install() {
 
 	# CMakeLists.txt installs a "Shiboken2Targets-gentoo.cmake" file forcing
 	# downstream consumers (e.g., PySide2) to target one "libshiboken2-*.so"
-	# library linked to a single Python interpreter. See also:
+	# library linked to one Python interpreter. See also:
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
-	sed -i -e 's~libshiboken2-python[[:digit:]]\+\.[[:digit:]]\+~libshiboken2${PYTHON_CONFIG_SUFFIX}~g' \
+	#     https://github.com/leycec/raiagent/issues/74
+	sed -i -e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
 		"${ED}/usr/$(get_libdir)/cmake/Shiboken2-${PV}/Shiboken2Targets-gentoo.cmake" || die
 
 	# Remove the broken "shiboken_tool.py" script. By inspection, this script

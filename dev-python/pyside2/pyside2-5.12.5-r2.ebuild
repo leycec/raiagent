@@ -148,7 +148,9 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5XmlPatterns=$(usex !xmlpatterns)
 	)
 
-	pyside_configure() {
+	pyside2_configure() {
+		# Note that, unlike the "shiboken2" ebuild, passing
+		# '-Dpyside2_SUFFIX="-${EPYTHON}"' here has harmful side effects.
 		local mycmakeargs=(
 			"${mycmakeargs[@]}"
 			-DPYTHON_CONFIG_SUFFIX="-${EPYTHON}"
@@ -158,7 +160,7 @@ src_configure() {
 		)
 		cmake-utils_src_configure
 	}
-	python_foreach_impl pyside_configure
+	python_foreach_impl pyside2_configure
 }
 
 src_compile() {
@@ -171,17 +173,27 @@ src_test() {
 }
 
 src_install() {
-	pyside_install() {
+	pyside2_install() {
 		cmake-utils_src_install
 
-		# Uniquify this pkgconfig file to a version-specific basename. Although
-		# each successive call to this function overwrites the original file,
-		# copying rather than moving this file ensures that an original file
-		# targetting the last Python target is still usable by third parties.
-		# Note that, unlike the "shiboken2" ebuild, passing
-		# "-Dpyside2_SUFFIX="-${EPYTHON}" above has harmful side effects.
-		cp "${ED}/usr/$(get_libdir)"/pkgconfig/${PN}{,-${EPYTHON}}.pc ||
-			die '"cp" failed.'
+		# Uniquify the shiboken2 pkgconfig dependency in the PySide2 pkgconfig
+		# file for the current Python target. See also:
+		#     https://github.com/leycec/raiagent/issues/73
+		sed -i -e 's~^Requires: shiboken2$~&-'${EPYTHON}'~' \
+			"${ED}/usr/$(get_libdir)"/pkgconfig/${PN}.pc || die
+
+		# Uniquify the PySide2 pkgconfig file for the current Python target,
+		# preserving an unversioned "pyside2.pc" file arbitrarily associated
+		# with the last Python target. (See the previously linked issue.)
+		cp "${ED}/usr/$(get_libdir)"/pkgconfig/${PN}{,-${EPYTHON}}.pc || die
 	}
-	python_foreach_impl pyside_install
+	python_foreach_impl pyside2_install
+
+	# CMakeLists.txt installs a "PySide2Targets-gentoo.cmake" file forcing
+	# downstream consumers (e.g., pyside2-tools) to target one
+	# "libpyside2-*.so" library linked to one Python interpreter. See also:
+	#     https://bugreports.qt.io/browse/PYSIDE-1053
+	#     https://github.com/leycec/raiagent/issues/74
+	sed -i -e 's~pyside2-python[[:digit:]]\+\.[[:digit:]]\+~pyside2${PYTHON_CONFIG_SUFFIX}~g' \
+		"${ED}/usr/$(get_libdir)/cmake/PySide2-${PV}/PySide2Targets-gentoo.cmake" || die
 }
