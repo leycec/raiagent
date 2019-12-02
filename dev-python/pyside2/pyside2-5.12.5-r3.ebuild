@@ -3,9 +3,11 @@
 
 EAPI=7
 
-# Note that PySide2 and friends are currently PyPy-incompatible. See also:
+# TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
+# TODO: Add Python 3.8 once officially supported. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-939
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit cmake-utils python-r1 virtualx
 
@@ -149,8 +151,6 @@ src_configure() {
 	)
 
 	pyside2_configure() {
-		# Note that, unlike the "shiboken2" ebuild, passing
-		# '-Dpyside2_SUFFIX="-${EPYTHON}"' here has harmful side effects.
 		local mycmakeargs=(
 			"${mycmakeargs[@]}"
 			-DPYTHON_CONFIG_SUFFIX="-${EPYTHON}"

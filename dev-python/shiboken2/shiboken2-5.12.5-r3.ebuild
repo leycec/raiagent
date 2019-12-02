@@ -10,10 +10,11 @@ EAPI=7
 # https://doc.qt.io/qtforpython/shiboken2/faq.html#is-there-any-runtime-dependency-on-the-generated-binding
 # Once split, the PySide2 ebuild should be revised to require
 # "/usr/bin/shiboken2" at build time and "libshiboken2-*.so" at runtime.
-
-# Note that PySide2 and friends are currently PyPy-incompatible. See also:
+# TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
+# TODO: Add Python 3.8 once officially supported. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-939
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
 
 inherit cmake-utils llvm python-r1
 
@@ -75,18 +76,17 @@ src_prepare() {
 }
 
 src_configure() {
+	local mycmakeargs=(
+		-DBUILD_TESTS=$(usex test)
+		-DDISABLE_DOCSTRINGS=$(usex !docstrings)
+	)
+
 	shiboken2_configure() {
 		local mycmakeargs=(
-			-DBUILD_TESTS=$(usex test)
-			-DDISABLE_DOCSTRINGS=$(usex !docstrings)
+			"${mycmakeargs[@]}"
 			-DPYTHON_CONFIG_SUFFIX="-${EPYTHON}"
 			-DPYTHON_EXECUTABLE="${PYTHON}"
 			-DUSE_PYTHON_VERSION="${EPYTHON#python}"
-
-			# Install Python-versioned files (e.g.,
-			# "/usr/bin/shiboken2-${EPYTHON}",
-			# "/usr/lib64/pkgconfig/shiboken2-${EPYTHON}.pc").
-			-Dshiboken2_SUFFIX="-${EPYTHON}"
 		)
 		# CMakeLists.txt expects LLVM_INSTALL_DIR as an environment variable.
 		LLVM_INSTALL_DIR="$(get_llvm_prefix)" cmake-utils_src_configure
@@ -105,24 +105,34 @@ src_test() {
 src_install() {
 	shiboken2_install() {
 		cmake-utils_src_install
+		python_optimize
 
-		# Preserve an unversioned "shiboken2.pc" file arbitrarily associated
+		# Uniquify the "shiboken2" executable for the current Python target,
+		# preserving an unversioned "shiboken2" file arbitrarily associated
+		# with the last Python target.
+		cp "${ED}"/usr/bin/${PN}{,-${EPYTHON}} || die
+
+		# Uniquify the Shiboken2 pkgconfig file for the current Python target,
+		# preserving an unversioned "shiboken2.pc" file arbitrarily associated
 		# with the last Python target. See also:
 		#     https://github.com/leycec/raiagent/issues/73
-		cp "${ED}/usr/$(get_libdir)"/pkgconfig/${PN}{-${EPYTHON},}.pc || die
+		cp "${ED}/usr/$(get_libdir)"/pkgconfig/${PN}{,-${EPYTHON}}.pc || die
 	}
 	python_foreach_impl shiboken2_install
 
 	# CMakeLists.txt installs a "Shiboken2Targets-gentoo.cmake" file forcing
 	# downstream consumers (e.g., PySide2) to target one "libshiboken2-*.so"
-	# library linked to one Python interpreter. See also:
+	# library and one "shiboken2" executable linked to one Python interpreter.
+	# See also:
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
 	#     https://github.com/leycec/raiagent/issues/74
-	sed -i -e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)/cmake/Shiboken2-${PV}/Shiboken2Targets-gentoo.cmake" || die
+	sed -i \
+		-e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
+		-e 's~/bin/shiboken2~/bin/shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
+		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets-gentoo.cmake || die
 
 	# Remove the broken "shiboken_tool.py" script. By inspection, this script
 	# reduces to a noop. Moreover, this script raises the following exception:
 	#     FileNotFoundError: [Errno 2] No such file or directory: '/usr/bin/../shiboken_tool.py': '/usr/bin/../shiboken_tool.py'
-	rm "${ED}/usr/bin/shiboken_tool.py"
+	rm "${ED}"/usr/bin/shiboken_tool.py
 }
