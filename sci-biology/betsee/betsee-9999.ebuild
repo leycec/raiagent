@@ -2,7 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
+# TODO: Add Python 3.8 once officially supported by PySide2. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-939
 PYTHON_COMPAT=( python3_{5,6,7} )
 
 inherit distutils-r1
@@ -38,9 +39,9 @@ COMMON_DEPEND="${PYTHON_DEPS}
 "
 DEPEND="${COMMON_DEPEND}
 	test? (
-		dev-python/pytest-qt[${PYTHON_USEDEP}]
-		dev-python/pytest-xvfb[${PYTHON_USEDEP}]
 		>=dev-python/pytest-3.7.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-qt-3.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-xvfb-1.2.0[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND="${COMMON_DEPEND}"
