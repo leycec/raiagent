@@ -1,0 +1,11 @@
+# ====================[ package.unmask                     ]====================
+#
+# --------------------( SYNOPSIS                           )--------------------
+# List of locally provided atoms to be hard-unmasked. Although well-maintained
+# in this repository, such atoms are typically hard-masked by popular Portage
+# profiles (e.g., due to official ebuilds no longer being actively maintained).
+
+# ....................{ PORTAGE                            }....................
+# Atoms previously published by Portage but no longer actively maintained and
+# hence hard-masked by Portage profiles.
+<=dev-python/pytest-qt-9999
