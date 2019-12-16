@@ -1,9 +1,9 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI=5
 
-inherit perl-app
+EAPI=7
+
+inherit perl-module
 
 DESCRIPTION="Perl script which is designed to apply an IPS patch to a ROM"
 HOMEPAGE="http://www.zophar.net/utilities/patchutil/ips-pl.html"
