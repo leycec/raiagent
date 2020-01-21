@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} pypy{,3} )
 
 # Since default phase functions defined by "distutils-r1" take absolute
 # precedence over those defined by "readme.gentoo-r1", inherit the latter later.
