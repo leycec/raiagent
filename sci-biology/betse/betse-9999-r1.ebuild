@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -63,7 +63,6 @@ RDEPEND="${COMMON_DEPEND}
 	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
 		sci-libs/openblas[eselect-ldso]
-		sci-libs/atlas[eselect-ldso,threads]
 		sci-libs/blis[eselect-ldso]
 		sci-libs/mkl-rt[eselect-ldso]
 	) )
