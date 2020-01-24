@@ -1,18 +1,17 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit distutils-r1
 
 DESCRIPTION="Utility belt for advanced users of python-requests"
 HOMEPAGE="
-http://toolbelt.readthedocs.io/en/latest
-https://pypi.python.org/pypi/requests-toolbelt
-https://github.com/requests/toolbelt
-"
+	http://toolbelt.readthedocs.io/en/latest
+	https://pypi.python.org/pypi/requests-toolbelt
+	https://github.com/requests/toolbelt"
 
 #FIXME: Add a new "doc" USE flag supporting documentation generation.
 LICENSE="Apache-2.0"
@@ -20,11 +19,11 @@ SLOT="0"
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}
 	<dev-python/requests-3.0.0[${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		dev-python/betamax[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]

@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -8,20 +8,21 @@ EAPI=7
 #package only appears to depend upon "pillow" and "EasyProcess", packaging that
 #package should prove trivial... in theory.
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7,8} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit distutils-r1
 
 DESCRIPTION="Python wrapper for Xvfb, Xephyr and Xvnc"
 HOMEPAGE="
 	https://pypi.org/project/PyVirtualDisplay
-	https://github.com/ponty/PyVirtualDisplay
-"
+	https://github.com/ponty/PyVirtualDisplay"
 
 LICENSE="BSD-2"
 SLOT="0"
 IUSE="xauth xephyr xvfb xvnc"
-REQUIRED_USE="|| ( xephyr xvfb xvnc ) ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	|| ( xephyr xvfb xvnc )
+"
 
 BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${PYTHON_DEPS}

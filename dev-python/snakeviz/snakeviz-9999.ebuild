@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
-EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5} )
+EAPI=7
+
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit distutils-r1
 
@@ -15,13 +15,11 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-COMMON_DEPEND="${PYTHON_DEPS}
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+RDEPEND="${PYTHON_DEPS}
 	>=www-servers/tornado-2.0[${PYTHON_USEDEP}]
 "
-DEPEND="${COMMON_DEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-"
-RDEPEND="${COMMON_DEPEND}"
+DEPEND="${RDEPEND}"
 
 #FIXME: Add a new "doc" USE flag that, when enabled, generates and installs the
 #HTML-based documentation templated as "smartypants"-driven Markdown in the
