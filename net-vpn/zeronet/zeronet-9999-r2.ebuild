@@ -345,8 +345,8 @@ errors will be displayed on attempting to browse with any other browser.
 	dodoc *.md
 }
 
+
+# On first installation, print the above Gentoo-specific documentation.
 pkg_postinst() {
-	# Display the above Gentoo-specific documentation on the first installation
-	# of this package.
 	readme.gentoo_print_elog
 }

@@ -1,12 +1,12 @@
 # Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} pypy{,3} )
 
-# Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo-r1", inherit the latter later.
+# Since default phase functions defined by "distutils-r1" take precedence over
+# those defined by "readme.gentoo-r1", inherit the latter later.
 inherit eutils readme.gentoo-r1 distutils-r1
 
 DESCRIPTION="Python-based statusline/prompt utility"
@@ -14,20 +14,22 @@ HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE="awesome busybox bash dash doc extra fish fonts i3bar lemonbar man mksh rc qtile tmux vim zsh"
+IUSE="
+	awesome busybox bash dash doc extra fish fonts i3bar lemonbar man mksh rc
+	qtile tmux vim zsh
+"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Some optional dependencies are only available for a limited subset of
 # architectures supported by this ebuild. For example, "app-shells/rc" is only
-# available for amd64 and x86 architectures. Such dependencies are explicitly
-# masked in the corresponding "profiles/arch/${ARCH}/package.use.mask" file for
-# this overlay.
-DEPEND="
-	dev-python/setuptools[${PYTHON_USEDEP}]
+# available for amd64 and x86 architectures. These dependencies are explicitly
+# masked in this overlay's "profiles/arch/${ARCH}/package.use.mask" files.
+BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+DEPEND="${PYTHON_DEPS}
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	man? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 "
-RDEPEND="
+RDEPEND="${PYTHON_DEPS}
 	media-fonts/powerline-symbols
 	awesome? ( >=x11-wm/awesome-3.5.1 )
 	bash? ( app-shells/bash )
@@ -44,7 +46,7 @@ RDEPEND="
 	mksh? ( app-shells/mksh )
 	qtile? ( >=x11-wm/qtile-0.6 )
 	rc? ( app-shells/rc )
-	vim? ( ~app-vim/powerline-vim-${PV} )
+	vim? ( ~app-vim/powerline-vim-${PV}[${PYTHON_USEDEP}] )
 	zsh? ( app-shells/zsh )
 "
 
@@ -112,6 +114,7 @@ if [[ ${PV} == 9999 ]]; then
 		fi
 	}
 
+
 	src_unpack() {
 		git-r3_src_unpack
 
@@ -125,10 +128,11 @@ if [[ ${PV} == 9999 ]]; then
 		fi
 	}
 
+
 	python_test() {
-		# Temporarily replace the source bindings directory currently containing
-		# only Python files with the temporary bindings directory containing all
-		# original files. Tests require unmodified bindings.
+		# Temporarily replace the source bindings directory currently
+		# containing only Python files with the temporary bindings directory
+		# containing all original files. (Tests require unmodified bindings.)
 		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
 		cp -R \
 			"${POWERLINE_TMP_BINDINGS_DIR}" \
@@ -158,6 +162,7 @@ if [[ ${PV} == 9999 ]]; then
 	}
 fi
 
+
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
 #
@@ -168,6 +173,7 @@ powerline_set_config_var_to_value() {
 	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py ||
 		die '"sed" failed.'
 }
+
 
 python_prepare_all() {
 	# Replace nonstandard system paths in Powerline's Python configuration.
@@ -222,6 +228,7 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
+
 python_compile_all() {
 	# Build documentation, if both available *AND* requested by the user. 
 	if use doc && [[ -d "${S}"/docs ]]; then
@@ -238,6 +245,7 @@ python_compile_all() {
 			die 'Manpage compilation failed.'
 	fi
 }
+
 
 python_install_all() {
 	# Install man pages.
@@ -399,12 +407,8 @@ python_install_all() {
 	distutils-r1_python_install_all
 }
 
-#FIXME: Documentation should also be printed on USE flag changes. Unfortunately,
-#it's unclear how exactly to detect such changes. If such changes are detected,
-#the ${FORCE_PRINT_ELOG} global variable should be conditionally set to a
-#non-empty value to force printing.
 
-# On first installation, print Gentoo-specific documentation.
+# On first installation, print the above Gentoo-specific documentation.
 pkg_postinst() {
 	readme.gentoo_print_elog
 }
