@@ -92,7 +92,7 @@ POWERLINE_TMP_BINDINGS_DIR="${T}"/bindings-full
 
 # Final target directory to which all applicable files will be installed.
 POWERLINE_HOME=/usr/share/powerline
-POWERLINE_HOME_EROOTED="${EROOT}"usr/share/powerline/
+POWERLINE_HOME_EROOTED="${EROOT}"/usr/share/powerline/
 
 # Powerline's Travis-specific continuous integration repository.
 TEST_EGIT_REPO_URI="https://github.com/powerline/bot-ci"
