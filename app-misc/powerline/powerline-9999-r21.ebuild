@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -90,9 +90,13 @@ POWERLINE_TMP_BINDINGS_NONPYTHON_DIR="${T}"/bindings
 # which all *NO* files will be removed. See python_prepare_all().
 POWERLINE_TMP_BINDINGS_DIR="${T}"/bindings-full
 
-# Final target directory to which all applicable files will be installed.
+# Target directory for system-wide assets.
 POWERLINE_HOME=/usr/share/powerline
-POWERLINE_HOME_EROOTED="${EROOT}"/usr/share/powerline/
+POWERLINE_HOME_EROOTED="${EROOT}${POWERLINE_HOME}"
+
+# Target directory for system-wide configuration.
+POWERLINE_CONF_HOME=/etc/xdg
+POWERLINE_CONF_HOME_EROOTED="${EROOT}${POWERLINE_CONF_HOME}"
 
 # Powerline's Travis-specific continuous integration repository.
 TEST_EGIT_REPO_URI="https://github.com/powerline/bot-ci"
@@ -103,9 +107,8 @@ if [[ ${PV} == 9999 ]]; then
 		git-r3_src_fetch
 
 		# If testing, fetch Powerline's Travis-specific continuous integration
-		# repository. Powerline requires the following files from such
-		# repository when testing:
-		# 
+		# repository. Powerline requires these files from this repository when
+		# testing:
 		# * "scripts/common/main.sh".
 		if use test; then
 			EGIT_REPO_URI="${TEST_EGIT_REPO_URI}" \
@@ -113,7 +116,6 @@ if [[ ${PV} == 9999 ]]; then
 				git-r3_src_fetch
 		fi
 	}
-
 
 	src_unpack() {
 		git-r3_src_unpack
@@ -128,15 +130,14 @@ if [[ ${PV} == 9999 ]]; then
 		fi
 	}
 
-
 	python_test() {
 		# Temporarily replace the source bindings directory currently
 		# containing only Python files with the temporary bindings directory
 		# containing all original files. (Tests require unmodified bindings.)
-		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die '"mv" failed.'
+		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{,.bak} || die
 		cp -R \
 			"${POWERLINE_TMP_BINDINGS_DIR}" \
-			"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"cp" failed.'
+			"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die
 
 		#FIXME: This is pretty terrible, and will definitely prevent Powerline
 		#from being added to Portage. Can the tests be improved so as not to
@@ -157,11 +158,10 @@ if [[ ${PV} == 9999 ]]; then
 			"${S}"/tests/test.sh || die 'Tests failed.'
 
 		# Revert the source bindings directory to only contain Python files.
-		rm -r "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die '"rm" failed.'
-		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{.bak,} || die '"mv" failed.'
+		rm -r "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" || die
+		mv "${POWERLINE_SRC_BINDINGS_PYTHON_DIR}"{.bak,} || die
 	}
 fi
-
 
 # void powerline_set_config_var_to_value(
 #     string variable_name, string variable_value)
@@ -171,14 +171,13 @@ fi
 powerline_set_config_var_to_value() {
 	(( ${#} == 2 )) || die 'Expected one variable name and one variable value.'
 	sed -i -e 's~^\('${1}' = \).*~\1'"'"${2}"'~" "${S}"/powerline/config.py ||
-		die '"sed" failed.'
+		die
 }
-
 
 python_prepare_all() {
 	# Replace nonstandard system paths in Powerline's Python configuration.
 	powerline_set_config_var_to_value \
-		DEFAULT_SYSTEM_CONFIG_DIR "${EROOT}"etc/xdg
+		DEFAULT_SYSTEM_CONFIG_DIR "${POWERLINE_CONF_HOME_EROOTED}"
 	powerline_set_config_var_to_value \
 		BINDINGS_DIRECTORY "${POWERLINE_HOME_EROOTED}"
 
@@ -191,7 +190,7 @@ python_prepare_all() {
 	# directory that distutils operates upon.
 	cp -R \
 		"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" \
-		"${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" || die '"cp" failed.'
+		"${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}" || die
 
 	# If testing...
 	if [[ ${PV} == 9999 ]] && use test; then
@@ -201,7 +200,7 @@ python_prepare_all() {
 		# from the second such directory. Ugh.
 		cp -R \
 			"${POWERLINE_SRC_BINDINGS_PYTHON_DIR}" \
-			"${POWERLINE_TMP_BINDINGS_DIR}" || die '"cp" failed.'
+			"${POWERLINE_TMP_BINDINGS_DIR}" || die
 	fi
 
 	# Remove all non-Python files from the original tree.
@@ -228,7 +227,6 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
-
 python_compile_all() {
 	# Build documentation, if both available *AND* requested by the user. 
 	if use doc && [[ -d "${S}"/docs ]]; then
@@ -245,7 +243,6 @@ python_compile_all() {
 			die 'Manpage compilation failed.'
 	fi
 }
-
 
 python_install_all() {
 	# Install man pages.
@@ -265,7 +262,7 @@ python_install_all() {
 		doexe "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/awesome/powerline-awesome.py
 
 		DOC_CONTENTS+="
-	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied that file from \"/etc/xdg/awesome/rc.lua\"):\\n
+	To enable Powerline under awesome, add the following lines to \"~/.config/awesome/rc.lua\" (assuming you originally copied that file from \"${POWERLINE_CONF_HOME_EROOTED}/awesome/rc.lua\"):\\n
 	\\trequire(\"powerline\")\\n
 	\\tright_layout:add(powerline_widget)\\n\\n"
 	fi
@@ -276,7 +273,7 @@ python_install_all() {
 
 		DOC_CONTENTS+="
 	To enable Powerline under bash, add the following line to either \"~/.bashrc\" or \"~/.profile\":\\n
-	\\tsource ${POWERLINE_HOME_EROOTED}bash/powerline.sh\\n\\n"
+	\\tsource ${POWERLINE_HOME_EROOTED}/bash/powerline.sh\\n\\n"
 	fi
 
 	if use busybox; then
@@ -284,8 +281,8 @@ python_install_all() {
 		doins   "${POWERLINE_TMP_BINDINGS_NONPYTHON_DIR}"/shell/powerline.sh
 
 		DOC_CONTENTS+="
-	To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run the following command:\\n
-	\\t. ${POWERLINE_HOME_EROOTED}busybox/powerline.sh\\n\\n"
+	To enable Powerline under interactive sessions of BusyBox's ash shell, interactively run this command:\\n
+	\\t. ${POWERLINE_HOME_EROOTED}/busybox/powerline.sh\\n\\n"
 	fi
 
 	if use dash; then
@@ -294,8 +291,8 @@ python_install_all() {
 
 		DOC_CONTENTS+="
 	To enable Powerline under dash, add the following line to the file referenced by environment variable \${ENV}:\\n
-	\\t. ${POWERLINE_HOME_EROOTED}dash/powerline.sh\\n
-	If such variable does not exist, you may need to manually create such file.\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}/dash/powerline.sh\\n
+	If that variable does not exist, you may need to manually create that file.\\n\\n"
 	fi
 
 	if use fish; then
@@ -336,7 +333,7 @@ python_install_all() {
 
 		DOC_CONTENTS+="
 	To enable Powerline under mksh, add the following line to \"~/.mkshrc\":\\n
-	\\t. ${POWERLINE_HOME_EROOTED}mksh/powerline.sh\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}/mksh/powerline.sh\\n\\n"
 	fi
 
 	if use qtile; then
@@ -367,7 +364,7 @@ python_install_all() {
 
 		DOC_CONTENTS+="
 	To enable Powerline under rc shell, add the following line to \"~/.rcrc\":\\n
-	\\t. ${POWERLINE_HOME_EROOTED}rc/powerline.rc\\n\\n"
+	\\t. ${POWERLINE_HOME_EROOTED}/rc/powerline.rc\\n\\n"
 	fi
 
 	if use tmux; then
@@ -376,7 +373,7 @@ python_install_all() {
 
 		DOC_CONTENTS+="
 	To enable Powerline under tmux, add the following line to \"~/.tmux.conf\":\\n
-	\\tsource ${POWERLINE_HOME_EROOTED}tmux/powerline.conf\\n\\n"
+	\\tsource ${POWERLINE_HOME_EROOTED}/tmux/powerline.conf\\n\\n"
 	fi
 
 	if use zsh; then
@@ -389,7 +386,7 @@ python_install_all() {
 	fi
 
 	# Install Powerline configuration files.
-	insinto /etc/xdg/powerline
+	insinto "${POWERLINE_CONF_HOME}"/powerline
 	doins -r "${S}"/powerline/config_files/*
 
 	# If no USE flags were enabled, ${DOC_CONTENTS} will be empty, in which
@@ -406,7 +403,6 @@ python_install_all() {
 	# Install the "powerline' Python package.
 	distutils-r1_python_install_all
 }
-
 
 # On first installation, print the above Gentoo-specific documentation.
 pkg_postinst() {
