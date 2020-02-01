@@ -5,14 +5,15 @@ EAPI=7
 
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit cmake-utils python-r1 virtualx
 
 # TODO: Add conditional support for "QtRemoteObjects" via a new "remoteobjects"
 # USE flag after an external "dev-qt/qtremoteobjects" package has been created.
 # TODO: Add conditional support for apidoc generation via a new "doc" USE flag.
-# Note that doing so requires the Qt source tree, sphinx, and graphviz.
+# Note that doing so requires the Qt source tree, sphinx, and graphviz. Once
+# ready, pass the ${QT_SRC_DIR} variable to cmake to enable this support.
 # TODO: Disable GLES support if the "gles2" USE flag is disabled. Note that the
 # "PySide2/QtGui/CMakeLists.txt" and "PySide2/QtOpenGLFunctions/CMakeLists.txt"
 # files test for GLES support by testing whether the "Qt5::Gui" list property
@@ -119,12 +120,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Charts=$(usex !charts)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Concurrent=$(usex !concurrent)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5DataVisualization=$(usex !datavis)
-		# TODO: Revert this temporarily disabling of Qt5Designer support
-		# seemingly broken by Qt 5.14.0 when the following issues are resolved:
-		#     https://bugs.gentoo.org/705198
-		#     https://bugs.gentoo.org/703306
-		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Designer=yes
-		# -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Designer=$(usex !designer)
+		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Designer=$(usex !designer)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Gui=$(usex !gui)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Help=$(usex !help)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Location=$(usex !location)
@@ -144,10 +140,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Sql=$(usex !sql)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Svg=$(usex !svg)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Test=$(usex !testlib)
-		# TODO: Revert this as soon as feasible, which temporarily disables
-		# Qt5Designer support seemingly broken by Qt 5.14.0. See above TODO.
-		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5UiTools=yes
-		# -DCMAKE_DISABLE_FIND_PACKAGE_Qt5UiTools=$(usex !designer)
+		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5UiTools=$(usex !designer)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebChannel=$(usex !webchannel)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebEngine=$(usex !webengine)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5WebEngineCore=$(usex !webengine)
