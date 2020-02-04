@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1
 
@@ -35,7 +35,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/distro-1.0.4[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.13.0[${PYTHON_USEDEP}]
-	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
+	>=dev-python/pillow-6.0.0[${PYTHON_USEDEP}]
 	>=dev-python/ruamel-yaml-0.15.35[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-38.2.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]

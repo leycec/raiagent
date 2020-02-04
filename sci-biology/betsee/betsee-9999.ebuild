@@ -1,10 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-# TODO: Add Python 3.8 once officially supported by PySide2. See also:
-#     https://bugreports.qt.io/browse/PYSIDE-939
-PYTHON_COMPAT=( python3_{5,6,7} )
+
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1
 
@@ -33,8 +32,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #   typically break backward compatibility with older versions of BETSEE, this
 #   dependency does *NOT* extend to newer versions of BETSE.
 COMMON_DEPEND="${PYTHON_DEPS}
-	dev-python/pyside2[${PYTHON_USEDEP},svg]
-	dev-python/pyside2-tools[${PYTHON_USEDEP}]
+	>=dev-python/pyside2-5.14.0[${PYTHON_USEDEP},svg]
+	>=dev-python/pyside2-tools-5.14.0[${PYTHON_USEDEP}]
 	~sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
 "
 DEPEND="${COMMON_DEPEND}
