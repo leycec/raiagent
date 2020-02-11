@@ -1,0 +1,73 @@
+From 70339732d8530570861d8fe26112b9f203077e91 Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Tue, 29 Oct 2019 21:33:26 +0100
+Subject: [PATCH] Use AM_GNU_GETTEXT([external]) for better compatibility
+
+---
+ Makefile.am  | 5 ++---
+ configure.ac | 8 ++------
+ 2 files changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index e87a059df..808d5198a 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -2,8 +2,7 @@ SUBDIRS = pixmaps\
+ 		  icons\
+ 		  shared\
+ 		  ${PLUGINS_DIRS}\
+-		  po\
+-		  intl
++		  po
+ 
+ bin_PROGRAMS = deadbeef
+ 
+@@ -58,7 +57,7 @@ sdk_HEADERS = deadbeef.h
+ 
+ deadbeef_LDADD = $(LDADD) $(DEPS_LIBS) $(ICONV_LIB) $(DL_LIBS) -lm -lpthread $(INTL_LIBS) plugins/libparser/libparser.a
+ 
+-AM_CFLAGS = $(DEPS_CFLAGS) -std=c99
++AM_CFLAGS = $(DEPS_CFLAGS) -std=c99 -DLOCALEDIR=\"@localedir@\"
+ AM_CPPFLAGS = $(DEPS_CFLAGS)
+ 
+ docsdir = $(docdir)
+diff --git a/configure.ac b/configure.ac
+index 158839006..b218743b5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -17,16 +17,15 @@ AC_PROG_INSTALL
+ dnl AC_PROG_LIBTOOL
+ AC_CONFIG_MACRO_DIR([m4])
+ AC_C_BIGENDIAN
+-AM_GNU_GETTEXT
++AM_GNU_GETTEXT([external])
+ PKG_PROG_PKG_CONFIG
+ AM_PROG_CC_C_O
+-
++AM_ICONV
+ IT_PROG_INTLTOOL([0.40.0])
+ GETTEXT_PACKAGE=deadbeef
+ AC_SUBST(GETTEXT_PACKAGE)
+ 
+ test "$prefix" = NONE && prefix=/usr/local
+-AC_DEFINE_UNQUOTED(LOCALEDIR, "${prefix}/${DATADIRNAME}/locale", [Name of gettext locale directory])
+ 
+ case "$host" in
+   i686-apple-*)
+@@ -157,8 +156,6 @@ case "$host" in
+     ;;
+ esac
+ 
+-AC_CHECK_LIB([intl], [main], [INTL_LIBS="-lintl";AC_SUBST(INTL_LIBS)])
+-
+ dnl check for yasm
+ AC_CHECK_PROG(HAVE_YASM, yasm, yes, no)
+ 
+@@ -948,7 +945,6 @@ plugins/pltbrowser/Makefile
+ plugins/sc68/Makefile
+ plugins/coreaudio/Makefile
+ plugins/rg_scanner/Makefile
+-intl/Makefile
+ po/Makefile.in
+ deadbeef.desktop
+ ])

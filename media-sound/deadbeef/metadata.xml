@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+	</maintainer>
+	<use>
+		<flag name='aac'>Advanced Audio Coding (AAC) plugin</flag>
+		<flag name='adplug'>Adplug plugin</flag>
+		<flag name='alac'>Apple Lossless Audio Codec (ALAC) plugin</flag>
+		<flag name='cdda'>Compact Disc Digital Audio (CDDA) plugin</flag>
+		<flag name='cdparanoia'>cdparanoia (audio CD ripper) support</flag>
+		<flag name='converter'>Media file format conversion support</flag>
+		<flag name='cover'>Album artwork plugin</flag>
+		<flag name='curl'>cURL plugin</flag>
+		<flag name='dts'>Digital Theater System (DTS) plugin</flag>
+		<flag name='dumb'>Tracker music (MOD, S3M, XM, IT, STM, 669, PTM, PSM, MTM, DSM, ASYLUM AMF, UMX, J2B) plugin</flag>
+		<flag name='equalizer'>Equalizer plugin</flag>
+		<flag name='ffmpeg'>FFmpeg plugin</flag>
+		<flag name='flac'>Free Lossless Audio Codec (FLAC) plugin</flag>
+		<flag name='gme'>Game Music Emu (NSF, AY and other formats) plugin</flag>
+		<flag name='gtk2'>GTK2 based user interface</flag>
+		<flag name='gtk3'>GTK3 based user interface</flag>
+		<flag name='hotkeys'>Hotkeys support plugin</flag>
+		<flag name='imlib2'>imlib2-based album artwork plugin</flag>
+		<flag name='lastfm'>Last.fm scrobbling plugin</flag>
+		<flag name='libav'>Libav plugin</flag>
+		<flag name='libnotify'>Notification daemon support plugin</flag>
+		<flag name='libsamplerate'>Sample rate conversion plugin</flag>
+		<flag name='m3u'>m3u playlist plugin</flag>
+		<flag name='mac'>Monkey's Audio plugin</flag>
+		<flag name='mad'>MPEG-1/2/2.5 Layer 3 (MP3) support through mad/libmad</flag>
+		<flag name='midi'>midi support (via timidity) plugin</flag>
+		<flag name='mms'>Microsoft Media Server (MMS) plugin</flag>
+		<flag name='mono2stereo'>mono2stereo plugin</flag>
+		<flag name='mp3'>MPEG-1/2/2.5 Layer 3 (MP3) support plugin. It is a virtual use for mad/libmad or mpg123/libmpg123 since deadbeef 0.6.3</flag>
+		<flag name='mpg123'>MPEG-1/2/2.5 Layer 3 (MP3) support through mpg123/libmpg123</flag>
+		<flag name='nls'>Native Language Support (NLS)</flag>
+		<flag name='nullout'>NULL output plugin</flag>
+		<flag name='opus'>Ogg Opus plugin</flag>
+		<flag name='oss'>Open Sound System (OSS) output plugin</flag>
+		<flag name='playlist-browser'>Playlist browser user interface plugin</flag>
+		<flag name='psf'>Portable Sound Format (PSF) plugin</flag>
+		<flag name='pulseaudio'>PulseAudio output plugin</flag>
+		<flag name='replaygain-scanner'>ReplayGain scanner plugin</flag>
+		<flag name='sc68'>Atari ST and Amiga music plugin</flag>
+		<flag name='shell-exec'>Support for running shell commands</flag>
+		<flag name='shn'>Shorten (SHN) plugin</flag>
+		<flag name='sid'>Commodore64 SID music player plugin</flag>
+		<flag name='sndfile'>PCM wave support (via libsndfile) plugin</flag>
+		<flag name='tta'>True Audio TTA plugin</flag>
+		<flag name='vorbis'>Ogg Vorbis plugin</flag>
+		<flag name='unity'>Gnome Unity support</flag>
+		<flag name='vtx'>Libayemy VTX ZX-Spectrum music player plugin</flag>
+		<flag name='wavpack'>WavPack plugin</flag>
+		<flag name='wma'>Windows media audio plugin</flag>
+		<flag name='zip'>vfs_zip plugin</flag>
+	</use>
+</pkgmetadata>
