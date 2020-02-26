@@ -5,12 +5,4 @@
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
 	</maintainer>
-	<longdescription>
-EasyProcess is an easy to use python subprocess interface.
-</longdescription>
-	<upstream>
-		<remote-id type="pypi">EasyProcess</remote-id>
-		<remote-id type="github">ponty/EasyProces</remote-id>
-		<bugs-to>https://github.com/ponty/EasyProcess/issues</bugs-to>
-	</upstream>
 </pkgmetadata>

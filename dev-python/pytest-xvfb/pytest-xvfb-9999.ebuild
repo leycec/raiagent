@@ -6,15 +6,14 @@ EAPI=7
 #FIXME: Officially, "pytest-xvfb" only supports Python <= 3.5. Pragmatically,
 #"pytest-xvfb" appears to behave as expected on Python > 3.5 as well. See also:
 #    https://github.com/The-Compiler/pytest-xvfb/issues/20
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
 
 inherit distutils-r1
 
 DESCRIPTION="pytest plugin to run Xvfb for tests"
 HOMEPAGE="
 	https://pypi.org/project/pytest-xvfb
-	https://github.com/The-Compiler/pytest-xvfb
-"
+	https://github.com/The-Compiler/pytest-xvfb"
 
 LICENSE="MIT"
 SLOT="0"

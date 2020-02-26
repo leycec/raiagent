@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} pypy{,3} )
+PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
 
 inherit distutils-r1
 
@@ -41,8 +41,8 @@ python_prepare_all() {
 	#     * Package installs 'tests' package which is forbidden and likely a bug in the build system.
 	# See also this open issue:
 	#     https://github.com/Tierion/pymerkletools/issues/19
-	sed -i -e 's~\bfind_packages()~find_packages(exclude=["tests"])~' \
-		setup.py || die '"sed" failed.'
+	sed -i -e \
+		's~\bfind_packages()~find_packages(exclude=["tests"])~' setup.py || die
 
 	distutils-r1_python_prepare_all
 }

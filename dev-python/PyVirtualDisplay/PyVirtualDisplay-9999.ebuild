@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -8,7 +8,7 @@ EAPI=7
 #package only appears to depend upon "pillow" and "EasyProcess", packaging that
 #package should prove trivial... in theory.
 
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1
 

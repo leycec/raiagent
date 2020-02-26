@@ -3,10 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-# Since default phase functions defined by "distutils-r1" take absolute
-# precedence over those defined by "readme.gentoo-r1", inherit the latter later.
 inherit readme.gentoo-r1 distutils-r1
 
 # Yes, the URL of this repository is actually suffixed by ".py". Just because.
@@ -52,7 +50,6 @@ else
 fi
 
 python_install_all() {
-	# Documentation to be printed on first installation.
 	DOC_CONTENTS="
 	To preview reStructuredText buffers in Vim, consider installing NeoBundle
 	and add the following lines to your Vim configuration (e.g.,
@@ -68,14 +65,11 @@ python_install_all() {
 	\\t:StopInstantRst
 	"
 
-	# Install Gentoo-specific documentation.
 	readme.gentoo_create_doc
 
-	# Install this package.
 	distutils-r1_python_install_all
 }
 
-# On first installation, print Gentoo-specific documentation.
 pkg_postinst() {
 	readme.gentoo_print_elog
 }

@@ -14,7 +14,7 @@ EAPI=7
 #     https://bugreports.qt.io/browse/PYSIDE-535
 # TODO: Add Python 3.8 once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-939
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 
 inherit cmake-utils llvm python-r1
 

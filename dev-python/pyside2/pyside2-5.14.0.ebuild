@@ -5,7 +5,7 @@ EAPI=7
 
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
 inherit cmake-utils python-r1 virtualx
 
