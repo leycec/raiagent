@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
 #"setup.py"-based PyPI integration, tracked at the following issue:
@@ -34,7 +34,9 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 #
 # Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
-RDEPEND="${DEPEND}
+RDEPEND="${PYTHON_DEPS}
+	acct-group/zeronet
+	acct-user/zeronet
 	dev-python/base58
 	dev-python/bencode_py
 	dev-python/coincurve
@@ -45,13 +47,20 @@ RDEPEND="${DEPEND}
 	dev-python/python-bitcoinlib
 	dev-python/rsa
 	dev-python/websocket-client
-	>=dev-python/PySocks-1.6.8[${PYTHON_USEDEP}]
-	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
-	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep \
+	   '~dev-python/pyelliptic-1.5.6[${PYTHON_MULTI_USEDEP}]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/PySocks-1.6.8[${PYTHON_MULTI_USEDEP}]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/gevent-1.1.0[${PYTHON_MULTI_USEDEP}]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/msgpack-0.4.4[${PYTHON_MULTI_USEDEP}]' -3 )
 	debug? (
 		>=dev-lang/coffee-script-1.9.3
-		>=dev-python/fs-0.5.4[${PYTHON_USEDEP}]
-		>=dev-python/werkzeug-0.11.11[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep \
+			'>=dev-python/fs-0.5.4[${PYTHON_MULTI_USEDEP}]' -3 )
+		$(python_gen_cond_dep \
+			'>=dev-python/werkzeug-0.11.11[${PYTHON_MULTI_USEDEP}]' -3 )
 	)
 	tor? ( >=net-vpn/tor-0.2.7.5 )
 "
@@ -71,12 +80,12 @@ else
 	S="${WORKDIR}/ZeroNet-${PV}"
 fi
 
-ZERONET_CONF_FILE="/etc/${PN}.conf"
-ZERONET_LOG_DIR="/var/log/${PN}"
-ZERONET_MODULE_DIR="/usr/share/${PN}"
-ZERONET_PID_FILE="/var/run/${PN}.pid"
-ZERONET_SCRIPT_FILE="/usr/bin/${PN}"
-ZERONET_STATE_DIR="/var/lib/${PN}"
+ZERONET_CONF_FILE=/etc/${PN}.conf
+ZERONET_LOG_DIR=/var/log/${PN}
+ZERONET_MODULE_DIR=/usr/share/${PN}
+ZERONET_PID_FILE=/var/run/${PN}.pid
+ZERONET_SCRIPT_FILE=/usr/bin/${PN}
+ZERONET_STATE_DIR=/var/lib/${PN}
 
 # Prevent the "readme.gentoo-r1" eclass from autoformatting documentation via
 # the external "fmt" and "echo -e" commands for readability.
@@ -84,15 +93,6 @@ DISABLE_AUTOFORMATTING=1
 
 #FIXME: Uncomment this line to test "readme.gentoo-r1" documentation.
 #FORCE_PRINT_ELOG=1
-
-pkg_setup() {
-	python-single-r1_pkg_setup
-
-	# Create the ZeroNet user and group. Since ZeroNet sites are typically
-	# modified while logged in as this user, a default login shell is set.
-	enewgroup ${PN}
-	enewuser  ${PN} -1 /bin/sh "${ZERONET_STATE_DIR}" ${PN}
-}
 
 # ZeroNet offers no "setup.py" script and thus requires manual installation.
 src_install() {
@@ -129,13 +129,8 @@ src_install() {
 	fi
 
 	# If enabling Tor, do so in all ZeroNet files generated below.
-	#
-	# Note that setting "tor = always" suffices to unconditionally proxy *ALL*
-	# connections (including trackers) through Tor. For that reason, attempting 
-	# to set "trackers_proxy = tor" here would be ignored by ZeroNet. See also:
-	#     https://github.com/HelloZeroNet/ZeroNet/issues/2147#issuecomment-524147130
 	if use tor; then
-		ZERONET_CONF_OPTIONS+='tor = always'$'\n'
+		ZERONET_CONF_OPTIONS+='tor = always'$'\n''trackers_proxy = tor'$'\n'
 		ZERONET_OPENRC_DEPENDENCIES='need tor'
 		ZERONET_SYSTEMD_DEPENDENCIES='After=tor.service'
 	fi
@@ -165,7 +160,7 @@ EOF
 	# with that of standard shell-formatted "/etc/conf.d/" files.
 	cat <<EOF > "${T}"/${PN}.conf
 # Configuration file for ZeroNet's "${ZERONET_SCRIPT_FILE}" launcher script.
-#
+
 # For each "--"-prefixed command-line option accepted by the "${PN}" script
 # (e.g., "--data_dir"), a key of the same name excluding that prefix (e.g.,
 # "data_dir") permanently setting that option may be defined in this section.
@@ -329,24 +324,22 @@ errors will be displayed on attempting to browse with any other browser.
 	python_moduleinto "${ZERONET_MODULE_DIR}"
 	python_domodule ${PN}.py plugins src tools
 
-	# Create ZeroNet's logging and state directories.
-	keepdir "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+	# Create ZeroNet's logging directory. Note that the "acct-user/zeronet"
+	# package now manages ZeroNet's state directory, which is thus omitted.
+	keepdir "${ZERONET_LOG_DIR}"
 
 	# Enable ZeroNet to modify all requisite paths. Note that this includes the
 	# configuration file generated above. Failure to do so induces the
 	# following runtime error on browsing to the local ZeroNet router console:
 	#     Unhandled exception: [Errno 13] Permission denied: '/etc/zeronet.conf'
-	fowners -R ${PN}:${PN} \
-		"${ZERONET_CONF_FILE}" \
-		"${ZERONET_LOG_DIR}" \
-		"${ZERONET_STATE_DIR}"
+	fowners -R ${PN}:${PN} "${ZERONET_CONF_FILE}" "${ZERONET_LOG_DIR}"
 
 	# Install all Markdown files as documentation.
 	dodoc *.md
 }
 
-
-# On first installation, print the above Gentoo-specific documentation.
 pkg_postinst() {
+	# Display the above Gentoo-specific documentation on the first installation
+	# of this package.
 	readme.gentoo_print_elog
 }

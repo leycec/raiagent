@@ -1,11 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-#FIXME: Adds Python 3.x support after the following upstream issue is resolved:
-#    https://github.com/HelloZeroNet/ZeroNet/issues/149
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
 #"setup.py"-based PyPI integration, tracked at the following issue:
@@ -23,44 +21,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	meek? ( tor )
 "
 
-#FIXME: Unbundle all bundled Python dependencies in the "src/lib" directory.
-#Doing so is complicated, however, by ZeroNet requiring:
-#
-#* Dependencies for which no Portage package currently exists, including:
-#  * "BitcoinECC".
-#  * "bencode". While a "dev-haskell/bencode" package exists, no corresponding
-#    "dev-python/bencode" exists.
-#  * "cssvendor".
-#  * "opensslVerify". This appears to be a ZeroNet-specific package rather than
-#    a bundled dependency, despite residing in the "src/lib" directory.
-#  * "pybitcointools".
-#  * "pyelliptic".
-#  * "subtl".
-#* Obsolete versions of packages no longer provided by Portage, including:
-#  * "=dev-python/PySocks-1.5.3". Due to Tor and gevent complications, ZeroNet
-#    explicitly reverted the bundled version of PySocks from a newer version
-#    back to 1.5.3. Ergo, this appears to be a hard requirement.
-#* Newer versions of packages not yet provided by Portage, including:
-#  * "=dev-python/gevent-websocket-0.10.1".
-#  * "=dev-python/pyasn1-0.2.4".
-#  * "=dev-python/rsa-3.4.2".
-#    
-#Note that any bundled Python dependency *NOT* internally modified for ZeroNet
-#may be safely unbundled once Portage provides a sufficient package version as
-#follows:
-#
-#* Remove the "src/lib" subdirectory containing this dependency (e.g.,
-#  "src/lib/pyasn1").
-#* Append an import statement to the "src/lib/__init__.py" submodule importing
-#  the system-wide version of this dependency (e.g., "import pyasn1").
-#
-#Tragically, numerous bundled dependencies are internally modified for ZeroNet,
-#as the git history for these dependencies' subdirectories trivially shows. For
-#each such dependency, submit an upstream issue requesting that this dependency
-#be officially unbundled from ZeroNet and dynamically monkey-patched at runtime
-#instead. Until ZeroNet itself unbundles these dependencies, there's little we
-#can reasonably do here.
-
 # Dependencies derive from the following sources:
 #
 # * The top-level "requirements.txt" file.
@@ -74,13 +34,31 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 #
 # Unfortunately, no official list of dependencies currently exists.
 DEPEND="${PYTHON_DEPS}"
-RDEPEND="${DEPEND}
-	>=dev-python/gevent-1.1.0[${PYTHON_USEDEP}]
-	>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]
+RDEPEND="${PYTHON_DEPS}
+	acct-group/zeronet
+	acct-user/zeronet
+	dev-python/base58
+	dev-python/bencode_py
+	dev-python/coincurve
+	dev-python/gevent-websocket
+	dev-python/maxminddb
+	dev-python/merkletools
+	dev-python/pyasn1
+	dev-python/python-bitcoinlib
+	dev-python/rsa
+	dev-python/websocket-client
+	$(python_gen_cond_dep \
+		'>=dev-python/PySocks-1.6.8[${PYTHON_MULTI_USEDEP}]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/gevent-1.1.0[${PYTHON_MULTI_USEDEP}]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/msgpack-0.4.4[${PYTHON_MULTI_USEDEP}]' -3 )
 	debug? (
 		>=dev-lang/coffee-script-1.9.3
-		>=dev-python/fs-0.5.4[${PYTHON_USEDEP}]
-		>=dev-python/werkzeug-0.11.11[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep \
+			'>=dev-python/fs-0.5.4[${PYTHON_MULTI_USEDEP}]' -3 )
+		$(python_gen_cond_dep \
+			'>=dev-python/werkzeug-0.11.11[${PYTHON_MULTI_USEDEP}]' -3 )
 	)
 	tor? ( >=net-vpn/tor-0.2.7.5 )
 "
@@ -88,22 +66,24 @@ RDEPEND="${DEPEND}
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
+	# Note that the Python 2.7-specific "master" branch has been effectively
+	# discontinued in favour of the Python 3-specific "py3" branch.
 	EGIT_REPO_URI="https://github.com/HelloZeroNet/ZeroNet"
-	EGIT_BRANCH="master"
+	EGIT_BRANCH="py3"
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="https://github.com/HelloZeroNet/ZeroNet/archive/v${PV}.tar.gz"
+	SRC_URI="https://github.com/HelloZeroNet/ZeroNet/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 	S="${WORKDIR}/ZeroNet-${PV}"
 fi
 
-ZERONET_CONF_FILE="/etc/${PN}.conf"
-ZERONET_LOG_DIR="/var/log/${PN}"
-ZERONET_MODULE_DIR="/usr/share/${PN}"
-ZERONET_PID_FILE="/var/run/${PN}.pid"
-ZERONET_SCRIPT_FILE="/usr/bin/${PN}"
-ZERONET_STATE_DIR="/var/lib/${PN}"
+ZERONET_CONF_FILE=/etc/${PN}.conf
+ZERONET_LOG_DIR=/var/log/${PN}
+ZERONET_MODULE_DIR=/usr/share/${PN}
+ZERONET_PID_FILE=/var/run/${PN}.pid
+ZERONET_SCRIPT_FILE=/usr/bin/${PN}
+ZERONET_STATE_DIR=/var/lib/${PN}
 
 # Prevent the "readme.gentoo-r1" eclass from autoformatting documentation via
 # the external "fmt" and "echo -e" commands for readability.
@@ -111,15 +91,6 @@ DISABLE_AUTOFORMATTING=1
 
 #FIXME: Uncomment this line to test "readme.gentoo-r1" documentation.
 #FORCE_PRINT_ELOG=1
-
-pkg_setup() {
-	python-single-r1_pkg_setup
-
-	# Create the ZeroNet user and group. Since ZeroNet sites are typically
-	# modified while logged in as this user, a default login shell is set.
-	enewgroup ${PN}
-	enewuser  ${PN} -1 /bin/sh "${ZERONET_STATE_DIR}" ${PN}
-}
 
 # ZeroNet offers no "setup.py" script and thus requires manual installation.
 src_install() {
@@ -156,8 +127,13 @@ src_install() {
 	fi
 
 	# If enabling Tor, do so in all ZeroNet files generated below.
+	#
+	# Note that setting "tor = always" suffices to unconditionally proxy *ALL*
+	# connections (including trackers) through Tor. For that reason, attempting 
+	# to set "trackers_proxy = tor" here would be ignored by ZeroNet. See also:
+	#     https://github.com/HelloZeroNet/ZeroNet/issues/2147#issuecomment-524147130
 	if use tor; then
-		ZERONET_CONF_OPTIONS+='tor = always'$'\n''trackers_proxy = tor'$'\n'
+		ZERONET_CONF_OPTIONS+='tor = always'$'\n'
 		ZERONET_OPENRC_DEPENDENCIES='need tor'
 		ZERONET_SYSTEMD_DEPENDENCIES='After=tor.service'
 	fi
@@ -187,7 +163,7 @@ EOF
 	# with that of standard shell-formatted "/etc/conf.d/" files.
 	cat <<EOF > "${T}"/${PN}.conf
 # Configuration file for ZeroNet's "${ZERONET_SCRIPT_FILE}" launcher script.
-
+#
 # For each "--"-prefixed command-line option accepted by the "${PN}" script
 # (e.g., "--data_dir"), a key of the same name excluding that prefix (e.g.,
 # "data_dir") permanently setting that option may be defined in this section.
@@ -351,24 +327,21 @@ errors will be displayed on attempting to browse with any other browser.
 	python_moduleinto "${ZERONET_MODULE_DIR}"
 	python_domodule ${PN}.py plugins src tools
 
-	# Create ZeroNet's logging and state directories.
-	keepdir "${ZERONET_LOG_DIR}" "${ZERONET_STATE_DIR}"
+	# Create ZeroNet's logging directory. Note that the "acct-user/zeronet"
+	# package now manages ZeroNet's state directory, which is thus omitted.
+	keepdir "${ZERONET_LOG_DIR}"
 
 	# Enable ZeroNet to modify all requisite paths. Note that this includes the
 	# configuration file generated above. Failure to do so induces the
 	# following runtime error on browsing to the local ZeroNet router console:
 	#     Unhandled exception: [Errno 13] Permission denied: '/etc/zeronet.conf'
-	fowners -R ${PN}:${PN} \
-		"${ZERONET_CONF_FILE}" \
-		"${ZERONET_LOG_DIR}" \
-		"${ZERONET_STATE_DIR}"
+	fowners -R ${PN}:${PN} "${ZERONET_CONF_FILE}" "${ZERONET_LOG_DIR}"
 
 	# Install all Markdown files as documentation.
 	dodoc *.md
 }
 
+# On first installation, print the above Gentoo-specific documentation.
 pkg_postinst() {
-	# Display the above Gentoo-specific documentation on the first installation
-	# of this package.
 	readme.gentoo_print_elog
 }
