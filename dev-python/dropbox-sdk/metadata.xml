@@ -5,12 +5,4 @@
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
 	</maintainer>
-	<longdescription>
-A Python SDK for integrating with the Dropbox API v2. Compatible with Python 2.7 and 3.4+. Documentation is available on Read the Docs.
-</longdescription>
-	<upstream>
-		<doc lang="en">http://dropbox-sdk-python.readthedocs.org</doc>
-        <remote-id type="github">dropbox/dropbox-sdk-python</remote-id>
-		<bugs-to>https://github.com/dropbox/dropbox-sdk-python/issues</bugs-to>
-	</upstream>
 </pkgmetadata>
