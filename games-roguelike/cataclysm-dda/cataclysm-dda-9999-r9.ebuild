@@ -14,7 +14,7 @@ HOMEPAGE="https://cataclysmdda.org"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	astyle clang debug lintjson lto ncurses nls sdl sound test xdg
+	astyle clang debug dev lintjson lto ncurses nls sdl sound test xdg
 	kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	sound? ( sdl )
@@ -58,6 +58,13 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/CleverRaven/Cataclysm-DDA.git"
 	SRC_URI=""
 	KEYWORDS=""
+
+	src_unpack() {
+		if use dev; then
+			EGIT_BRANCH=dev
+		fi
+		git-r3_src_unpack
+	}
 else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
