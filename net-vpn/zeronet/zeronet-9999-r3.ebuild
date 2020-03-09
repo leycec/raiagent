@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 #"setup.py"-based PyPI integration, tracked at the following issue:
 #    https://github.com/HelloZeroNet/ZeroNet/issues/382
 #Note that, after doing so, the src_install() function will require heavy edits.
-inherit systemd user readme.gentoo-r1 python-single-r1
+inherit systemd readme.gentoo-r1 python-single-r1
 
 DESCRIPTION="Decentralized websites using Bitcoin crypto and BitTorrent network"
 HOMEPAGE="https://zeronet.io https://github.com/HelloZeroNet/ZeroNet"
