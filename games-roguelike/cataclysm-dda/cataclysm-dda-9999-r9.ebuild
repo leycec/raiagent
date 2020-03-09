@@ -60,9 +60,10 @@ if [[ ${PV} == 9999 ]]; then
 	KEYWORDS=""
 
 	src_unpack() {
-		if use dev; then
-			EGIT_BRANCH=dev
+		if use dev; then EGIT_BRANCH=dev
+		else             EGIT_BRANCH=master
 		fi
+
 		git-r3_src_unpack
 	}
 else

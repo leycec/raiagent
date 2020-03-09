@@ -9,6 +9,7 @@
 	<use>
 		<flag name="astyle">Check for astyle-specific lint regressions</flag>
 		<flag name="clang">Build with clang++ rather than g++ (experimental!)</flag>
+		<flag name="dev">Install live ebuild against "dev" rather than "master" branch (experimental!)</flag>
 		<flag name="lintjson">Check for JSON-specific lint regressions</flag>
 		<flag name="lto">Enable support for link time optimization (LTO)</flag>
 		<flag name="lua">Enable Lua scripting support (e.g., for modding)</flag>
