@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
 
 inherit readme.gentoo-r1 distutils-r1
 
@@ -27,7 +27,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 DEPEND="${PYTHON_DEPS}
 	dev-python/docutils[${PYTHON_USEDEP}]
-	dev-python/flask[${PYTHON_USEDEP}]
 	dev-python/flask-socketio[${PYTHON_USEDEP}]
 	dev-python/pygments[${PYTHON_USEDEP}]
 "

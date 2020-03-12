@@ -8,4 +8,7 @@
 # ....................{ PORTAGE                            }....................
 # Atoms previously published by Portage but no longer actively maintained and
 # hence hard-masked by Portage profiles.
+<=dev-python/flask-socketio-9999
+<=dev-python/python-engineio-9999
 <=dev-python/pytest-qt-9999
+<=dev-python/python-socketio-9999
