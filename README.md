@@ -57,13 +57,23 @@ Notable command-line interface (CLI) ebuilds include:
 
 Notable peer-to-peer (P2P) ebuilds include:
 
-* **[ZeroNet](https://zeronet.io)**, a peer-to-peer web hosting network brokered
-  with demonetized [BitCoin](https://en.wikipedia.org/wiki/Bitcoin) blockchain
-  semantics distributed over the decentralized
+* **[ZeroNet](https://zeronet.io)**, a peer-to-peer web hosting network
+  brokered with demonetized [BitCoin](https://en.wikipedia.org/wiki/Bitcoin)
+  blockchain semantics distributed over the decentralized
   [BitTorrent](https://en.wikipedia.org/wiki/BitTorrent) protocol complete with
   optional Tor-based traffic anonymization. *Yeah.* It's pretty special.
-  `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet) ZeroNet
-  ebuilds.
+  `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet)
+  ZeroNet ebuilds.
+
+### Perl 5
+
+Notable Perl 5 ebuilds include:
+
+* **[Minilla](https://metacpan.org/pod/Minilla)**, a command automating the
+  production and distribution of CPAN modules. Minilla is a lightweight drop-in
+  replacement for [Dist::Milla](https://metacpan.org/pod/Dist::Milla), the
+  heavyweight older brother that should probably start hitting his local gym.
+  `raiagent` unofficially hosts ebuilds installing the full Minilla stack.
 
 ### Python
 
