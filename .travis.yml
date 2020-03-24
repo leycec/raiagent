@@ -1,8 +1,9 @@
-# ====================[ .travis.yml                        ]====================
+# ====================[ .travis.yml                       ]====================
 #
-# --------------------( SYNOPSIS                           )--------------------
+# --------------------( SYNOPSIS                          )--------------------
 # Overlay-wide Travis Continuous Integration (CI) configuration.
 #
+# --------------------( DESCRIPTION                       )--------------------
 # Specifically, this configuration:
 #
 # * Clones a current snapshot of Gentoo's main tree and a reasonably recent
@@ -10,15 +11,15 @@
 # * Validates the current state of this overlay with "repoman".
 # * Redirects the resulting log to this Travis build's report.
 #
-# --------------------( SEE ALSO                           )--------------------
+# --------------------( SEE ALSO                          )--------------------
 # * https://github.com/mrueg/repoman-travis
 #   Pseudo-official Travis CI configuration for Gentoo overlays from which this
 #   configuration is strongly inspired.
 
-# ....................{ COPY-AND-PASTE JOB                 }....................
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# WARNING: All following text is copy-and-pasted directly from the corresponding
-# upstream ".travis.yml" file at:
+# ....................{ COPY-AND-PASTE JOB                }....................
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# WARNING: All following text is copy-and-pasted directly from the
+# corresponding upstream ".travis.yml" file at:
 #     https://github.com/mrueg/repoman-travis/blob/master/.travis.yml
 #
 # Since we currently lack sufficient time, blood, sweat, and salty tears to
@@ -48,7 +49,7 @@
 #
 # For further details, see:
 #     https://github.com/travis-ci/travis-ci/issues/5385#issuecomment-169306763
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Run repoman via travis
 # See https://github.com/mrueg/repoman-travis

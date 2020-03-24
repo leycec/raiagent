@@ -29,15 +29,15 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="+docstrings numpy test"
+IUSE="+docstrings numpy test vulkan"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Minimal supported version of Qt.
 QT_PV="$(ver_cut 1-2):5"
 
+BDEPEND=">=sys-devel/clang-6:="
 RDEPEND="${PYTHON_DEPS}
 	>=dev-qt/qtcore-${QT_PV}
-	>=sys-devel/clang-6:=
 	docstrings? (
 		>=dev-libs/libxml2-2.6.32
 		>=dev-libs/libxslt-1.1.19
@@ -45,6 +45,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-qt/qtxmlpatterns-${QT_PV}
 	)
 	numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
+	vulkan? ( dev-util/vulkan-headers )
 "
 DEPEND="${RDEPEND}
 	test? ( >=dev-qt/qttest-${QT_PV} )
@@ -59,15 +60,22 @@ llvm_check_deps() {
 }
 
 src_prepare() {
-	#FIXME: File an upstream issue requesting a sane way to disable NumPy support.
+	# TODO: File upstream issue requesting a sane way to disable NumPy support.
 	if ! use numpy; then
 		sed -i -e '/print(os\.path\.realpath(numpy))/d' \
 			libshiboken/CMakeLists.txt || die
 	fi
 
-	# CMakeLists.txt assumes clang builtin includes are installed under
-	# LLVM_INSTALL_DIR. They are not on Gentoo. See bug 624682.
-	sed -i -e "s~\(clangPathLibDir\s\+=\s\+\)findClangLibDir()~\1QStringLiteral(\"${EPREFIX}/usr/lib\")~" \
+	# Shiboken2 assumes Vulkan headers live under either "$VULKAN_SDK/include"
+	# or "$VK_SDK_PATH/include" rather than "${EPREFIX}/usr/include/vulkan".
+	if use vulkan; then
+		sed -i -e "s~detectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral(\"${EPREFIX}/usr/include/vulkan\"), HeaderType::System});~" \
+			ApiExtractor/clangparser/compilersupport.cpp || die
+	fi
+
+	# Shiboken2 assumes Clang builtin includes live under $LLVM_INSTALL_DIR
+	# rather than "${EPREFIX}/usr/lib/cmake/include" on Gentoo. See bug 624682.
+	sed -i -e "s~findClangLibDir();~QStringLiteral(\"${EPREFIX}/usr/lib\");~" \
 		ApiExtractor/clangparser/compilersupport.cpp || die
 
 	cmake-utils_src_prepare
