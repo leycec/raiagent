@@ -35,8 +35,9 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # Minimal supported version of Qt.
 QT_PV="$(ver_cut 1-2):5"
 
-BDEPEND=">=sys-devel/clang-6:="
+# Since Clang is required at both build- and runtime, BDEPEND is omitted here.
 RDEPEND="${PYTHON_DEPS}
+	>=sys-devel/clang-6:=
 	>=dev-qt/qtcore-${QT_PV}
 	docstrings? (
 		>=dev-libs/libxml2-2.6.32
