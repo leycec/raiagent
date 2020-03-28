@@ -3,11 +3,13 @@
 
 EAPI=7
 
+# TODO: Remove Python 2.7 support on the next bump. Gentoo support for Python
+# 2.7 effectively ceases in April 2020.
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
 PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 
-inherit cmake-utils llvm python-r1 virtualx
+inherit cmake-utils python-r1 virtualx
 
 # TODO: Add conditional support for "QtRemoteObjects" via a new "remoteobjects"
 # USE flag after an external "dev-qt/qtremoteobjects" package has been created.
@@ -71,7 +73,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # Minimal supported version of Qt.
 QT_PV="$(ver_cut 1-2):5"
 
-BDEPEND=">=sys-devel/clang-6:="
 RDEPEND="${PYTHON_DEPS}
 	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
 	3d? ( >=dev-qt/qt3d-${QT_PV}[qml?] )
@@ -107,11 +108,6 @@ DEPEND="${RDEPEND}
 "
 
 S=${WORKDIR}/${MY_P}/sources/pyside2
-
-# Ensure the path returned by get_llvm_prefix() contains clang as well.
-llvm_check_deps() {
-	has_version "sys-devel/clang:${LLVM_SLOT}"
-}
 
 src_configure() {
 	# See COLLECT_MODULE_IF_FOUND macros in CMakeLists.txt

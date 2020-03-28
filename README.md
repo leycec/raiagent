@@ -5,7 +5,7 @@ raiagent —————[ …it is possibly good ]—————
 FIXME: Uncomment the following preferred document title, assuming we finally
 crush all outstanding Travis-CI issues -- a *VERY* large assumption, indeed.
 
-raiagent —————————[ [![Build Status](https://travis-ci.org/leycec/raiagent.svg?branch=master)](https://travis-ci.org/leycec/raiagent) ]—————————
+raiagent —————————[ [![Build Status](https://api.travis-ci.org/leycec/raiagent.svg?branch=master)](https://travis-ci.org/leycec/raiagent) ]—————————
 ===========
 --->
 

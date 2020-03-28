@@ -3,6 +3,12 @@
 
 EAPI=7
 
+# TODO: *CRITICAL.* Remove the Clang >= 10.0.0 blocker below (i.e.,
+# "!!>=sys-devel/clang-10.0.0") *AFTER* resolving this issue:
+#     https://github.com/leycec/raiagent/issues/83
+# Ideally, this should be done on the next bump.
+# TODO: Remove Python 2.7 support on the next bump. Gentoo support for Python
+# 2.7 effectively ceases in April 2020.
 # TODO: Split the "/usr/bin/shiboken2" binding generator from the
 # "/usr/lib64/libshiboken2-*.so" family of shared libraries. The former
 # requires everything (including Clang) at runtime; the latter only requires
@@ -37,8 +43,9 @@ QT_PV="$(ver_cut 1-2):5"
 
 # Since Clang is required at both build- and runtime, BDEPEND is omitted here.
 RDEPEND="${PYTHON_DEPS}
-	>=sys-devel/clang-6:=
 	>=dev-qt/qtcore-${QT_PV}
+	>=sys-devel/clang-6:=
+	!!>=sys-devel/clang-10.0.0
 	docstrings? (
 		>=dev-libs/libxml2-2.6.32
 		>=dev-libs/libxslt-1.1.19
