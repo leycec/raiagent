@@ -14,7 +14,6 @@ HOMEPAGE="
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
 BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
