@@ -4,6 +4,7 @@
 	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
 	<use>
 		<flag name="3d">Build Qt3DCore, Qt3DAnimation, Qt3DExtras, Qt3DInput, Qt3DLogic, and Qt3DRender modules</flag>

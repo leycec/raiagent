@@ -4,6 +4,7 @@
 	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
 	<use>
 		<flag name="docstrings">Expose documentation as Python docstrings (recommended)</flag>

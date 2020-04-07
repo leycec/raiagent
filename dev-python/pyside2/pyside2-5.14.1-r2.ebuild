@@ -16,14 +16,15 @@ inherit cmake-utils python-r1 virtualx
 # TODO: Add conditional support for apidoc generation via a new "doc" USE flag.
 # Note that doing so requires the Qt source tree, sphinx, and graphviz. Once
 # ready, pass the ${QT_SRC_DIR} variable to cmake to enable this support.
-# TODO: Disable GLES support if the "gles2" USE flag is disabled. Note that the
-# "PySide2/QtGui/CMakeLists.txt" and "PySide2/QtOpenGLFunctions/CMakeLists.txt"
-# files test for GLES support by testing whether the "Qt5::Gui" list property
-# defined by "/usr/lib64/cmake/Qt5Gui/Qt5GuiConfig.cmake" at "dev-qt/qtgui"
-# installation time contains the substring "opengles2". Since cmake does not
-# permit properties to be overridden from the command line, these files must
-# instead be conditionally patched to avoid these tests. An issue should be
-# filed with upstream requesting a CLI-settable variable to control this.
+# TODO: Disable GLES support if the "gles2-only" USE flag is disabled. Note
+# that the "PySide2/QtGui/CMakeLists.txt" and
+# "PySide2/QtOpenGLFunctions/CMakeLists.txt" files test for GLES support by
+# testing whether the "Qt5::Gui" list property defined by
+# "/usr/lib64/cmake/Qt5Gui/Qt5GuiConfig.cmake" at "dev-qt/qtgui" installation
+# time contains the substring "opengles2". Since cmake does not permit
+# properties to be overridden from the command line, these files must instead
+# be conditionally patched to avoid these tests. An issue should be filed with
+# upstream requesting a CLI-settable variable to control this.
 
 MY_P=pyside-setup-opensource-src-${PV}
 
@@ -35,10 +36,12 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="3d charts concurrent datavis designer gles2 gui help location multimedia
-	network positioning printsupport qml quick script scripttools scxml sensors
-	speech sql svg test testlib webchannel webengine websockets widgets
-	x11extras xml xmlpatterns"
+IUSE="
+	3d charts concurrent datavis designer gles2-only gui help location
+	multimedia network positioning printsupport qml quick script scripttools
+	scxml sensors speech sql svg test testlib webchannel webengine websockets
+	widgets x11extras xml xmlpatterns
+"
 
 # Manually reextract these requirements on version bumps by running the
 # following one-liner from within "${S}":
@@ -49,7 +52,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	charts? ( widgets )
 	datavis? ( gui )
 	designer? ( widgets xml )
-	gles2? ( gui )
+	gles2-only? ( gui )
 	help? ( widgets )
 	location? ( positioning )
 	multimedia? ( gui network )
@@ -80,7 +83,7 @@ RDEPEND="${PYTHON_DEPS}
 	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
 	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[qml?] )
 	designer? ( >=dev-qt/designer-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV}[gles2?] )
+	gui? ( >=dev-qt/qtgui-${QT_PV}[gles2-only?] )
 	help? ( >=dev-qt/qthelp-${QT_PV} )
 	location? ( >=dev-qt/qtlocation-${QT_PV} )
 	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[qml?,widgets?] )
