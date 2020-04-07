@@ -12,7 +12,7 @@
 		<flag name="concurrent">Build QtConcurrent module</flag>
 		<flag name="datavis">Build QtDataVisualization module</flag>
 		<flag name="designer">Build QtDesigner and QtUiTools modules</flag>
-		<flag name="gles2">Build QtGui "QOpenGL*" classes</flag>
+		<flag name="gles2-only">Build QtGui "QOpenGL*" classes</flag>
 		<flag name="gui">Build QtGui module</flag>
 		<flag name="help">Build QtHelp module</flag>
 		<flag name="location">Build QtLocation module</flag>
