@@ -3,10 +3,7 @@
 
 EAPI=7
 
-# TODO: *CRITICAL.* Remove the Clang >= 10.0.0 blocker below (i.e.,
-# "!!>=sys-devel/clang-10.0.0") *AFTER* resolving this issue:
-#     https://github.com/leycec/raiagent/issues/83
-# Ideally, this should be done on the next bump.
+# TODO: Remove the shiboken2 5.14.1-specific "sed" kludge on the next bump.
 # TODO: Remove Python 2.7 support on the next bump. Gentoo support for Python
 # 2.7 effectively ceases in April 2020.
 # TODO: Split the "/usr/bin/shiboken2" binding generator from the
@@ -45,7 +42,6 @@ QT_PV="$(ver_cut 1-2):5"
 RDEPEND="${PYTHON_DEPS}
 	>=dev-qt/qtcore-${QT_PV}
 	>=sys-devel/clang-6:=
-	!!>=sys-devel/clang-10.0.0
 	docstrings? (
 		>=dev-libs/libxml2-2.6.32
 		>=dev-libs/libxslt-1.1.19
@@ -70,20 +66,31 @@ llvm_check_deps() {
 src_prepare() {
 	# TODO: File upstream issue requesting a sane way to disable NumPy support.
 	if ! use numpy; then
-		sed -i -e '/print(os\.path\.realpath(numpy))/d' \
+		sed -i -e '/\bprint(os\.path\.realpath(numpy))/d' \
 			libshiboken/CMakeLists.txt || die
 	fi
 
 	# Shiboken2 assumes Vulkan headers live under either "$VULKAN_SDK/include"
 	# or "$VK_SDK_PATH/include" rather than "${EPREFIX}/usr/include/vulkan".
 	if use vulkan; then
-		sed -i -e "s~detectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral(\"${EPREFIX}/usr/include/vulkan\"), HeaderType::System});~" \
+		sed -i -e "s~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral(\"${EPREFIX}/usr/include/vulkan\"), HeaderType::System});~" \
+			ApiExtractor/clangparser/compilersupport.cpp || die
+	fi
+
+	#FIXME: Remove on the next bump to Shiboken > 5.14.2.
+	# Shiboken2 <= 5.14.2 assumes the first digit of the Clang version in the
+	# Clang includes directory identifies the full major Clang version,
+	# breaking forward compatibility with Clang >= 10.0.0. See also:
+	#     https://github.com/leycec/raiagent/issues/83
+	#     https://bugreports.qt.io/browse/PYSIDE-1261
+	if [[ ${PV} == '5.14.1' ]]; then
+		sed -i -e "s~\bfileName.at(0)~fileName~" \
 			ApiExtractor/clangparser/compilersupport.cpp || die
 	fi
 
 	# Shiboken2 assumes Clang builtin includes live under $LLVM_INSTALL_DIR
 	# rather than "${EPREFIX}/usr/lib/cmake/include" on Gentoo. See bug 624682.
-	sed -i -e "s~findClangLibDir();~QStringLiteral(\"${EPREFIX}/usr/lib\");~" \
+	sed -i -e "s~\bfindClangLibDir();~QStringLiteral(\"${EPREFIX}/usr/lib\");~" \
 		ApiExtractor/clangparser/compilersupport.cpp || die
 
 	cmake-utils_src_prepare
