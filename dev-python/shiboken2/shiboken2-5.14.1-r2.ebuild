@@ -84,7 +84,7 @@ src_prepare() {
 	#     https://github.com/leycec/raiagent/issues/83
 	#     https://bugreports.qt.io/browse/PYSIDE-1261
 	if [[ ${PV} == '5.14.1' ]]; then
-		sed -i -e "s~\bfileName.at(0)~fileName~" \
+		sed -i -e "s~\b\(QVersionNumber::fromString\)(fileName.at(0));~\1(fileName);~" \
 			ApiExtractor/clangparser/compilersupport.cpp || die
 	fi
 
