@@ -3,9 +3,6 @@
 
 EAPI=7
 
-# TODO: Remove the shiboken2 5.14.1-specific "sed" kludge on the next bump.
-# TODO: Remove Python 2.7 support on the next bump. Gentoo support for Python
-# 2.7 effectively ceases in April 2020.
 # TODO: Split the "/usr/bin/shiboken2" binding generator from the
 # "/usr/lib64/libshiboken2-*.so" family of shared libraries. The former
 # requires everything (including Clang) at runtime; the latter only requires
@@ -15,9 +12,9 @@ EAPI=7
 # "/usr/bin/shiboken2" at build time and "libshiboken2-*.so" at runtime.
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit cmake-utils llvm python-r1
+inherit cmake-utils llvm python-r1 toolchain-funcs
 
 MY_P=pyside-setup-opensource-src-${PV}
 
@@ -73,25 +70,35 @@ src_prepare() {
 	# Shiboken2 assumes Vulkan headers live under either "$VULKAN_SDK/include"
 	# or "$VK_SDK_PATH/include" rather than "${EPREFIX}/usr/include/vulkan".
 	if use vulkan; then
-		sed -i -e "s~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral(\"${EPREFIX}/usr/include/vulkan\"), HeaderType::System});~" \
+		sed -i -e 's~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral("'${EPREFIX}'/usr/include/vulkan"), HeaderType::System});~' \
 			ApiExtractor/clangparser/compilersupport.cpp || die
 	fi
 
-	#FIXME: Remove on the next bump to Shiboken > 5.14.2.
-	# Shiboken2 <= 5.14.2 assumes the first digit of the Clang version in the
-	# Clang includes directory identifies the full major Clang version,
-	# breaking forward compatibility with Clang >= 10.0.0. See also:
-	#     https://github.com/leycec/raiagent/issues/83
-	#     https://bugreports.qt.io/browse/PYSIDE-1261
-	if [[ ${PV} == '5.14.1' ]]; then
-		sed -i -e "s~\b\(QVersionNumber::fromString\)(fileName.at(0));~\1(fileName);~" \
-			ApiExtractor/clangparser/compilersupport.cpp || die
-	fi
-
-	# Shiboken2 assumes Clang builtin includes live under $LLVM_INSTALL_DIR
-	# rather than "${EPREFIX}/usr/lib/cmake/include" on Gentoo. See bug 624682.
-	sed -i -e "s~\bfindClangLibDir();~QStringLiteral(\"${EPREFIX}/usr/lib\");~" \
+	# Shiboken2 assumes the "/usr/lib/clang/${CLANG_NEWEST_VERSION}/include/"
+	# subdirectory provides Clang builtin includes (e.g., "stddef.h") for the
+	# currently installed version of Clang, where ${CLANG_NEWEST_VERSION} is
+	# the largest version specifier that exists under the "/usr/lib/clang/"
+	# subdirectory. This assumption is false in edge cases, including when
+	# users downgrade from newer Clang versions but fail to remove those
+	# versions with "emerge --depclean". See also:
+	#     https://github.com/leycec/raiagent/issues/85
+	#
+	# Sadly, the clang-* family of functions exported by the "toolchain-funcs"
+	# eclass are defective, returning nonsensical placeholder strings if the
+	# end user has *NOT* explicitly configured their C++ compiler to be Clang.
+	# PySide2 does *NOT* care whether the end user has done so or not, as
+	# PySide2 unconditionally requires Clang in either case. This requires us
+	# to temporarily coerce the "${CPP}" environment variable identifying the
+	# current C++ compiler to "clang" immediately *BEFORE* calling such a
+	# function and then restoring that variable to its prior state immediately
+	# *AFTER* returning from that function call merely to force the
+	# clang-fullversion() function called below to return sanity. See also:
+	#     https://bugs.gentoo.org/619490
+	_CPP_old="$(tc-getCPP)"
+	CPP=clang
+	sed -i -e 's~(findClangBuiltInIncludesDir())~(QStringLiteral("'${EPREFIX}'/usr/lib/clang/'$(clang-fullversion)'/include"))~' \
 		ApiExtractor/clangparser/compilersupport.cpp || die
+	CPP="${_CPP_old}"
 
 	cmake-utils_src_prepare
 }
