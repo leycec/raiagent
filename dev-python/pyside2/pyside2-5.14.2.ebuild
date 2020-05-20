@@ -34,10 +34,13 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )"
 SLOT="0"
 KEYWORDS="~amd64"
+
+# TODO: Reenable the "test" USE flag here and below after resolving:
+#    https://github.com/leycec/raiagent/issues/87
 IUSE="
 	3d charts concurrent datavis designer gles2-only gui help location
 	multimedia network positioning printsupport qml quick script scripttools
-	scxml sensors speech sql svg test testlib webchannel webengine websockets
+	scxml sensors speech sql svg testlib webchannel webengine websockets
 	widgets x11extras xml xmlpatterns
 "
 
@@ -104,16 +107,20 @@ RDEPEND="${PYTHON_DEPS}
 	xml? ( >=dev-qt/qtxml-${QT_PV} )
 	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
 "
-DEPEND="${RDEPEND}
-	test? ( x11-misc/xvfb-run )
-"
+
+# TODO: Reenable tests here and above after resolving #87.
+#DEPEND="${RDEPEND}
+#	test? ( x11-misc/xvfb-run )
+#"
+DEPEND="${RDEPEND}"
 
 S=${WORKDIR}/${MY_P}/sources/pyside2
 
 src_configure() {
 	# See COLLECT_MODULE_IF_FOUND macros in CMakeLists.txt
 	local mycmakeargs=(
-		-DBUILD_TESTS=$(usex test)
+		# TODO: Reenable tests here and above after resolving #87.
+		# -DBUILD_TESTS=$(usex test)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt53DAnimation=$(usex !3d)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt53DCore=$(usex !3d)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt53DExtras=$(usex !3d)
@@ -172,10 +179,11 @@ src_compile() {
 	python_foreach_impl cmake-utils_src_compile
 }
 
-src_test() {
-	local -x PYTHONDONTWRITEBYTECODE
-	python_foreach_impl virtx cmake-utils_src_test
-}
+#FIXME: Reenable tests here and above after resolving #87.
+# src_test() {
+# 	local -x PYTHONDONTWRITEBYTECODE
+# 	python_foreach_impl virtx cmake-utils_src_test
+# }
 
 src_install() {
 	pyside2_install() {

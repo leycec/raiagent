@@ -29,7 +29,11 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="+docstrings numpy test vulkan"
+
+# TODO: Reenable the "test" USE flag here and below after resolving:
+#    https://github.com/leycec/raiagent/issues/86
+#IUSE="+docstrings numpy test vulkan"
+IUSE="+docstrings numpy vulkan"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Minimal supported version of Qt.
@@ -48,9 +52,12 @@ RDEPEND="${PYTHON_DEPS}
 	numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	vulkan? ( dev-util/vulkan-headers )
 "
-DEPEND="${RDEPEND}
-	test? ( >=dev-qt/qttest-${QT_PV} )
-"
+
+# TODO: Reenable tests here and above after resolving #86.
+#DEPEND="${RDEPEND}
+#	test? ( >=dev-qt/qttest-${QT_PV} )
+#"
+DEPEND="${RDEPEND}"
 
 S=${WORKDIR}/${MY_P}/sources/shiboken2
 DOCS=( AUTHORS )
@@ -105,7 +112,8 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DBUILD_TESTS=$(usex test)
+		# TODO: Reenable tests here and above after resolving #86.
+		# -DBUILD_TESTS=$(usex test)
 		-DDISABLE_DOCSTRINGS=$(usex !docstrings)
 	)
 
@@ -126,9 +134,10 @@ src_compile() {
 	python_foreach_impl cmake-utils_src_compile
 }
 
-src_test() {
-	python_foreach_impl cmake-utils_src_test
-}
+#FIXME: Reenable tests here and above after resolving #87.
+# src_test() {
+# 	python_foreach_impl cmake-utils_src_test
+# }
 
 src_install() {
 	shiboken2_install() {
