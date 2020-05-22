@@ -30,6 +30,7 @@
 		<flag name="sql">Build QtSql module</flag>
 		<flag name="svg">Build QtSvg module</flag>
 		<flag name="testlib">Build QtTest module</flag>
+		<flag name="vulkan">Build QtGui "QVulkan*" classes</flag>
 		<flag name="webchannel">Build QtWebChannel module</flag>
 		<flag name="webengine">Build QtWebEngine and QtWebEngineWidgets modules</flag>
 		<flag name="websockets">Build QtWebSockets module</flag>

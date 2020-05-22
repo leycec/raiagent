@@ -14,15 +14,6 @@ inherit cmake-utils python-r1 virtualx
 # TODO: Add conditional support for apidoc generation via a new "doc" USE flag.
 # Note that doing so requires the Qt source tree, sphinx, and graphviz. Once
 # ready, pass the ${QT_SRC_DIR} variable to cmake to enable this support.
-# TODO: Disable GLES support if the "gles2-only" USE flag is disabled. Note
-# that the "PySide2/QtGui/CMakeLists.txt" and
-# "PySide2/QtOpenGLFunctions/CMakeLists.txt" files test for GLES support by
-# testing whether the "Qt5::Gui" list property defined by
-# "/usr/lib64/cmake/Qt5Gui/Qt5GuiConfig.cmake" at "dev-qt/qtgui" installation
-# time contains the substring "opengles2". Since cmake does not permit
-# properties to be overridden from the command line, these files must instead
-# be conditionally patched to avoid these tests. An issue should be filed with
-# upstream requesting a CLI-settable variable to control this.
 
 MY_P=pyside-setup-opensource-src-${PV}
 
@@ -37,14 +28,17 @@ KEYWORDS="~amd64"
 IUSE="
 	3d charts concurrent datavis designer gles2-only gui help location
 	multimedia network positioning printsupport qml quick script scripttools
-	scxml sensors speech sql svg test testlib webchannel webengine websockets
-	widgets x11extras xml xmlpatterns
+	scxml sensors speech sql svg test testlib vulkan webchannel webengine
+	websockets widgets x11extras xml xmlpatterns
 "
 
 # Manually reextract these requirements on version bumps by running the
 # following one-liner from within "${S}":
 #     $ grep 'set\(.*_deps' PySide2/Qt*/CMakeLists.txt
-# Note that the "designer" USE flag corresponds to the "Qt5UiTools" module.
+#
+# Note that:
+# * The "designer" USE flag corresponds to the "Qt5UiTools" module.
+# * The "QtOpenGL" module is deprecated and thus omitted here and below.
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	3d? ( gui network )
 	charts? ( widgets )
@@ -62,6 +56,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	sql? ( widgets )
 	svg? ( widgets )
 	testlib? ( widgets )
+	vulkan? ( gui )
 	webengine? (
 		location quick
 		widgets? ( gui network printsupport webchannel )
@@ -79,21 +74,21 @@ RESTRICT="test"
 QT_PV="$(ver_cut 1-2):5"
 
 RDEPEND="${PYTHON_DEPS}
-	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
+	>=dev-python/shiboken2-${PV}[vulkan?,${PYTHON_USEDEP}]
 	>=dev-qt/qtcore-${QT_PV}
-	3d? ( >=dev-qt/qt3d-${QT_PV}[qml?] )
+	3d? ( >=dev-qt/qt3d-${QT_PV}[gles2-only?,qml?] )
 	charts? ( >=dev-qt/qtcharts-${QT_PV}[qml?] )
 	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
-	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[qml?] )
+	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[gles2-only?,qml?] )
 	designer? ( >=dev-qt/designer-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV}[gles2-only?] )
+	gui? ( >=dev-qt/qtgui-${QT_PV}[gles2-only?,vulkan?] )
 	help? ( >=dev-qt/qthelp-${QT_PV} )
 	location? ( >=dev-qt/qtlocation-${QT_PV} )
-	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[qml?,widgets?] )
+	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[gles2-only?,qml?,widgets?] )
 	network? ( >=dev-qt/qtnetwork-${QT_PV} )
 	positioning? ( >=dev-qt/qtpositioning-${QT_PV}[qml?] )
-	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
-	qml? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
+	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV}[gles2-only?] )
+	qml? ( >=dev-qt/qtdeclarative-${QT_PV}[gles2-only?,vulkan?,widgets?] )
 	script? ( >=dev-qt/qtscript-${QT_PV} )
 	scxml? ( >=dev-qt/qtscxml-${QT_PV} )
 	sensors? ( >=dev-qt/qtsensors-${QT_PV}[qml?] )
@@ -104,7 +99,7 @@ RDEPEND="${PYTHON_DEPS}
 	webchannel? ( >=dev-qt/qtwebchannel-${QT_PV}[qml?] )
 	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
 	websockets? ( >=dev-qt/qtwebsockets-${QT_PV}[qml?] )
-	widgets? ( >=dev-qt/qtwidgets-${QT_PV} )
+	widgets? ( >=dev-qt/qtwidgets-${QT_PV}[gles2-only?] )
 	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
 	xml? ( >=dev-qt/qtxml-${QT_PV} )
 	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
@@ -114,6 +109,17 @@ DEPEND="${RDEPEND}
 "
 
 S=${WORKDIR}/${MY_P}/sources/pyside2
+
+src_prepare() {
+	# TODO: File upstream issue requesting a sane way to disable GLES2 support.
+	if ! use gles2-only; then
+		sed -i -e 's~^list(FIND Qt.*enabled_features "opengles2" _opengles2Index)$~set(_opengles2Index -1)~' \
+			PySide2/QtGui/CMakeLists.txt \
+			PySide2/QtOpenGLFunctions/CMakeLists.txt || die
+	fi
+
+	cmake-utils_src_prepare
+}
 
 src_configure() {
 	# See COLLECT_MODULE_IF_FOUND macros in CMakeLists.txt
@@ -135,6 +141,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Multimedia=$(usex !multimedia)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5MultimediaWidgets=$(usex !multimedia yes $(usex !widgets))
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Network=$(usex !network)
+		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5OpenGL=yes  # deprecated by upstream
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Positioning=$(usex !positioning)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5PrintSupport=$(usex !printsupport)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Qml=$(usex !qml)
