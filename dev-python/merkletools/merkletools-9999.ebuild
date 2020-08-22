@@ -18,9 +18,7 @@ IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 BDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
-DEPEND="${PYTHON_DEPS}
-	>=dev-python/pysha3-1.0.0
-"
+DEPEND="${PYTHON_DEPS}"
 RDEPEND="${DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
