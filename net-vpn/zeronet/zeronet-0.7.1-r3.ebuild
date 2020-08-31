@@ -21,6 +21,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	meek? ( tor )
 "
 
+#FIXME: Consider removing "pyelliptic" on the next bump.
+
 # Dependencies derive from the following sources:
 #
 # * The top-level "requirements.txt" file.
@@ -33,6 +35,12 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 #   "dev-python/werkzeug" dependency when passed the "--debug" option.
 #
 # Unfortunately, no official list of dependencies currently exists.
+# Additionally, note that:
+#
+# * The "gevent[test]" USE flag is unconditionally enabled, as ZeroNet imports
+#   the "gevent.monkey" subpackage (typically only enabled during unit testing)
+#   to monkey-patch various third-party Python package at runtime. If this USE
+#   flag is disabled, ZeroNet raises non-human-readable exceptions at startup.
 DEPEND="${PYTHON_DEPS}"
 RDEPEND="${PYTHON_DEPS}
 	acct-group/zeronet
@@ -48,17 +56,19 @@ RDEPEND="${PYTHON_DEPS}
 	dev-python/rsa
 	dev-python/websocket-client
 	$(python_gen_cond_dep \
-		'>=dev-python/PySocks-1.6.8[${PYTHON_MULTI_USEDEP}]' -3 )
+	   '~dev-python/pyelliptic-1.5.6[${PYTHON_USEDEP}]' -3 )
 	$(python_gen_cond_dep \
-		'>=dev-python/gevent-1.1.0[${PYTHON_MULTI_USEDEP}]' -3 )
+		'>=dev-python/PySocks-1.6.8[${PYTHON_USEDEP}]' -3 )
 	$(python_gen_cond_dep \
-		'>=dev-python/msgpack-0.4.4[${PYTHON_MULTI_USEDEP}]' -3 )
+		'>=dev-python/gevent-1.1.0[${PYTHON_USEDEP},test]' -3 )
+	$(python_gen_cond_dep \
+		'>=dev-python/msgpack-0.4.4[${PYTHON_USEDEP}]' -3 )
 	debug? (
 		>=dev-lang/coffee-script-1.9.3
 		$(python_gen_cond_dep \
-			'>=dev-python/fs-0.5.4[${PYTHON_MULTI_USEDEP}]' -3 )
+			'>=dev-python/fs-0.5.4[${PYTHON_USEDEP}]' -3 )
 		$(python_gen_cond_dep \
-			'>=dev-python/werkzeug-0.11.11[${PYTHON_MULTI_USEDEP}]' -3 )
+			'>=dev-python/werkzeug-0.11.11[${PYTHON_USEDEP}]' -3 )
 	)
 	tor? ( >=net-vpn/tor-0.2.7.5 )
 "
