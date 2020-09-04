@@ -206,16 +206,16 @@ start() {
 
 	# Note that we wait 2000ms (i.e., 2s) after daemonizing ZeroNet to validate
 	# that ZeroNet successfully daemonized.
-	start-stop-daemon --start --user ${PN} --pidfile "${ZERONET_PID_FILE}" \
-		--background --make-pidfile --progress --wait 2000 \
+	start-stop-daemon --start --user ${PN} --pidfile "${ZERONET_PID_FILE}" \\
+		--background --make-pidfile --progress --wait 2000 \\
 		--exec "${ZERONET_SCRIPT_FILE}" main
 	eend $?
 }
 
 stop() {
 	ebegin "Stopping ZeroNet"
-	start-stop-daemon --stop --user ${PN} --pidfile "${ZERONET_PID_FILE}" \
-		--progress --retry TERM/10/KILL/20 \
+	start-stop-daemon --stop --user ${PN} --pidfile "${ZERONET_PID_FILE}" \\
+		--progress --retry TERM/10/KILL/20 \\
 		--exec "${ZERONET_SCRIPT_FILE}"
 	eend $?
 }
@@ -339,13 +339,25 @@ errors will be displayed on attempting to browse with any other browser.
 
 	# Create ZeroNet's logging directory. Note that the "acct-user/zeronet"
 	# package now manages ZeroNet's state directory, which is thus omitted.
-	keepdir "${ZERONET_LOG_DIR}"
+	keepdir "${ZERONET_LOG_DIR}" || die '"keepdir" failed.'
 
-	# Enable ZeroNet to modify all requisite paths. Note that this includes the
-	# configuration file generated above. Failure to do so induces the
-	# following runtime error on browsing to the local ZeroNet router console:
+	# Enable ZeroNet to modify all requisite paths. Note that:
+	# * This includes the configuration file generated above. Failure to do so
+	#   induces the following runtime error on browsing to the local ZeroNet
+	#   router console:
 	#     Unhandled exception: [Errno 13] Permission denied: '/etc/zeronet.conf'
-	fowners -R ${PN}:${PN} "${ZERONET_CONF_FILE}" "${ZERONET_LOG_DIR}"
+	# * The following terser command silently fails to change ownership of
+	#   files in the "${ZERONET_LOG_DIR}" directory for unknown reasons and
+	#   *MUST* thus expanded to explicitly glob all files in that directory:
+	#     fowners -R ${PN}:${PN} "${ZERONET_CONF_FILE}" "${ZERONET_LOG_DIR}"
+	#   This is critical, as ZeroNet silently fails on startup if unable to
+	#   write to even one of these files with an error resembling:
+	#     * start-stop-daemon: /usr/bin/zeronet died 
+	fowners ${PN}:${PN} \
+		"${ZERONET_CONF_FILE}" \
+		"${ZERONET_LOG_DIR}" \
+		"${ZERONET_LOG_DIR}/"* \
+		|| die '"fowners" failed.'
 
 	# Install all Markdown files as documentation.
 	dodoc *.md
