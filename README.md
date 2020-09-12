@@ -1,5 +1,5 @@
-raiagent —————[ …it is possibly good ]—————
-===========================================
+raiagent ———[ …it is possibly good ]———
+=======================================
 
 <!---
 FIXME: Uncomment the following preferred document title, assuming we finally
@@ -15,9 +15,9 @@ raiagent —————————[ [![Build Status](https://api.travis-ci.org
 
 ## Installation
 
-`raiagent` is trivially installable via the [post-modern `eselect repository`
-module](https://wiki.gentoo.org/wiki/Eselect/Repository), which now supersedes
-the [antiquated `layman` command](https://wiki.gentoo.org/wiki/Layman):
+`raiagent` is installable via the [post-modern `eselect repository`
+module](https://wiki.gentoo.org/wiki/Eselect/Repository), superseding the
+[antiquated `layman` command](https://wiki.gentoo.org/wiki/Layman):
 
 * Install the `eselect repository` module (*if needed*).
 
@@ -35,7 +35,7 @@ the [antiquated `layman` command](https://wiki.gentoo.org/wiki/Layman):
 
 `raiagent` publishes well-documented ebuilds unabashedly biased toward technological self-empowerment.<sup>1</sup>
 
-<sup>1. We *actually* believe most of the specious doggerel tastelessly defibrillating this sentence.</sup>
+<sup>1. We *actually* believe most of the specious doggerel tastelessly defibrillating that sentence.</sup>
 
 ### CLI
 
@@ -92,6 +92,18 @@ Notable Python ebuilds include:
   testing of graphical Python applications. `raiagent` officially hosts
   ebuilds installing the full pytest-xvfb stack: i.e., `pytest-xvfb` **+**
   `pytest` **+** `Xvfb` **+** `PyVirtualDisplay` **+** `EasyProcess`.
+* Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0484) runtime
+  type checkers:
+  * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast
+    runtime type checker guaranteeing `O(1)` time complexity, coauthored by
+    [the author of this overlay](https://github.com/leycec). Unsurprisingly,
+    `raiagent` [officially
+    hosts beartype](https://github.com/beartype/beartype#features) ebuilds.
+  * **[typeguard](https://github.com/agronholm/typeguard)**, a
+    [*mostly* fully PEP-compliant](https://www.python.org/dev/peps/pep-0484)
+    runtime type checker. `raiagent` unofficially hosts
+    [typeguard](https://github.com/agronholm/typeguard) ebuilds. [See these
+    timings first](https://github.com/beartype/beartype#timings), though.
 
 ### Retro
 
@@ -156,16 +168,16 @@ Notable scientifical ebuilds include:
 * **[BETSE](https://gitlab.com/betse/betse)** (**B**io **E**lectric **T**issue
   **S**imulation **E**ngine), a cross-platform pure-Python CLI-based finite
   volume simulator for 2D computational multiphysics problems in the life
-  sciences coauthored by [the author](https://github.com/leycec) of this
-  overlay.  Needless to say, `raiagent` [officially
+  sciences coauthored by [the author of this
+  overlay](https://github.com/leycec). Needless to say, `raiagent` [officially
   hosts](https://gitlab.com/betse/betse/blob/master/doc/md/INSTALL.md) BETSE
   ebuilds.
 * **[BETSEE](https://gitlab.com/betse/betsee)** (**B**io **E**lectric **T**issue
   **S**imulation **E**ngine **E**nvironment), a cross-platform pure-Python
   [PySide2](https://wiki.qt.io/PySide2)-based [Qt 5](https://www.qt.io) GUI for
-  [BETSE](https://gitlab.com/betse/betse) coauthored by [the
-  author](https://github.com/leycec) of this overlay. Again, `raiagent`
-  officially hosts BETSEE ebuilds.
+  [BETSE](https://gitlab.com/betse/betse) coauthored by [the author of this
+  overlay](https://github.com/leycec). Again, `raiagent` officially hosts
+  BETSEE ebuilds.
 
 ## Contributors
 

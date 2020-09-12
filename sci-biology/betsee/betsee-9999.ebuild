@@ -5,6 +5,9 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
+# This package requires setuptools at runtime.
+DISTUTILS_USE_SETUPTOOLS=rdepend
+
 inherit distutils-r1
 
 DESCRIPTION="Bioelectric Tissue Simulation Engine Environment (BETSEE)"
@@ -36,14 +39,19 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/pyside2-tools-5.14.0[${PYTHON_USEDEP}]
 	~sci-biology/betse-${PV%.*}[${PYTHON_USEDEP}]
 "
-DEPEND="${COMMON_DEPEND}
+
+# Note that we intentionally prefer manually defining test-time dependencies as
+# well as the python_test() function below rather than calling the
+# distutils_enable_tests() function, as the latter's implementation is too
+# generic to usefully apply to this package.
+DEPEND="${DEPEND} ${COMMON_DEPEND}
 	test? (
 		>=dev-python/pytest-3.7.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-qt-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xvfb-1.2.0[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND="${COMMON_DEPEND}"
+RDEPEND="${RDEPEND} ${COMMON_DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3

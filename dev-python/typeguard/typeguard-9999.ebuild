@@ -5,9 +5,9 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
 
-# Note that "typeguard" optionally installs a "pytest" plugin implemented as a
-# setuptools-based entry point and thus requires setuptools (but probably *NOT*
-# "setuptools_scm") at runtime.
+# This package optionally installs a "pytest" plugin implemented as a
+# setuptools-based entry point and thus requires setuptools (but presumably
+# *NOT* "setuptools_scm") at runtime.
 DISTUTILS_USE_SETUPTOOLS=rdepend
 
 inherit distutils-r1
@@ -20,13 +20,12 @@ HOMEPAGE="
 LICENSE="MIT"
 SLOT="0"
 IUSE=""
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-BDEPEND=">=dev-python/setuptools_scm-2.0.0[${PYTHON_USEDEP}]"
-DEPEND="${PYTHON_DEPS}
-	>=dev-python/setuptools-40.0.4[${PYTHON_USEDEP}]
+# This package requires setuptools >= 40.0.4, which the "distutils-r1"
+# eclass implicitly guarantees and is thus omitted here.
+BDEPEND="${BDEPEND}
+	>=dev-python/setuptools_scm-2.0.0[${PYTHON_USEDEP}]
 "
-RDEPEND="${DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3

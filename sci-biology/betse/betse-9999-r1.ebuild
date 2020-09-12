@@ -5,6 +5,9 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
+# This package requires setuptools at runtime.
+DISTUTILS_USE_SETUPTOOLS=rdepend
+
 inherit distutils-r1
 
 DESCRIPTION="Bioelectric Tissue Simulation Engine (BETSE)"
@@ -23,13 +26,17 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # "betse.metadata.DEPENDENCIES_RUNTIME_MANDATORY" list, which is enforced at
 # BETSE runtime and hence guaranteed to be authorative.
 #
-# For uniformity across *ALL* Python releases, the technically optional
-# "dev-python/distro" dependency replacing the deprecated
-# platform.linux_distribution() function removed by Python 3.8 is treated here
-# as a mandatory dependency. While a USE flag governing the installation of
-# this dependency could also be introduced (e.g., "distro"), doing so would be
-# complicated by the version-specific conditionality of this dependency --
-# which is optional only under Python <= 3.7 and is otherwise mandatory.
+# Note that:
+# * For uniformity across *ALL* Python releases, the technically optional
+#   "dev-python/distro" dependency replacing the deprecated
+#   platform.linux_distribution() function removed by Python 3.8 is treated
+#   here as a mandatory dependency. While a USE flag governing the installation
+#   of this dependency could also be introduced (e.g., "distro"), doing so
+#   would be complicated by the version-specific conditionality of this
+#   dependency -- which is optional only under Python <= 3.7 and is otherwise
+#   mandatory.
+# * This package requires setuptools >= 38.2.0, which the "distutils-r1" eclass
+#   implicitly guarantees and is thus omitted here.
 COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/dill-0.2.3[${PYTHON_USEDEP}]
 	>=dev-python/distro-1.0.4[${PYTHON_USEDEP}]
@@ -41,9 +48,13 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
 "
-	# >=dev-python/psutil-5.3.0[${PYTHON_USEDEP}]
-DEPEND="${COMMON_DEPEND}
-	test? ( >=dev-python/pytest-3.7.0[${PYTHON_USEDEP}] )
+
+# Note that we intentionally prefer manually defining test-time dependencies as
+# well as the python_test() function below rather than calling the
+# distutils_enable_tests() function, as the latter's implementation is too
+# generic to usefully apply to this package.
+DEPEND="${DEPEND} ${COMMON_DEPEND}
+	test? ( >=dev-python/pytest-5.4.0[${PYTHON_USEDEP}] )
 "
 
 # The list of multicore-aware BLAS implementations required by the "smp" USE
@@ -54,7 +65,7 @@ DEPEND="${COMMON_DEPEND}
 # The remaining list of optional dependencies derives directly from the
 # "betse.metadata.DEPENDENCIES_RUNTIME_OPTIONAL" list, which is enforced at
 # BETSE runtime and hence guaranteed to be authorative.
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="${RDEPEND} ${COMMON_DEPEND}
 	ffmpeg? ( virtual/ffmpeg )
 	graph? (
 		>=dev-python/pydot-1.2.3[${PYTHON_USEDEP}]
