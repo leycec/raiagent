@@ -347,17 +347,25 @@ errors will be displayed on attempting to browse with any other browser.
 	#   router console:
 	#     Unhandled exception: [Errno 13] Permission denied: '/etc/zeronet.conf'
 	# * The following terser command silently fails to change ownership of
-	#   files in the "${ZERONET_LOG_DIR}" directory for unknown reasons and
-	#   *MUST* thus expanded to explicitly glob all files in that directory:
+	#   files in the "${ZERONET_LOG_DIR}" directory already owned by "root":
 	#     fowners -R ${PN}:${PN} "${ZERONET_CONF_FILE}" "${ZERONET_LOG_DIR}"
-	#   This is critical, as ZeroNet silently fails on startup if unable to
-	#   write to even one of these files with an error resembling:
+	#   Thus, we refactor that to explicitly glob all files in that directory,
+	#   which *DOES* correctly change the ownership of such files. This is
+	#   critical, as ZeroNet silently fails on startup if unable to write to
+	#   even one of these files with a non-human-readable error resembling:
 	#     * start-stop-daemon: /usr/bin/zeronet died 
+	# * The "nullglob" shell option is explicitly enabled (which, frankly,
+	#   should *ALREADY* be enabled by default), as the glob expression
+	#   "${ZERONET_LOG_DIR}/"* fails to match any files and thus raises a
+	#   fatal error on the first installation of ZeroNet when this shell option
+	#   is disabled. See also: https://github.com/leycec/raiagent/issues/91
+	shopt -s nullglob
 	fowners ${PN}:${PN} \
 		"${ZERONET_CONF_FILE}" \
 		"${ZERONET_LOG_DIR}" \
 		"${ZERONET_LOG_DIR}/"* \
 		|| die '"fowners" failed.'
+	shopt -u nullglob
 
 	# Install all Markdown files as documentation.
 	dodoc *.md
