@@ -85,13 +85,6 @@ Notable Python ebuilds include:
   Python. `raiagent` [officially hosts](https://bugs.gentoo.org/624682) ebuilds
   installing the full PySide2 stack: i.e., PySide2 **+** pyside2-tools **+**
   shiboken2 **+** Qt.
-* **[pytest-xvfb](https://github.com/The-Compiler/pytest-xvfb)**, a
-  third-party Python package integrating the [popular pytest
-  framework](https://pytest.org) with the [Xvfb (X virtual
-  framebuffer)](https://en.wikipedia.org/wiki/Xvfb) for automated headless
-  testing of graphical Python applications. `raiagent` officially hosts
-  ebuilds installing the full pytest-xvfb stack: i.e., `pytest-xvfb` **+**
-  `pytest` **+** `Xvfb` **+** `PyVirtualDisplay` **+** `EasyProcess`.
 * Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0484) runtime
   type checkers:
   * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast
