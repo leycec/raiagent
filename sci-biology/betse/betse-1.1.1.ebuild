@@ -37,9 +37,9 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/numpy-1.13.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-2.3.0[${PYTHON_USEDEP}]
 	>=dev-python/ruamel-yaml-0.15.35[${PYTHON_USEDEP}]
+	>=dev-python/scipy-0.12.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-38.2.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
-	>=sci-libs/scipy-0.12.0[${PYTHON_USEDEP}]
 "
 	# >=dev-python/psutil-5.3.0[${PYTHON_USEDEP}]
 DEPEND="${COMMON_DEPEND}
