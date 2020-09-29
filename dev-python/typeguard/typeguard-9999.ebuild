@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
+PYTHON_COMPAT=( python3_{6..9} pypy3 )
 
 # This package optionally installs a "pytest" plugin implemented as a
 # setuptools-based entry point and thus requires setuptools (but presumably

@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} pypy3 )
 
 # This package requires setuptools at runtime.
 DISTUTILS_USE_SETUPTOOLS=rdepend

@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
 #"setup.py"-based PyPI integration, tracked at the following issue:

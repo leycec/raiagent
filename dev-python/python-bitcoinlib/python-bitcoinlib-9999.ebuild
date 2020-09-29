@@ -6,7 +6,7 @@ EAPI=7
 # Note that the name of this package is intentionally *NOT* "bitcoinlib", an
 # unrelated project with its own unique PyPI package.
 
-PYTHON_COMPAT=( python3_{6,7,8} pypy3 )
+PYTHON_COMPAT=( python3_{6..9} pypy3 )
 
 inherit distutils-r1
 

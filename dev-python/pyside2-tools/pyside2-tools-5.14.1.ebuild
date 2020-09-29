@@ -7,7 +7,7 @@ EAPI=7
 # 2.7 effectively ceases in April 2020.
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python2_7 python3_{6..9} )
 CMAKE_IN_SOURCE_BUILD=1
 
 inherit cmake-utils python-r1 virtualx

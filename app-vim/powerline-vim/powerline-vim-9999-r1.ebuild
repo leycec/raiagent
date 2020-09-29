@@ -5,7 +5,7 @@ EAPI=7
 
 # Since eclasses cannot be conditionally inherited, this ebuild remains
 # distinct from "app-misc/powerline", the core Powerline ebuild.
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{6..9} pypy{,3} )
 
 # inherit python-any-r1 vim-plugin
 inherit python-r1 vim-plugin
