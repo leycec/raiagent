@@ -3,7 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+#FIXME: Add Python 3.9 support once ZeroNet officially does.
+PYTHON_COMPAT=( python3_{6..8} )
 
 #FIXME: Replace "python-single-r1" with "distutils-r1" after ZeroNet adds
 #"setup.py"-based PyPI integration, tracked at the following issue:
