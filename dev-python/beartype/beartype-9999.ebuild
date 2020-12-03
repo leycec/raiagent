@@ -12,7 +12,7 @@ DISTUTILS_USE_SETUPTOOLS=rdepend
 
 inherit distutils-r1
 
-DESCRIPTION="Unbearably fast runtime type checking in pure Python."
+DESCRIPTION="Unbearably fast O(1) runtime type checking in pure Python"
 HOMEPAGE="
 	https://pypi.org/project/beartype
 	https://github.com/beartype/beartype"
