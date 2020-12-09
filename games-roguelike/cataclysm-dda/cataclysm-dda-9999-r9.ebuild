@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -72,11 +72,18 @@ else
 	# version specifiers to contain only a single suffixing letter prefixed by
 	# one or more digits, we:
 	#
-	# * Encode such versions as "0.9${lowercase_letter}" in ebuild filenames.
-	# * In the ebuilds themselves (i.e., here), we:
-	#   * Manually strip the "9" in such filenames.
-	#   * Uppercase the lowercase letter in such filenames.
-	MY_PV="${PV/.9/.}"
+	# * Encode these versions as "0.9${lowercase_letter}[_p${digit}]" in ebuild
+	#   filenames, where the optional suffixing "[_p${digit}]" portion connotes
+	#   a patch revision. As example, we encode the upstream version:
+	#   * "0.D" as "0.9d".
+	#   * "0.E-2" as "0.9e_p2".
+	# * Here, we (in order):
+	#   1. Reduce the "0.9" in these filenames to merely "0.".
+	#   2. Reduce the "_p" in these filenames to merely "-".
+	#   3. Uppercase the lowercase letter in these filenames.
+	MY_PV="${PV}"
+	MY_PV="${MY_PV/0.9/0.}"
+	MY_PV="${MY_PV/_p/-}"
 	MY_PV="${MY_PV^^}"
 	SRC_URI="https://github.com/CleverRaven/Cataclysm-DDA/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"

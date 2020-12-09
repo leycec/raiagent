@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -13,24 +13,30 @@ HOMEPAGE="https://cataclysmdda.org"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
+
+# Note that C:DDA 0.E-2 unintentionally broke "clang" support, which has thus
+# been temporarily removed as a USE flag for this release only. See also:
+#     https://github.com/CleverRaven/Cataclysm-DDA/pull/39763
 IUSE="
-	astyle clang debug lintjson lto lua luajit ncurses nls sdl sound test xdg
+	astyle debug dev lintjson lto ncurses nls sdl sound test xdg
 	kernel_linux kernel_Darwin"
 REQUIRED_USE="
-	lua? ( sdl )
-	luajit? ( lua )
 	sound? ( sdl )
 	|| ( ncurses sdl )
 "
 
-RDEPEND="
+# Note that, while GCC also supports LTO via the gold linker, Portage appears
+# to provide no means of validating the current GCC to link with gold. *shrug*
+BDEPEND="
+	sys-devel/gcc[cxx]
+	debug? ( sys-devel/gcc[sanitize] )
+"
+DEPEND="
 	app-arch/bzip2
 	sys-libs/glibc
 	sys-libs/zlib
 	virtual/libc
 	astyle? ( dev-util/astyle )
-	lua? ( >=dev-lang/lua-5.1:0 )
-	luajit? ( dev-lang/luajit:2 )
 	ncurses? ( >=sys-libs/ncurses-6.0:0 )
 	nls? ( sys-devel/gettext:0[nls] )
 	sdl? (
@@ -41,20 +47,7 @@ RDEPEND="
 	)
 	sound? ( media-libs/sdl2-mixer:0 )
 "
-
-# Note that, while GCC also supports LTO via the gold linker, Portage appears
-# to provide no means of validating the current GCC to link with gold. *shrug*
-BDEPEND="${RDEPEND}
-	clang? (
-		sys-devel/clang
-		debug? ( sys-devel/clang-runtime[sanitize] )
-		lto?   ( sys-devel/llvm[gold] )
-	)
-	!clang? (
-		sys-devel/gcc[cxx]
-		debug? ( sys-devel/gcc[sanitize] )
-	)
-"
+RDEPEND="${DEPEND}"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -62,25 +55,37 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/CleverRaven/Cataclysm-DDA.git"
 	SRC_URI=""
 	KEYWORDS=""
+
+	src_unpack() {
+		if use dev; then EGIT_BRANCH=dev
+		else             EGIT_BRANCH=master
+		fi
+
+		git-r3_src_unpack
+	}
 else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
 	# version specifiers to contain only a single suffixing letter prefixed by
 	# one or more digits, we:
 	#
-	# * Encode such versions as "0.9${lowercase_letter}" in ebuild filenames.
-	# * In the ebuilds themselves (i.e., here), we:
-	#   * Manually strip the "9" in such filenames.
-	#   * Uppercase the lowercase letter in such filenames.
-	MY_PV="${PV/.9/.}"
+	# * Encode these versions as "0.9${lowercase_letter}[_p${digit}]" in ebuild
+	#   filenames, where the optional suffixing "[_p${digit}]" portion connotes
+	#   a patch revision. As example, we encode the upstream version:
+	#   * "0.D" as "0.9d".
+	#   * "0.E-2" as "0.9e_p2".
+	# * Here, we (in order):
+	#   1. Reduce the "0.9" in these filenames to merely "0.".
+	#   2. Reduce the "_p" in these filenames to merely "-".
+	#   3. Uppercase the lowercase letter in these filenames.
+	MY_PV="${PV}"
+	MY_PV="${MY_PV/0.9/0.}"
+	MY_PV="${MY_PV/_p/-}"
 	MY_PV="${MY_PV^^}"
 	SRC_URI="https://github.com/CleverRaven/Cataclysm-DDA/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 	S="${WORKDIR}/Cataclysm-DDA-${MY_PV}"
 fi
-
-# Absolute dirname of the system-wide directory containing C:DDA data files.
-CATACLYSM_DIRNAME=/usr/share/"${PN}"
 
 src_prepare() {
 	# If "doc/JSON_LOADING_ORDER.md" is still a symbolic link, replace this
@@ -130,7 +135,7 @@ src_compile() {
 		# install-time directory, all variables defined by the makefile
 		# relative to ${PREFIX} *MUST* be redefined here relative to ${ED}.
 		BIN_PREFIX="${ED}"/usr/bin
-		DATA_PREFIX="${ED}${CATACLYSM_DIRNAME}"
+		DATA_PREFIX="${ED}"/usr/share/${PN}
 		LOCALE_DIR="${ED}"/usr/share/locale
 
 		# Unconditionally enable backtrace support. Note that:
@@ -184,13 +189,6 @@ src_compile() {
 	fi
 	CATACLYSM_EMAKE_NCURSES+=( NATIVE=${cataclysm_arch} )
 
-	# Conditionally set USE flag-dependent options. Since the makefile tests
-	# for the existence rather than the value of the corresponding environment
-	# variables, these variables must be left undefined rather than defined to
-	# some false value (e.g., 0, "False", the empty string) if the
-	# corresponding USE flags are disabled.
-	use clang && CATACLYSM_EMAKE_NCURSES+=( CLANG=1 )
-
 	# If enabling link time optimization, do so.
 	use lto && CATACLYSM_EMAKE_NCURSES+=( LTO=1 )
 
@@ -216,16 +214,6 @@ src_compile() {
 	# Else, store saves and settings in standard home dot directories.
 	else
 		CATACLYSM_EMAKE_NCURSES+=( USE_HOME_DIR=1 USE_XDG_DIR=0 )
-	fi
-
-	# If enabling Lua support, do so. Note that Lua support requires SDL
-	# support but, paradoxically, appears to be supported when compiling both
-	# SDL *AND* ncurses binaries. (Black magic is black.)
-	if use lua; then
-		CATACLYSM_EMAKE_NCURSES+=( LUA=1 )
-
-		# If enabling LuaJIT support, do so.
-		use luajit && CATACLYSM_EMAKE_NCURSES+=( LUA_BINARY=luajit )
 	fi
 
 	# If enabling internationalization, do so.

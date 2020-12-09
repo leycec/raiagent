@@ -12,8 +12,6 @@
 		<flag name="dev">Install live ebuild against "dev" rather than "master" branch (experimental!)</flag>
 		<flag name="lintjson">Check for JSON-specific lint regressions</flag>
 		<flag name="lto">Enable support for link time optimization (LTO)</flag>
-		<flag name="lua">Enable Lua scripting support (e.g., for modding)</flag>
-		<flag name="luajit">Use dev-lang/luajit instead of dev-lang/lua</flag>
 		<flag name="ncurses">Install ncurses-based terminal executable</flag>
 		<flag name="sdl">Install SDL-based X11 executable (recommended)</flag>
 		<flag name="sound">Enable SDL-based sound support</flag>
