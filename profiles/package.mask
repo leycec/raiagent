@@ -5,11 +5,6 @@
 # unmask atoms by adding an equivalent line to "/etc/portage/package.unmask".
 
 # ....................{ BROKEN                             }....................
-# Unfortunately, ToME4 beta 42 suffers instability issues under Linux and OS X.
-# For tear-jerking bug reports, see:
-#
-#   http://forums.te4.org/viewtopic.php?f=42&t=34598&p=136576
-=games-roguelike/tome4-1.0.0_beta42*
 
 # ....................{ UNSTABLE                           }....................
 # Ditto for the SDL1 repository.
