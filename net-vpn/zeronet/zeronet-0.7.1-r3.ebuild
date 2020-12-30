@@ -364,7 +364,6 @@ errors will be displayed on attempting to browse with any other browser.
 	fowners ${PN}:${PN} \
 		"${ZERONET_CONF_FILE}" \
 		"${ZERONET_LOG_DIR}" \
-		"${ZERONET_LOG_DIR}/"* \
 		|| die '"fowners" failed.'
 	shopt -u nullglob
 
