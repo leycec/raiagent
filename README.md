@@ -79,12 +79,12 @@ Notable Perl 5 ebuilds include:
 
 Notable Python ebuilds include:
 
-* The full **[Panel](https://panel.holoviz.org) +
-  [Param](http://param.holoviz.org)** stack, the pure-Python stateful
+* The full [HoloViz](https://holoviz.org) **[Panel](https://panel.holoviz.org)
+  + [Param](http://param.holoviz.org)** stack, the pure-Python stateful
   [WebSocket](https://en.wikipedia.org/wiki/WebSocket)-driven
-  [Tornado](https://www.tornadoweb.org)-backed
-  [Bokeh](https://bokeh.org)-based web dev framework for developing reactive
-  data visualization dashboard web apps.
+  [Tornado](https://www.tornadoweb.org)-backed [Bokeh](https://bokeh.org)-based
+  full-stack web dev framework for developing reactive data visualization
+  dashboard web apps.
 * Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0484) runtime
   type checkers:
   * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast
