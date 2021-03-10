@@ -79,12 +79,12 @@ Notable Perl 5 ebuilds include:
 
 Notable Python ebuilds include:
 
-* **[PySide2](https://wiki.qt.io/Qt_for_Python)** (AKA, "Qt for
-  Python;" AKA, `pyside-setup-everywhere-src`; AKA, The Package Formerly Known
-  as PySide2),<sup>*don't ask*</sup> the official LGPL-licensed Qt bindings for
-  Python. `raiagent` [officially hosts](https://bugs.gentoo.org/624682) ebuilds
-  installing the full PySide2 stack: i.e., PySide2 **+** pyside2-tools **+**
-  shiboken2 **+** Qt.
+* The full **[Panel](https://panel.holoviz.org) +
+  [Param](http://param.holoviz.org)** stack, the pure-Python stateful
+  [WebSocket](https://en.wikipedia.org/wiki/WebSocket)-driven
+  [Tornado](https://www.tornadoweb.org)-backed
+  [Bokeh](https://bokeh.org)-based web dev framework for developing reactive
+  data visualization dashboard web apps.
 * Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0484) runtime
   type checkers:
   * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast

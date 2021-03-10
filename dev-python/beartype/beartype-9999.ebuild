@@ -3,12 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} pypy3 )
-
-# Note that "typeguard" optionally installs a "pytest" plugin implemented as a
-# setuptools-based entry point and thus requires setuptools (but probably *NOT*
-# "setuptools_scm") at runtime.
-DISTUTILS_USE_SETUPTOOLS=rdepend
+PYTHON_COMPAT=( python3_{7..9} pypy3 )
 
 inherit distutils-r1
 
