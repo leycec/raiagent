@@ -23,9 +23,7 @@ IUSE=""
 
 # This package requires setuptools >= 40.0.4, which the "distutils-r1"
 # eclass implicitly guarantees and is thus omitted here.
-BDEPEND="${BDEPEND}
-	>=dev-python/setuptools_scm-2.0.0[${PYTHON_USEDEP}]
-"
+BDEPEND=">=dev-python/setuptools_scm-2.0.0[${PYTHON_USEDEP}]"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
