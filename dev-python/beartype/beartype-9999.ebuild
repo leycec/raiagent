@@ -8,9 +8,7 @@ PYTHON_COMPAT=( python3_{7..9} pypy3 )
 inherit distutils-r1
 
 DESCRIPTION="Unbearably fast O(1) runtime type checking in pure Python"
-HOMEPAGE="
-	https://pypi.org/project/beartype
-	https://github.com/beartype/beartype"
+HOMEPAGE="https://pypi.org/project/beartype"
 
 LICENSE="MIT"
 SLOT="0"
