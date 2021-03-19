@@ -12,7 +12,6 @@ HOMEPAGE="https://pypi.org/project/beartype"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE=""
 
 # This package has no dependencies other than:
 # * A build-time dependency on an arbitrary version of setuptools, which the
