@@ -1,14 +1,13 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-EGIT_REPO_URI="https://github.com/powerline/fonts"
+EAPI=7
 
 inherit font git-r3
 
 DESCRIPTION="Monospaced fonts pre-patched with Powerline symbols"
 HOMEPAGE="https://github.com/powerline/fonts"
+EGIT_REPO_URI="https://github.com/powerline/fonts"
 
 LICENSE="
 	3270? ( || ( BSD CC-BY-SA-3.0 ) )
@@ -41,7 +40,7 @@ LICENSE="
 	ubuntumono? ( UbuntuFontLicense-1.0 )
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 
 #FIXME: Add support for all additional fonts supported by the repository.
 
@@ -81,9 +80,6 @@ IUSE="${IUSE_FLAGS[*]}"
 
 # If no such USE flags were enabled, fail.
 REQUIRED_USE="|| ( ${IUSE_FLAGS[*]} )"
-
-DEPEND=""
-RDEPEND=""
 
 # List of the basenames of all subdirectories containing OTF-formatted fonts.
 OTF_DIRNAMES=(

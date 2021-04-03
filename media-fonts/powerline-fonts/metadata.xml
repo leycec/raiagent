@@ -32,6 +32,7 @@ Pre-patched and adjusted fonts for usage with the new Powerline plugin.
 		<flag name="monofur">Install Powerline-patched Monofur fonts</flag>
 		<flag name="notomono">Install Powerline-patched Noto Mono fonts</flag>
 		<flag name="novamono">Install Powerline-patched Nova Mono fonts</flag>
+		<flag name="profont">Install Powerline-patched ProFont fonts</flag>
 		<flag name="robotomono">Install Powerline-patched Roboto Mono fonts</flag>
 		<flag name="sourcecodepro">Install Powerline-patched Source Code Pro fonts</flag>
 		<flag name="spacemono">Install Powerline-patched Space Mono fonts</flag>

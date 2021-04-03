@@ -31,29 +31,29 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	# Inject user $CFLAGS into the TSL shell scripts.
-	sed -e 's~^\(gcc.*\)\\$~\1 '"${CFLAGS}"' \\~' -i *.sh
+	sed -e 's~^\(gcc.*\)\\$~\1 '"${CFLAGS}"' \\~' -i *.sh || die
 }
 
-# Technically, we should be running "nbuild.php" to rebuild TSL shell scripts on
-# a per-system basis. But that requires adding a build-time PHP dependency,
+# Technically, we should be running "nbuild.php" to rebuild TSL shell scripts
+# on a per-system basis. But that requires adding a build-time PHP dependency,
 # which smacks of overkill. For now, just run the bundled shell scripts.
 src_compile() {
-	# If the current requests requests both graphical and console builds, rename
-	# the executable output by the latter but not former. The former retains the
-	# default executable filename, as expected.
+	# If the current requests requests both graphical and console builds,
+	# rename the executable output by the latter but not former. The former
+	# retains the default executable filename, as expected.
 	if use allegro && use ncurses; then
 		einfo 'Compiling console interface...'
-		./build_console.sh
-		mv tsl tsl_console
+		./build_console.sh || die
+		mv tsl tsl_console || die
 		einfo 'Compiling graphical interface...'
-		./build_gui.sh
+		./build_gui.sh || die
 	# Otherwise, accept the default executable of "tsl".
 	elif use allegro; then
 		einfo 'Compiling graphical interface...'
-		./build_gui.sh
+		./build_gui.sh || die
 	else # use ncurses
 		einfo 'Compiling console interface...'
-		./build_console.sh
+		./build_console.sh || die
 	fi
 }
 
