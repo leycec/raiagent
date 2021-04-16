@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
+	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
-	<longdescription>
-A simple, cross-platform, pure Python module for JavaScript-like message boxes.
-</longdescription>
+	<stabilize-allarches/>
 	<upstream>
-		<doc lang="en">https://pymsgbox.readthedocs.org/en/latest/index.html</doc>
+		<remote-id type="pypi">pymsgbox</remote-id>
+		<remote-id type="github">asweigart/pymsgbox</remote-id>
 	</upstream>
 </pkgmetadata>
