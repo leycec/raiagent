@@ -54,6 +54,14 @@ else
 	S="${WORKDIR}/${MY_P}"
 fi
 
+default_to_py3() {
+	# Make the plugin default to using Python 3.x instead of 2.x.
+	sed -i -e \
+		"/if exists('g:powerline_pycmd')/i \\let g:powerline_pycmd = 'py3'" \
+		"${S}"/powerline/bindings/vim/plugin/powerline.vim ||
+		die
+}
+
 
 src_prepare() {
 	default
@@ -75,11 +83,12 @@ src_prepare() {
 	#     should set g:powerline_pycmd to "py3" to make it load correctly.
 	#     Unable to import powerline, is it installed?
 	#     Press ENTER or type command to continue
-	if ! use python_targets_python2_7; then
-		sed -i -e \
-			"/if exists('g:powerline_pycmd')/i \\let g:powerline_pycmd = 'py3'" \
-			"${S}"/powerline/bindings/vim/plugin/powerline.vim ||
-			die
+	if has python_targets_python2_7 ${IUSE} ; then
+		if ! use python_targets_python2_7; then
+			default_to_py3
+		fi
+	else
+		default_to_py3
 	fi
 
 	# vim-plugin_src_install() expects ${S} to be the top-level directory for
