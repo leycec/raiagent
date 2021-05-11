@@ -1,11 +1,11 @@
-# Copyright 1999-2020 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 # Since eclasses cannot be conditionally inherited, this ebuild remains
 # distinct from "app-misc/powerline", the core Powerline ebuild.
-PYTHON_COMPAT=( python2_7 python3_{6..9} pypy{,3} )
+PYTHON_COMPAT=( python3_{6..9} pypy3 )
 
 # inherit python-any-r1 vim-plugin
 inherit python-r1 vim-plugin
@@ -15,8 +15,6 @@ HOMEPAGE="https://pypi.python.org/pypi/powerline-status"
 
 LICENSE="MIT"
 SLOT="0"
-IUSE=""
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 #FIXME: Ideally, we would also enforce ${PYTHON_USEDEP} on "vim" and "gvim"
 #(e.g., as ">=app-editors/vim-7.2[python,${PYTHON_USEDEP}]". Sadly, doing so
@@ -54,12 +52,11 @@ else
 	S="${WORKDIR}/${MY_P}"
 fi
 
-
 src_prepare() {
 	default
 
-	# If installing Powerline only for Python 3.x, notify this Vim plugin.
-	# Failing to do so causes an absurd fatal error at runtime resembling:
+	# As we are installing Powerline only for Python 3.x, notify this Vim
+	# plugin. Failing to do so raises an absurd error at runtime resembling:
 	#
 	#     $ vim
 	#     Traceback (most recent call last):
@@ -75,12 +72,10 @@ src_prepare() {
 	#     should set g:powerline_pycmd to "py3" to make it load correctly.
 	#     Unable to import powerline, is it installed?
 	#     Press ENTER or type command to continue
-	if ! use python_targets_python2_7; then
-		sed -i -e \
-			"/if exists('g:powerline_pycmd')/i \\let g:powerline_pycmd = 'py3'" \
-			"${S}"/powerline/bindings/vim/plugin/powerline.vim ||
-			die
-	fi
+	sed -i -e \
+		"/if exists('g:powerline_pycmd')/i \\let g:powerline_pycmd = 'py3'" \
+		"${S}"/powerline/bindings/vim/plugin/powerline.vim ||
+		die
 
 	# vim-plugin_src_install() expects ${S} to be the top-level directory for
 	# the Vim plugin installed at "/usr/share/vim/vimfiles". To guarantee this,
