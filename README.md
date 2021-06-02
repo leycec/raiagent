@@ -3,7 +3,7 @@ raiagent ———[ …it is possibly good ]———
 
 <!---
 FIXME: Uncomment the following preferred document title, assuming we finally
-crush all outstanding Travis-CI issues -- a *VERY* large assumption, indeed.
+crush all outstanding Travis-CI issues.
 
 raiagent —————————[ [![Build Status](https://api.travis-ci.org/leycec/raiagent.svg?branch=master)](https://travis-ci.org/leycec/raiagent) ]—————————
 ===========
@@ -57,13 +57,17 @@ Notable command-line interface (CLI) ebuilds include:
 
 Notable peer-to-peer (P2P) ebuilds include:
 
-* **[ZeroNet](https://zeronet.io)**, a peer-to-peer web hosting network
+* ~~**[ZeroNet](https://zeronet.io)**, a peer-to-peer web hosting network
   brokered with demonetized [BitCoin](https://en.wikipedia.org/wiki/Bitcoin)
   blockchain semantics distributed over the decentralized
   [BitTorrent](https://en.wikipedia.org/wiki/BitTorrent) protocol complete with
   optional Tor-based traffic anonymization. *Yeah.* It's pretty special.
   `raiagent` [officially hosts](https://github.com/HelloZeroNet/ZeroNet)
-  ZeroNet ebuilds.
+  ZeroNet ebuilds.~~ Tragically, **[ZeroNet is no longer actively
+  maintained](https://github.com/HelloZeroNet/ZeroNet/issues/2749).** Until
+  someone sufficiently young and idealistic creates a well-maintained friendly
+  fork supporting the modern Python ecosystem, we have *no* choice but to
+  remove all traces of ZeroNet from `::raiagent`.
 
 ### Perl 5
 
@@ -186,7 +190,7 @@ including:
 
 * The [official Qt overlay](https://github.com/gentoo/qt), notably the
   [PySide2](https://wiki.qt.io/PySide2), PySide2-tools, and shiboken2 packages.
-* [stefan-gr](https://github.com/stefan-gr)'s 
+* [stefan-gr](https://github.com/stefan-gr)'s
   [unofficial `abendbrot` overlay](https://github.com/stefan-gr/abendbrot),
   emphasizing emulation frontends (e.g.,
   [EmulationStation](http://www.emulationstation.org),
