@@ -113,19 +113,24 @@ Notable "enthusiast" ebuilds include:
 
 ### Roguelike
 
-Notable **roguelike** (i.e., games featuring permanent death as a prominent mechanic) ebuilds include:
+Notable **roguelike** (i.e., games featuring permanent death as a prominent
+mechanic) ebuilds include:
 
 * **[Cataclysm: Dark Days Ahead (C:DDA)](https://cataclysmdda.org)**, a
   post-apocalyptic survival horror roguelike. `raiagent` [officially
   hosts](https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo)
   C:DDA ebuilds.
+* **[The Slimy Lichmummy
+  (TSL)](http://www.happyponyland.net/the-slimy-lichmummy)**, a classic
+  dungeon-crawling roguelike from the Golden Age of Roguelikes (GAOR).
 * **[UnReal World (URW)](http://www.unrealworld.fi)**, a Finnish Iron-Age
   wilderness survival roguelike. `raiagent` [unofficially
   hosts](http://z3.invisionfree.com/UrW_forum/index.php?showtopic=3551) URW ebuilds.
 
 ### Interactive Fiction (IF)
 
-Notable **interactive fiction** (i.e., parser games featuring text-based control schemes) ebuilds include:
+Notable **interactive fiction** (i.e., parser games featuring text-based
+control schemes) ebuilds include:
 
 * **[Gargoyle (garglk)](http://ccxvii.net/gargoyle)**, the ultimate back- and
   frontend GUI supporting *most* (but inevitably not all) works of interactive

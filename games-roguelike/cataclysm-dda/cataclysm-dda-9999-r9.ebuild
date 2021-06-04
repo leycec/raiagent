@@ -70,17 +70,16 @@ else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
 	# version specifiers to contain only a single suffixing letter prefixed by
-	# one or more digits, we:
-	#
-	# * Encode these versions as "0.9${lowercase_letter}[_p${digit}]" in ebuild
-	#   filenames, where the optional suffixing "[_p${digit}]" portion connotes
-	#   a patch revision. As example, we encode the upstream version:
+	# one or more digits:
+	# * We encode these versions as "0.9${lowercase_letter}[_p${digit}]" in
+	#      ebuild filenames, where the optional suffixing "[_p${digit}]"
+	#      portion connotes a patch revision. As example, we encode upstream:
 	#   * "0.D" as "0.9d".
 	#   * "0.E-2" as "0.9e_p2".
-	# * Here, we (in order):
-	#   1. Reduce the "0.9" in these filenames to merely "0.".
-	#   2. Reduce the "_p" in these filenames to merely "-".
-	#   3. Uppercase the lowercase letter in these filenames.
+	# * We deencode these encoded versions here by (in order):
+	#   1. Reducing the "0.9" in these filenames to merely "0.".
+	#   2. Reducing the "_p" in these filenames to merely "-".
+	#   3. Uppercasing the lowercase letter in these filenames.
 	MY_PV="${PV}"
 	MY_PV="${MY_PV/0.9/0.}"
 	MY_PV="${MY_PV/_p/-}"
@@ -94,17 +93,15 @@ src_prepare() {
 	# If "doc/JSON_LOADING_ORDER.md" is still a symbolic link, replace this
 	# link by a copy of its transitive target to avoid "QA Notice" complaints.
 	if [[ -L doc/JSON_LOADING_ORDER.md ]]; then
-		rm doc/JSON_LOADING_ORDER.md || die '"rm" failed.'
-		cp data/json/LOADING_ORDER.md doc/JSON_LOADING_ORDER.md ||
-			die '"cp" failed.'
+		rm doc/JSON_LOADING_ORDER.md || die
+		cp data/json/LOADING_ORDER.md doc/JSON_LOADING_ORDER.md || die
 	fi
 
 	# Strip the following from all makefiles:
-	#
 	# * Hardcoded optimization (e.g., "-O3", "-Os") and stripping (e.g., "-s").
 	# * g++ option "-Werror", converting compiler warnings to errors and hence
 	#   failing on the first (inevitable) warning.
-	# * The makefile-specific ${BUILD_PREFIX} variable, conflicting with the 
+	# * The makefile-specific ${BUILD_PREFIX} variable, conflicting with the
 	#   Portage-specific variable of the same name. For disambiguity, this
 	#   variable is renamed to a makefile-specific variable name.
 	sed -i\
@@ -112,11 +109,11 @@ src_prepare() {
 		-e '/LDFLAGS += /s~-s\b~~'\
 		-e '/RELEASE_FLAGS = /s~-Werror\b~~'\
 		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~'\
-		{tests/,}Makefile || die '"sed" failed.'
+		{tests/,}Makefile || die
 
 	# The makefile assumes subdirectories "obj" and "obj/tiles" both exist,
 	# which (...of course) they don't. Create these subdirectories manually.
-	mkdir -p obj/tiles || die '"mkdir" failed.'
+	mkdir -p obj/tiles || die
 
 	# Apply user-specific patches and all patches added to ${PATCHES} above.
 	default_src_prepare
@@ -142,14 +139,12 @@ src_compile() {
 		LOCALE_DIR="${ED}"/usr/share/locale
 
 		# Unconditionally enable backtrace support. Note that:
-		#
 		# * Enabling this functionality incurs no performance penalty.
 		# * Disabling this functionality has undesirable side effects,
 		#   including:
 		#   * Stripping of symbols, which Portage already does when requested.
-		#   * Disabling of crash reports on fatal errors, a tragically common 
+		#   * Disabling of crash reports on fatal errors, a tragically common
 		#     occurence when installing the live version.
-		#
 		# Ergo, this support should *NEVER* be disabled.
 		BACKTRACE=1
 
@@ -163,7 +158,7 @@ src_compile() {
 		# Enable tests if requested.
 		RUNTESTS=$(usex test 1 0)
 
-		# Conditionally enable code style and JSON linting if requested.
+		# Enable code style and JSON linting if requested.
 		ASTYLE=$(usex astyle 1 0)
 		LINTJSON=$(usex lintjson 1 0)
 
@@ -172,7 +167,6 @@ src_compile() {
 		# passed to this makefile by overriding the current user-defined value
 		# of ${L10N} with the empty string. Failing to do so results in the
 		# following link-time fatal error:
-		#
 		#     make: *** No rule to make target 'en', needed by 'all'.  Stop.
 		L10N=
 	)
@@ -203,7 +197,6 @@ src_compile() {
 	use lto && CATACLYSM_EMAKE_NCURSES+=( LTO=1 )
 
 	# If enabling debugging-specific facilities, do so. Specifically,
-	#
 	# * "RELEASE=0", disabling release-specific optimizations.
 	# * "BACKTRACE=1", enabling backtrace support.
 	# * "SANITIZE=address", enabling Google's AddressSanitizer (ASan)
@@ -275,7 +268,7 @@ src_compile() {
 }
 
 src_test() {
-	emake tests || die 'Tests failed.'
+	emake tests || die
 }
 
 src_install() {
@@ -288,7 +281,7 @@ src_install() {
 	# Replace a symbolic link in the documentation directory to be installed
 	# below with the physical target file of that link. These operations are
 	# non-essential to the execution of installed binaries and are thus
-	# intentionally *NOT* suffixed by "|| die 'cp failed.'"-driven protection.
+	# intentionally *NOT* suffixed by "|| die"-driven protection.
 	rm doc/LOADING_ORDER.md
 	cp data/json/LOADING_ORDER.md doc/
 
