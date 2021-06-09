@@ -156,7 +156,7 @@ src_install() {
 	readme.gentoo_create_doc
 }
 
+# Print the "README.gentoo" file installed above on first installation.
 pkg_postinst() {
-	# Print the "README.gentoo" file installed above on first installation.
 	readme.gentoo_print_elog
 }

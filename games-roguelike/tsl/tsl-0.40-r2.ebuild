@@ -5,7 +5,6 @@ EAPI=7
 
 inherit readme.gentoo-r1
 
-#FIXME: Add "dotfloors" support.
 DESCRIPTION="The Slimy Lichmummy, an adventure game similar in style to the classic Rogue"
 HOMEPAGE="http://www.happyponyland.net/roguelike.php"
 SRC_URI="http://www.happyponyland.net/files/${P}.tar.gz"
@@ -122,4 +121,9 @@ TSL writes save and morgue files directly into your home directory as
 ~/TSL-SAVE and ~/morgue.txt (respectively).
 "
 	readme.gentoo_create_doc
+}
+
+# Print the "README.gentoo" file installed above on first installation.
+pkg_postinst() {
+	readme.gentoo_print_elog
 }
