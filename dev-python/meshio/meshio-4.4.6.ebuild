@@ -8,7 +8,7 @@ DISTUTILS_USE_SETUPTOOLS=pyproject.toml
 
 inherit distutils-r1
 
-DESCRIPTION="input/output for many mesh formats"
+DESCRIPTION="Python input/output for many mesh formats"
 HOMEPAGE="https://pypi.org/project/meshio"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
