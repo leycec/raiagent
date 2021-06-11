@@ -5,7 +5,7 @@ EAPI=7
 
 # Since eclasses cannot be conditionally inherited, this ebuild remains
 # distinct from "app-misc/powerline", the core Powerline ebuild.
-PYTHON_COMPAT=( python3_{6..9} pypy3 )
+PYTHON_COMPAT=( python3_{8..9} pypy3 )
 
 # inherit python-any-r1 vim-plugin
 inherit python-r1 vim-plugin
@@ -18,13 +18,14 @@ SLOT="0"
 
 #FIXME: Ideally, we would also enforce ${PYTHON_USEDEP} on "vim" and "gvim"
 #(e.g., as ">=app-editors/vim-7.2[python,${PYTHON_USEDEP}]". Sadly, doing so
-#coercively disables the user's desired $"PYTHON_SINGLE_TARGET}: e.g.,
-#
+#coercively disables the user's desired ${PYTHON_SINGLE_TARGET}: e.g.,
 #    The following USE changes are necessary to proceed:
 #     (see "package.use" in the portage(5) man page for more details)
 #    # required by app-vim/powerline-vim-9999-r1::raiagent
 #    # required by powerline-vim (argument)
 #    >=app-editors/vim-8.1.1486 -python_single_target_python3_6
+#FIXME: Is the above still true? Something seems a bit off here.
+#FIXME: Shouldn't this ebuild depend on "distutils-r1" instead?
 DEPEND="${PYTHON_DEPS}
 	|| (
 		>=app-editors/vim-7.2[python]
@@ -74,8 +75,7 @@ src_prepare() {
 	#     Press ENTER or type command to continue
 	sed -i -e \
 		"/if exists('g:powerline_pycmd')/i \\let g:powerline_pycmd = 'py3'" \
-		"${S}"/powerline/bindings/vim/plugin/powerline.vim ||
-		die
+		"${S}"/powerline/bindings/vim/plugin/powerline.vim || die
 
 	# vim-plugin_src_install() expects ${S} to be the top-level directory for
 	# the Vim plugin installed at "/usr/share/vim/vimfiles". To guarantee this,
