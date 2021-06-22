@@ -60,9 +60,9 @@ src_prepare() {
 
 src_configure() {
 	econf \
- 		$(use_enable sdl) \
- 		$(use_enable static-libs static) \
- 		$(use_with X x)
+		$(use_enable sdl) \
+		$(use_enable static-libs static) \
+		$(use_with X x)
 }
 
 # OpenGLide provides no documentation to speak of, so this is it.
