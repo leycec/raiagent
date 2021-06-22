@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -14,7 +14,7 @@ HOMEPAGE="https://cataclysmdda.org"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	astyle clang debug dev lintjson lto ncurses nls sdl sound test xdg
+	astyle clang debug lintjson lto ncurses nls sdl sound test xdg
 	kernel_linux kernel_Darwin"
 REQUIRED_USE="
 	sound? ( sdl )
@@ -56,16 +56,10 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
 	EGIT_REPO_URI="https://github.com/CleverRaven/Cataclysm-DDA.git"
+	EGIT_BRANCH=master
+
 	SRC_URI=""
 	KEYWORDS=""
-
-	src_unpack() {
-		if use dev; then EGIT_BRANCH=dev
-		else             EGIT_BRANCH=master
-		fi
-
-		git-r3_src_unpack
-	}
 else
 	# Post-0.9 versions of C:DDA employ capitalized alphabetic letters rather
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
@@ -125,12 +119,6 @@ src_compile() {
 
 	# Define ncurses-specific emake() options first.
 	CATACLYSM_EMAKE_NCURSES=(
-		# Unlike all other paths defined below, ${PREFIX} is compiled into
-		# installed binaries and therefore *MUST* refer to a runtime rather
-		# than installation-time directory (i.e., relative to ${ESYSROOT}
-		# rather than ${ED}).
-		PREFIX="${ESYSROOT}"/usr
-
 		# Install-time directories. Since ${PREFIX} does *NOT* refer to an
 		# install-time directory, all variables defined by the makefile
 		# relative to ${PREFIX} *MUST* be redefined here relative to ${ED}.
@@ -244,7 +232,12 @@ src_compile() {
 	# If enabling ncurses, compile the ncurses-based binary.
 	if use ncurses; then
 		einfo 'Compiling ncurses interface...'
-		emake "${CATACLYSM_EMAKE_NCURSES[@]}"
+
+		# Unlike all other paths defined elsewhere, ${PREFIX} is compiled into
+		# installed binaries and therefore *MUST* refer to a runtime rather
+		# than installation-time directory (i.e., relative to ${ESYSROOT}
+		# rather than ${ED}) during the src_compile() phase.
+		emake "${CATACLYSM_EMAKE_NCURSES[@]}" PREFIX="${ESYSROOT}"/usr
 	fi
 
 	# If enabling SDL, compile the SDL-based binary.
@@ -263,7 +256,7 @@ src_compile() {
 
 		# Compile us up the tiled bomb.
 		einfo 'Compiling SDL interface...'
-		emake "${CATACLYSM_EMAKE_SDL[@]}"
+		emake "${CATACLYSM_EMAKE_SDL[@]}" PREFIX="${ESYSROOT}"/usr
 	fi
 }
 
@@ -273,10 +266,16 @@ src_test() {
 
 src_install() {
 	# If enabling ncurses, install the ncurses-based binary.
-	use ncurses && emake install "${CATACLYSM_EMAKE_NCURSES[@]}"
+	#
+	# Set ${PREFIX} to refer to an installation-time rather than runtime
+	# directory (i.e., relative to ${ED} rather than ${ESYSROOT}) during the
+	# src_install() phase.
+	use ncurses && \
+		emake install "${CATACLYSM_EMAKE_NCURSES[@]}" PREFIX="${ED}"/usr
 
 	# If enabling SDL, install the SDL-based binary.
-	use sdl && emake install "${CATACLYSM_EMAKE_SDL[@]}"
+	use sdl && \
+		emake install "${CATACLYSM_EMAKE_SDL[@]}" PREFIX="${ED}"/usr
 
 	# Replace a symbolic link in the documentation directory to be installed
 	# below with the physical target file of that link. These operations are
