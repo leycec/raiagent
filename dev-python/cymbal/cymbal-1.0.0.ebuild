@@ -18,4 +18,17 @@ SLOT="0"
 DEPEND="dev-python/clang-python[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 
-distutils_enable_tests setup.py
+distutils_enable_tests pytest
+
+# Prevent "setup.py" from installing the "tests" package.
+src_prepare() {
+	sed -i -e 's~\(packages     = \)find_packages(),~\1["cymbal"],~' \
+		setup.py || die
+
+	default_src_prepare
+}
+
+# Omit "test_class_template_arg", failing due to outdated clang assumptions.
+python_test() {
+	pytest -k 'not test_class_template_arg' || die
+}
