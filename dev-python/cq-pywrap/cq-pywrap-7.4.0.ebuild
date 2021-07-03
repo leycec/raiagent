@@ -7,8 +7,9 @@ PYTHON_COMPAT=( python3_{8..9} )
 
 inherit llvm toolchain-funcs distutils-r1
 
-MY_PN="occt"
-MY_P="${MY_PN}${PV}"
+MY_PN=occt
+MY_PV=$(ver_cut 1-2)
+MY_P="${MY_PN}${MY_PV}"
 
 DESCRIPTION="C++ binding generator based on libclang and pybind11"
 HOMEPAGE="https://github.com/CadQuery/pywrap"
@@ -27,7 +28,7 @@ RDEPEND="
 	dev-python/cymbal[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/joblib[${PYTHON_USEDEP}]
+	>=dev-python/joblib-1.0.0[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/toposort[${PYTHON_USEDEP}]
@@ -95,4 +96,5 @@ src_prepare() {
 		bindgen/utils.py || die
 
 	distutils-r1_src_prepare
+	eapply_user
 }
