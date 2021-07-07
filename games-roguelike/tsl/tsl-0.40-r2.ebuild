@@ -49,6 +49,10 @@ src_prepare() {
 	#
 	# Note that user $CFLAGS are intentionally *NOT* injected, as doing so
 	# causes segmentation faults at runtime. tl;dr: TSL is fragile, people.
+
+	#FIXME: Sanitize the hardcoded "pkg-config" call away by:
+	#* Inheriting "toolchain-funcs" above.
+	#* Replacing "pkg-config" with "$(tc-getPKG_CONFIG)" below.
 	sed -i \
 		-e 's~^\(gcc.*\)\\$~\1 -fcommon \\~' \
 		-e '/exit 0/d' \
