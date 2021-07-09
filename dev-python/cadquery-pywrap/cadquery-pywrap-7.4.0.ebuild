@@ -120,5 +120,4 @@ src_prepare() {
 		bindgen/utils.py || die
 
 	distutils-r1_src_prepare
-	eapply_user
 }
