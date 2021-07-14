@@ -5,18 +5,21 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{8..9} )
 
-# inherit llvm toolchain-funcs distutils-r1
-inherit multiprocessing python-r1 cmake
+inherit llvm multiprocessing cmake python-r1
+
+MY_PYWRAP_PN=occt
+MY_PYWRAP_PV=$(ver_cut 1-2)
+MY_PYWRAP_P="${MY_PYWRAP_PN}${MY_PYWRAP_PV}"
 
 DESCRIPTION="Python wrapper for OCCT generated using pywrap"
 HOMEPAGE="https://github.com/CadQuery/OCP"
-SRC_URI="https://github.com/CadQuery/OCP/archive/refs/tags/${PV}.tar.gz"
+SRC_URI="https://github.com/CadQuery/OCP/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 
-#FIXME: When bumping to "cadquery-ocp-7.5.*", also list the "json" USE here.
+#FIXME: On bumping to 7.5.x, also list the "json" USE here.
 RDEPEND="~sci-libs/opencascade-7.4.0[tbb,vtk]"
 DEPEND="${RDEPEND}
 	~dev-python/cadquery-pywrap-${PV}[${PYTHON_USEDEP}]
@@ -28,10 +31,9 @@ MY_P="${MY_PN}-${PV}"
 S="${WORKDIR}/${MY_P}"
 BUILD_DIR="${S}"
 
-# Unvendor the vendored "pywrap/" subdirectory.
-src_unpack() {
-	default
-	rm -rf pywrap || die
+# Ensure the path returned by get_llvm_prefix() contains clang as well.
+llvm_check_deps() {
+	has_version -r "sys-devel/clang:${LLVM_SLOT}"
 }
 
 #FIXME: Don't submit this without getting "lief" working, as we almost
@@ -45,40 +47,65 @@ src_unpack() {
 #* Run the following command, which expects "libTK*.so.7.4.0" files to exist in
 #  the "lib_linux/" subdirectory of the passed directory:
 #      ${EPYTHON} dump_symbols.py "${T}"
+
+# OCP currently requires manual configuration, compilation, and installation as
+# performed by the conda-specific "build-bindings-job.yml" file.
 src_prepare() {
 	default
 	python_copy_sources
 
+	# Number of available hardware processors.
 	local _NPROC="$(get_nproc)"
 
-	cadquery-ocp_src_prepare() {
-		#FIXME: On bump to 7.5.x, reduce these three commands to merely:
-		#    ${EPYTHON} -m bindgen -n ${_NPROC} all ocp.toml
-		${EPYTHON} -m bindgen -n ${_NPROC} parse \
-			ocp.toml out.pkl
-		${EPYTHON} -m bindgen -n ${_NPROC} transform \
-			ocp.toml out.pkl ${BUILD_DIR}/out_f.pkl
-		${EPYTHON} -m bindgen -n ${_NPROC} generate \
-			ocp.toml out_f.pkl
-		# ${EPYTHON} -m bindgen -n ${_NPROC} parse \
-		# 	ocp.toml ${BUILD_DIR}/out.pkl
-		# ${EPYTHON} -m bindgen -n ${_NPROC} transform \
-		# 	ocp.toml ${BUILD_DIR}/out.pkl ${BUILD_DIR}/out_f.pkl
-		# ${EPYTHON} -m bindgen -n ${_NPROC} generate \
-		# 	ocp.toml ${BUILD_DIR}/out_f.pkl
+	# Most recently installed version of Clang.
+	local _CLANG_VERSION="$(CPP=clang clang-fullversion)"
 
-		#FIXME: Excise us up.
-		# mkdir -p "${MY_P}" || die
-		# echo "BUILD_DIR: ${BUILD_DIR}"
-		# cp -a out*.pkl "${BUILD_DIR}/" || die
+	# Absolute dirname of the most recently installed Clang include directory,
+	# mimicing similar logic in the "dev-python/shiboken2" ebuild. See also:
+	#     https://bugs.gentoo.org/619490
+	local _CLANG_INCLUDE_DIR="${EPREFIX}/usr/lib/clang/${_CLANG_VERSION}/include"
+
+	# Absolute filename of the most recently installed Clang shared library.
+	local _CLANG_LIB_FILE="$(get_llvm_prefix)/lib64/libclang.so"
+
+	# Most recently installed version (excluding trailing patch) of VTK.
+	local _VTK_VERSION="$(best_version -r sci-libs/vtk)"
+	_VTK_VERSION="$(ver_cut 1-2 "${_VTK_VERSION##sci-libs/vtk}")"
+
+	# Absolute dirname of the most recently installed VTK include directory,
+	local _VTK_INCLUDE_DIR="${EPREFIX}/usr/include/vtk-${_VTK_VERSION}"
+
+	# Ensure the above paths exist (as a crude sanity check).
+	test -d "${_CLANG_INCLUDE_DIR}" || die "${_CLANG_INCLUDE_DIR} not found."
+	test -f "${_CLANG_LIB_FILE}"    || die "${_CLANG_LIB_FILE} not found."
+	test -d "${_VTK_INCLUDE_DIR}"   || die "${_VTK_INCLUDE_DIR} not found."
+
+	# "dev-python/clang-python" atom targeting this Clang version.
+	local _CLANG_PYTHON_ATOM="dev-python/clang-python-${_CLANG_VERSION}"
+
+	# Ensure "dev-python/clang-python" targets this Clang version.
+	has_version -r "=${_CLANG_PYTHON_ATOM}" ||
+		die "${_CLANG_PYTHON_ATOM} not installed."
+
+	cadquery-ocp_src_prepare() {
+		#FIXME: python_foreach_impl() should do this for us, but doesn't. This
+		#is probably an eclass conflict between "python-r1" and "cmake".
+		# cd "${BUILD_DIR}" || die
+		echo 'bindgen pwd: '${PWD}
+
+		${EPYTHON} -m bindgen \
+			--verbose \
+			--libclang "${_CLANG_LIB_FILE}" \
+			--include "${_CLANG_INCLUDE_DIR}" \
+			--include "${_VTK_INCLUDE_DIR}" \
+			--njobs ${_NPROC} \
+			all ocp.toml
 
 		cmake_src_prepare
 	}
 	python_foreach_impl cadquery-ocp_src_prepare
 }
 
-# OCP currently requires manual configuration, compilation, and installation as
-# performed by the conda-specific "${S}/build-bindings-job.yml" file.
 src_configure() {
 	#FIXME: Pe probably also need to pass these VTK-specific paths:
 	# local mycmakeargs=(
@@ -120,7 +147,7 @@ src_install() {
 		echo "BUILD_DIR: ${BUILD_DIR}"
 
 		#FIXME: This almost certainly isn't quite right... *shrug*
-		python_domodule ${BUILD_DIR}/OCP.cp*-*.*
+		python_domodule "${BUILD_DIR}"/OCP.cp*-*.*
 	}
 	python_foreach_impl cadquery-ocp_src_install
 }
