@@ -54,6 +54,8 @@ src_prepare() {
 		-e 's~^\({%- macro super(cls,classes,typedefs\)\() -%}\)$~\1=[]\2~' \
 		bindgen/macros.j2 || die
 
+	#FIXME: Submit an upstream issue. This violates packaging standards,
+	#including PEP 440.
 	# Sanitize the "bindgen" version to avoid Gentoo QA notices.
 	sed -i -e 's~\(version=\)"0.1dev"~\1"'${PV}'"~' setup.py || die
 
