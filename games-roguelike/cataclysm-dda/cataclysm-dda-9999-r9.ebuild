@@ -1,11 +1,16 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 #FIXME: C:DDA ships with an undocumented and currently unsupported
-#"CMakeLists.txt" for building under CMake. Switch to this makefile when
+#"CMakeLists.txt" for building under cmake. Switch to this makefile when
 #confirmed to be reliably working.
+#FIXME: After switching to cmake, remove the "pch? ( || ( ncurses sdl ) )"
+#restriction below. Indeed, the inapplicability of that restriction to cmake is
+#one of the strongest arguments in favour of switching to cmake.
+
+inherit xdg-utils
 
 # See "COMPILING.md" in the C:DDA repository for compilation instructions.
 DESCRIPTION="Roguelike set in a post-apocalyptic world"
@@ -14,15 +19,25 @@ HOMEPAGE="https://cataclysmdda.org"
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
 IUSE="
-	astyle clang debug lintjson lto ncurses nls sdl sound test xdg
+	astyle clang debug lintjson lto ncurses nls pch sdl sound test xdg
 	kernel_linux kernel_Darwin"
+
+# Enabling precompiled headers prevents sequential compilation of both the
+# ncurses and SDL binaries. Fundamental flaws in upstream makefiles erroneously
+# attempt to reuse precompiled headers unique to the ncurses binary when
+# compiling the SDL binary, resulting in compilation errors resembling:
+#     cc1plus: error: pch/main-pch.hpp.gch: not used because `_XOPEN_SOURCE'
+#     not defined [-Werror=invalid-pch]
+# See also: https://github.com/CleverRaven/Cataclysm-DDA/issues/42598
 REQUIRED_USE="
-	sound? ( sdl )
 	|| ( ncurses sdl )
+	pch? ( ^^ ( ncurses sdl ) )
+	sound? ( sdl )
 "
 
 # Note that, while GCC also supports LTO via the gold linker, Portage appears
-# to provide no means of validating the current GCC to link with gold. *shrug*
+# to provide no way of validating the current "gcc" to link with gold. *shrug*
+IDEPEND="dev-util/desktop-file-utils"
 BDEPEND="
 	clang? (
 		sys-devel/clang
@@ -65,12 +80,12 @@ else
 	# than numbers (e.g., "0.A" rather than "1.0"). Since Portage permits
 	# version specifiers to contain only a single suffixing letter prefixed by
 	# one or more digits:
-	# * We encode these versions as "0.9${lowercase_letter}[_p${digit}]" in
-	#      ebuild filenames, where the optional suffixing "[_p${digit}]"
-	#      portion connotes a patch revision. As example, we encode upstream:
+	# * Encode these versions as "0.9${lowercase_letter}[_p${digit}]" in ebuild
+	#   filenames, where the optional suffixing "[_p${digit}]" portion connotes
+	#   a patch revision. As example, encode the upstream:
 	#   * "0.D" as "0.9d".
 	#   * "0.E-2" as "0.9e_p2".
-	# * We deencode these encoded versions here by (in order):
+	# * Deencode these encoded versions here by (in order):
 	#   1. Reducing the "0.9" in these filenames to merely "0.".
 	#   2. Reducing the "_p" in these filenames to merely "-".
 	#   3. Uppercasing the lowercase letter in these filenames.
@@ -78,8 +93,10 @@ else
 	MY_PV="${MY_PV/0.9/0.}"
 	MY_PV="${MY_PV/_p/-}"
 	MY_PV="${MY_PV^^}"
+
 	SRC_URI="https://github.com/CleverRaven/Cataclysm-DDA/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
+
 	S="${WORKDIR}/Cataclysm-DDA-${MY_PV}"
 fi
 
@@ -98,12 +115,34 @@ src_prepare() {
 	# * The makefile-specific ${BUILD_PREFIX} variable, conflicting with the
 	#   Portage-specific variable of the same name. For disambiguity, this
 	#   variable is renamed to a makefile-specific variable name.
-	sed -i\
-		-e '/\bOPTLEVEL = /s~-O.\b~~'\
-		-e '/LDFLAGS += /s~-s\b~~'\
-		-e '/RELEASE_FLAGS = /s~-Werror\b~~'\
-		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~'\
+	sed -i \
+		-e '/\bOPTLEVEL = /s~-O.\b~~' \
+		-e '/LDFLAGS += /s~-s\b~~' \
+		-e '/RELEASE_FLAGS = /s~-Werror\b~~' \
+		-e 's~\bBUILD_PREFIX\b~CATACLYSM_BUILD_PREFIX~' \
 		{tests/,}Makefile || die
+
+	# If installing a stable release, remove all globally scoped process
+	# substitutions unconditionally running "git" from makefiles to avoid:
+	#     fatal: not a git repository (or any parent up to mount point /var/tmp)
+	#     Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+	if [[ "${PV}" != 9999* ]]; then
+		sed -i -e 's~$(shell git [^)]*)~not-true~' {tests/,}Makefile || die
+	fi
+
+	# If *NOT* linting with astyle, remove all globally scoped process
+	# substitutions unconditionally running "astyle" from makefiles to avoid:
+	#     /bin/sh: line 1: astyle: command not found
+	if ! use astyle; then
+		sed -i -e 's~$(shell if $(ASTYLE_BINARY)[^)]*)~not-foo~' \
+			{tests/,}Makefile || die
+	fi
+
+	# If compiling with g++, remove the Clang-specific
+	# "-Wno-unknown-warning-option" option unsupported by g++ from makefiles.
+	if ! use clang; then
+		sed -i -e 's~-Wno-unknown-warning-option~~' {tests/,}Makefile || die
+	fi
 
 	# The makefile assumes subdirectories "obj" and "obj/tiles" both exist,
 	# which (...of course) they don't. Create these subdirectories manually.
@@ -143,13 +182,6 @@ src_compile() {
 		# Link against Portage-provided shared libraries.
 		DYNAMIC_LINKING=1
 
-		# Enable tests if requested.
-		RUNTESTS=$(usex test 1 0)
-
-		# Enable code style and JSON linting if requested.
-		ASTYLE=$(usex astyle 1 0)
-		LINTJSON=$(usex lintjson 1 0)
-
 		# Since Gentoo's ${L10N} USE_EXPAND flag conflicts with this makefile's
 		# flag of the same name, temporarily prevent the former from being
 		# passed to this makefile by overriding the current user-defined value
@@ -157,6 +189,12 @@ src_compile() {
 		# following link-time fatal error:
 		#     make: *** No rule to make target 'en', needed by 'all'.  Stop.
 		L10N=
+
+		# Conditionally enable all remaining USE flag-dependent options.
+		ASTYLE=$(usex astyle 1 0)
+		LINTJSON=$(usex lintjson 1 0)
+		PCH=$(usex pch 1 0)
+		RUNTESTS=$(usex test 1 0)
 	)
 
 	# Detect the current machine architecture and operating system.
@@ -265,25 +303,27 @@ src_test() {
 }
 
 src_install() {
+	dodoc -r README.md doc/*
+
 	# If enabling ncurses, install the ncurses-based binary.
 	#
 	# Set ${PREFIX} to refer to an installation-time rather than runtime
 	# directory (i.e., relative to ${ED} rather than ${ESYSROOT}) during the
 	# src_install() phase.
-	use ncurses && \
+	use ncurses &&
 		emake install "${CATACLYSM_EMAKE_NCURSES[@]}" PREFIX="${ED}"/usr
 
 	# If enabling SDL, install the SDL-based binary.
-	use sdl && \
+	use sdl &&
 		emake install "${CATACLYSM_EMAKE_SDL[@]}" PREFIX="${ED}"/usr
+}
 
-	# Replace a symbolic link in the documentation directory to be installed
-	# below with the physical target file of that link. These operations are
-	# non-essential to the execution of installed binaries and are thus
-	# intentionally *NOT* suffixed by "|| die"-driven protection.
-	rm doc/LOADING_ORDER.md
-	cp data/json/LOADING_ORDER.md doc/
+pkg_postinst() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
+}
 
-	# Recursively install all available documentation.
-	dodoc -r README.md doc/*
+pkg_postrm() {
+	xdg_desktop_database_update
+	xdg_icon_cache_update
 }
