@@ -5,6 +5,20 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{8..9} )
 
+#FIXME: Submit upstream issue concerning this Gentoo QA notice:
+#    * QA Notice: Package triggers severe warnings which indicate that it
+#    *            may exhibit random runtime failures.
+#    * cc1plus: warning: function may return address of local variable [-Wreturn-local-addr]
+#    In file included from /usr/include/pybind11/attr.h:13,
+#                     from /usr/include/pybind11/pybind11.h:45,
+#                     from /var/tmp/portage/dev-python/cadquery-ocp-7.4.0/work/OCP-7.4.0-python3_9/OCP/Graphic3d.cpp:6:
+#    /usr/include/pybind11/cast.h:1747:35: note: declared here
+#     1747 |     return cast_op<T>(load_type<T>(handle));
+#          |                       ~~~~~~~~~~~~^~~~~~~~
+#I'm unclear if this is a "pybind11", OpenCASCADE, or OPT issue... but it's
+#certainly *NOT* good and will prevent CadQuery from being packaged in the
+#official Portage tree.
+
 # The "cmake" eclass is intentionally omitted here despite "cmake" being run.
 # That eclass expects a "${S}/CMakeLists.txt" file during src_prepare(),
 # whereas this package uniquely generates one "${BUILD_DIR}/OCP/CMakeLists.txt"
@@ -42,18 +56,6 @@ BUILD_DIR="${S}"
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
 }
-
-#FIXME: Don't submit this without getting "lief" working, as we almost
-#certainly need to rebuild symbols on Gentoo. Specifically:
-#* Publish our own "dev-util/lief" ebuild. *sigh*
-#* Unvendor bundled "symbols_mangled_*.dat" files above: e.g.,
-#      rm -rf pywrap || die
-#      rm symbols_mangled_*.dat || die
-#* Symlink "/usr/lib64/opencascade-7.4.0/ros/lib64/" to a new directory
-#  resembling "${T}/lib_linux/".
-#* Run the following command, which expects "libTK*.so.7.4.0" files to exist in
-#  the "lib_linux/" subdirectory of the passed directory:
-#      ${EPYTHON} dump_symbols.py "${T}"
 
 # OCP currently requires manual configuration, compilation, and installation as
 # performed by the conda-specific "build-bindings-job.yml" file.
@@ -142,18 +144,12 @@ src_prepare() {
 }
 
 src_configure() {
-	#FIXME: We probably also need to pass these VTK-specific paths:
-	# local mycmakeargs=(
-	#    -DCMAKE_CXX_STANDARD_LIBRARIES="${EPREFIX}/usr/lib64/libvtkWrappingPythonCore-${_VTK_VERSION}.so"
-	#    -DCMAKE_CXX_FLAGS=-I\ "${_VTK_INCLUDE_DIR}"
-	# )
-
 	cadquery-ocp_src_configure() {
 		cd "${BUILD_DIR}" || die
 		cmake \
 			-Wno-dev \
-			-S OCP \
-			-B OCP_binary_tree \
+			-S OCP/ \
+			-B OCP.binary_tree/ \
 			-G Ninja \
 			-D CMAKE_BUILD_TYPE=Gentoo \
 			-D PYTHON_EXECUTABLE="${PYTHON}" \
@@ -165,14 +161,22 @@ src_configure() {
 src_compile() {
 	cadquery-ocp_src_compile() {
 		cd "${BUILD_DIR}" || die
-		cmake --build OCP_binary_tree -- -j $(get_nproc) || die
+		cmake --build OCP.binary_tree/ -- -j $(get_nproc) || die
 	}
 	python_foreach_impl cadquery-ocp_src_compile
 }
 
-src_install() {
-	python_moduleinto OCP
+src_test() {
+	cadquery-ocp_src_test() {
+		cd "${BUILD_DIR}" || die
+		PYTHONPATH=OCP.binary_tree ${EPYTHON} -c \
+			'from OCP.gp import gp_Vec, gp_Ax1, gp_Ax3, gp_Pnt, gp_Dir, gp_Trsf, gp_GTrsf, gp, gp_XYZ'
+	}
+	python_foreach_impl cadquery-ocp_src_test
+}
 
+src_install() {
+	python_moduleinto .
 	cadquery-ocp_src_install() {
 		cd "${BUILD_DIR}" || die
 		python_domodule OCP_binary_tree/OCP*.so
