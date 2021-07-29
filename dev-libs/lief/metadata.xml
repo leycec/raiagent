@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="project">
+		<email>sci@gentoo.org</email>
+		<name>Gentoo Science Project</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">lief-project/LIEF</remote-id>
+	</upstream>
+	<use>
+		<flag name="c">install C API</flag>
+
+        <!--FIXME: Uncomment after bumping to the next stable release.
+		<flag name="art">enable support for instrumenting ART binaries</flag>
+		<flag name="dex">enable support for instrumenting DEX binaries</flag>
+		<flag name="elf">enable support for instrumenting ELF binaries</flag>
+		<flag name="macho">enable support for instrumenting Mach0 binaries</flag>
+		<flag name="oat">enable support for instrumenting OAT binaries</flag>
+		<flag name="pe">enable support for instrumenting PE binaries</flag>
+        <flag name="vdex">enable support for instrumenting VDEX binaries</flag>
+        -->
+	</use>
+</pkgmetadata>
