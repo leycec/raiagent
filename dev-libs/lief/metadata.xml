@@ -11,14 +11,14 @@
 	<use>
 		<flag name="c">install C API</flag>
 
-        <!--FIXME: Uncomment after bumping to the next stable release.
+		<!--FIXME: Uncomment after bumping to the next stable release.
 		<flag name="art">enable support for instrumenting ART binaries</flag>
 		<flag name="dex">enable support for instrumenting DEX binaries</flag>
 		<flag name="elf">enable support for instrumenting ELF binaries</flag>
 		<flag name="macho">enable support for instrumenting Mach0 binaries</flag>
 		<flag name="oat">enable support for instrumenting OAT binaries</flag>
 		<flag name="pe">enable support for instrumenting PE binaries</flag>
-        <flag name="vdex">enable support for instrumenting VDEX binaries</flag>
-        -->
+		<flag name="vdex">enable support for instrumenting VDEX binaries</flag>
+		-->
 	</use>
 </pkgmetadata>

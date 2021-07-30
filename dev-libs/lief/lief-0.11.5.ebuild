@@ -22,8 +22,8 @@ KEYWORDS="~amd64 ~x86"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 #FIXME: Uncomment after bumping to the next stable release. See below.
-# IUSE="art c dex elf examples macho oat pe +python static-libs test vdex"
-IUSE="c examples +python static-libs test"
+# IUSE="art c dex elf examples macho oat pe +python static-libs vdex"
+IUSE="c examples +python static-libs"
 
 # See "cmake/LIEFDependencies.cmake" for C and C++ dependencies.
 BDEPEND="
@@ -68,6 +68,9 @@ src_configure() {
 	# See also:
 	# * "cmake/LIEFDependencies.cmake" for a dependency list.
 	# * "cmake/LIEFOptions.cmake" for option descriptions.
+	#
+	# Note that the "LIEF_INSTALL_PYTHON" option declared by
+	# "cmake/LIEFOptions.cmake" is vestigial, unused, and useless.
 	local mycmakeargs=(
 		-DLIEF_COVERAGE=OFF
 		-DLIEF_DISABLE_FROZEN=OFF
@@ -81,7 +84,6 @@ src_configure() {
 		-DLIEF_EXAMPLES="$(usex examples ON OFF)"
 		-DLIEF_FORCE32="$(usex x86 ON OFF)"
 		-DLIEF_FORCE_API_EXPORTS="$(usex python ON OFF)"  # <-- see "setup.py"
-		-DLIEF_INSTALL_PYTHON="$(usex python ON OFF)"
 		-DLIEF_PYTHON_API="$(usex python ON OFF)"
 
 		#FIXME: Uncomment after bumping to the next stable release. Disabling
@@ -119,4 +121,27 @@ src_configure() {
 	use python && mycmakeargs+=( -DPYTHON_EXECUTABLE="${PYTHON}" )
 
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+
+	#FIXME: This is horrible and a potential security risk. The
+	#"api/python/CMakeLists.txt" file *MUST* be patched to actually install its
+	#library via something like:
+	#    IF(LIEF_INSTALL_PYTHON)
+	#      INSTALL(
+	#        FILES ${PROJECT_BINARY_DIR}/api/python/lief.so
+	#        DESTINATION ${CMAKE_INSTALL_LIBDIR}
+	#        COMPONENT Application
+	#      )
+	#    ENDIF()
+	#Note we'll also need to add back above:
+	#    -DLIEF_INSTALL_PYTHON="$(usex python ON OFF)"
+	#See also:
+	#    https://github.com/lief-project/LIEF/issues/599#issuecomment-889670629
+	if use python; then
+		python_moduleinto .
+		python_domodule "${BUILD_DIR}/api/python/lief.so"
+	fi
 }
