@@ -19,11 +19,8 @@ SRC_URI="https://github.com/lief-project/LIEF/archive/${PV}.tar.gz -> ${P}.tar.g
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
-
-#FIXME: Uncomment after bumping to the next stable release. See below.
-# IUSE="art c dex elf examples macho oat pe +python static-libs vdex"
 IUSE="c examples +python static-libs"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 # See "cmake/LIEFDependencies.cmake" for C and C++ dependencies.
 BDEPEND="
@@ -61,6 +58,21 @@ src_prepare() {
 	# Respect "multilib"-based lib dirnames.
 	sed -i -e 's~\bDESTINATION lib\(64\)\{0,1\}\b~DESTINATION ${CMAKE_INSTALL_LIBDIR}~' \
 		CMakeLists.txt || die
+
+	# Respect "python"-based installation of Python bindings. Upstream
+	# currently fails to install these bindings and refuses to fix this,
+	# resulting in Gentoo "RUNPATH" QA notices at installation time. See also:
+	#    https://github.com/lief-project/LIEF/issues/599#issuecomment-889654343
+	cat <<- EOF >> api/python/CMakeLists.txt || die
+		if(LIEF_INSTALL_PYTHON)
+		  install(
+		    TARGETS pyLIEF
+		    DESTINATION "${D}$(python_get_sitedir)"
+		    COMPONENT libraries
+		  )
+		endif()
+	EOF
+
 	cmake_src_prepare
 }
 
@@ -79,24 +91,9 @@ src_configure() {
 		-DLIEF_SUPPORT_CXX14=ON
 		-DLIEF_USE_CCACHE=OFF
 
-		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
-		-DLIEF_C_API="$(usex c ON OFF)"
-		-DLIEF_EXAMPLES="$(usex examples ON OFF)"
-		-DLIEF_FORCE32="$(usex x86 ON OFF)"
-		-DLIEF_FORCE_API_EXPORTS="$(usex python ON OFF)"  # <-- see "setup.py"
-		-DLIEF_PYTHON_API="$(usex python ON OFF)"
-
-		#FIXME: Uncomment after bumping to the next stable release. Disabling
-		#LIEF's format options commonly causes build failure. See also:
+		# Disabling LIEF's format options causes spurious build failures.
+		# Unfortunately, upstream refuses to fix this. See also:
 		#    https://github.com/lief-project/LIEF/issues/599
-		# -DLIEF_ELF="$(usex elf ON OFF)"
-		# -DLIEF_PE="$(usex pe ON OFF)"
-		# -DLIEF_MACHO="$(usex macho ON OFF)"
-		# -DLIEF_ART="$(usex art ON OFF)"
-		# -DLIEF_DEX="$(usex dex ON OFF)"
-		# -DLIEF_OAT="$(usex oat ON OFF)"
-		# -DLIEF_VDEX="$(usex vdex ON OFF)"
-		# -DLIEF_EXTERNAL_SPDLOG=ON
 		-DLIEF_ELF=ON
 		-DLIEF_PE=ON
 		-DLIEF_MACHO=ON
@@ -105,7 +102,17 @@ src_configure() {
 		-DLIEF_OAT=ON
 		-DLIEF_VDEX=ON
 
-		#FIXME: Add USE flags governing most or all of these options.
+		-DBUILD_SHARED_LIBS="$(usex static-libs OFF ON)"
+		-DLIEF_C_API="$(usex c ON OFF)"
+		-DLIEF_EXAMPLES="$(usex examples ON OFF)"
+		-DLIEF_FORCE32="$(usex x86 ON OFF)"
+		-DLIEF_FORCE_API_EXPORTS="$(usex python ON OFF)"  # <-- see "setup.py"
+		-DLIEF_PYTHON_API="$(usex python ON OFF)"
+		-DLIEF_INSTALL_PYTHON="$(usex python ON OFF)"
+
+		#FIXME: Add USE flags governing most or all of these options. Or not.
+		#Upstream isn't testing their build process and isn't responsive to
+		#build failures.
 		-DLIEF_ENABLE_JSON=OFF
 		-DLIEF_DOC=OFF
 		-DLIEF_FUZZING=OFF
@@ -121,27 +128,4 @@ src_configure() {
 	use python && mycmakeargs+=( -DPYTHON_EXECUTABLE="${PYTHON}" )
 
 	cmake_src_configure
-}
-
-src_install() {
-	cmake_src_install
-
-	#FIXME: This is horrible and a potential security risk. The
-	#"api/python/CMakeLists.txt" file *MUST* be patched to actually install its
-	#library via something like:
-	#    IF(LIEF_INSTALL_PYTHON)
-	#      INSTALL(
-	#        FILES ${PROJECT_BINARY_DIR}/api/python/lief.so
-	#        DESTINATION ${CMAKE_INSTALL_LIBDIR}
-	#        COMPONENT Application
-	#      )
-	#    ENDIF()
-	#Note we'll also need to add back above:
-	#    -DLIEF_INSTALL_PYTHON="$(usex python ON OFF)"
-	#See also:
-	#    https://github.com/lief-project/LIEF/issues/599#issuecomment-889670629
-	if use python; then
-		python_moduleinto .
-		python_domodule "${BUILD_DIR}/api/python/lief.so"
-	fi
 }
