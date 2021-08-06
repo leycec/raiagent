@@ -17,16 +17,5 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 
-#FIXME: Enable tests, which require "nptyping", which circularly requires
-#"typish", which is insane. That's upstream for you.
+#FIXME: Tests require "nptyping" which circularly requires... "typish". *sigh*
 RESTRICT="test"
-
-src_prepare() {
-	# Prevent "setup.py" from installing tests. See also:
-	#     https://github.com/ramonhagenaars/typish/issues/28
-	sed -i -e \
-		"s~\\('tests', 'test_resources'\\)~\\1, 'tests.*', 'test_resources.*'~" \
-		setup.py || die
-
-	distutils-r1_src_prepare
-}
