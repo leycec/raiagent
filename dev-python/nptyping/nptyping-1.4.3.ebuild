@@ -14,8 +14,8 @@ HOMEPAGE="https://pypi.org/project/nptyping"
 SRC_URI="https://github.com/ramonhagenaars/nptyping/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
 SLOT="0"
+KEYWORDS="~amd64 ~x86"
 
 DEPEND="
 	dev-python/numpy[${PYTHON_USEDEP}]

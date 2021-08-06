@@ -14,8 +14,8 @@ HOMEPAGE="https://pypi.org/project/typish"
 SRC_URI="https://github.com/ramonhagenaars/typish/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
 SLOT="0"
+KEYWORDS="~amd64 ~x86"
 
 #FIXME: Tests require "nptyping" which circularly requires... "typish". *sigh*
 RESTRICT="test"
