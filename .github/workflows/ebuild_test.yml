@@ -1,0 +1,14 @@
+---
+# --------------------( SYNOPSIS                          )--------------------
+# GitHub-specific continuous integration (CI) configuration, enabling the usual
+# GitHub Actions workflow for Gentoo overlays exercised by "pkgcheck scan".
+#
+# --------------------( SEE ALSO                          )--------------------
+# * https://github.com/pkgcore/pkgcheck
+#   Upstream GitHub-hosted "pkgcheck" repository.
+# * https://github.com/gentoo-mirror/guru/blob/master/.github/workflows/pkgcheck.yml
+#   Official GURU overlay "pkgcheck" GitHub Actions workflow, mildly inspiring
+#   this similar workflow.
+
+# ....................{ TODO                              }....................
+#FIXME: Actually implement us up, please. *sigh*
