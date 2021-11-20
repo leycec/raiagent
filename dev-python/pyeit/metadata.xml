@@ -12,4 +12,8 @@
 		           remote-id type="pypi">pyEIT</remote-id-->
 		<remote-id type="github">liubenyuan/pyEIT</remote-id>
 	</upstream>
+	<use>
+        <flag name="3d">Enable 3D mesh visualization</flag>
+		<flag name="thorax">Enable thoracic mesh building and reconstruction</flag>
+	</use>
 </pkgmetadata>

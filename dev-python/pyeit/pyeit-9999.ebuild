@@ -12,11 +12,15 @@ HOMEPAGE="https://github.com/liubenyuan/pyEIT"
 
 LICENSE="BSD"
 SLOT="0"
+IUSE="3d thorax"
 
+#FIXME: Add below *AFTER* Gentoo packages "dev-python/vispy".
+#	3d? ( dev-python/vispy[${PYTHON_USEDEP}] )
 RDEPEND="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
+	thorax? ( sci-libs/shapely[${PYTHON_USEDEP}] )
 "
 
 if [[ ${PV} == 9999 ]]; then
@@ -31,6 +35,8 @@ else
 	KEYWORDS="~amd64 ~x86"
 fi
 
+DOCS=( Readme.md doc/pyEIT-data_format.pdf )
+
 #FIXME: Remove after upstream resolves the following issue:
 #    https://github.com/liubenyuan/pyEIT/issues/24
 python_prepare_all() {
@@ -38,4 +44,10 @@ python_prepare_all() {
 	sed -i -e 's~"test"~"tests", "tests.*"~' setup.py || die '"sed" failed.'
 
 	distutils-r1_python_prepare_all
+}
+
+python_install_all() {
+	[[ -d examples ]] && dodoc -r examples
+
+	distutils-r1_python_install_all
 }
