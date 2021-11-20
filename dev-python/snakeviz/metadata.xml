@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
+	<maintainer type="person">
 		<email>leycec@gmail.com</email>
 		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
 	</maintainer>
-	<longdescription>
-SnakeViz is a browser based graphical viewer for the output of Python's cProfile module. It was originally inspired by RunSnakeRun. SnakeViz works on Python 2.6, 2.7, and Python 3.
-</longdescription>
+	<stabilize-allarches/>
 	<upstream>
-		<doc lang="en">https://jiffyclub.github.io/snakeviz</doc>
-		<bugs-to>https://github.com/jiffyclub/snakeviz/issues</bugs-to>
+		<remote-id type="pypi">snakeviz</remote-id>
+		<remote-id type="github">jiffyclub/snakeviz</remote-id>
 	</upstream>
-	<!--use>
-		<flag name=""></flag>
-    </use-->
 </pkgmetadata>
