@@ -26,7 +26,7 @@ RDEPEND="
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="https://github.com/liubenyuan/pyEIT"
+	EGIT_REPO_URI="https://github.com/liubenyuan/pyEIT.git"
 	EGIT_BRANCH="master"
 	SRC_URI=""
 	KEYWORDS=""
