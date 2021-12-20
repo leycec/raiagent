@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<stabilize-allarches/>
+	<upstream>
+		<remote-id type="github">AntiMicroX/antimicrox</remote-id>
+	</upstream>
+	<use>
+		<flag name="X">Enable support for X.org [recommended]</flag>
+		<flag name="doc">Build documentation with doxygen</flag>
+		<flag name="udev">Install uinput-based udev rules</flag>
+		<flag name="uinput">Enable support for uinput (x11-libs/libXi) [recommended]</flag>
+		<flag name="xtest">Enable support for XTest (x11-libs/libXtst)</flag>
+	</use>
+</pkgmetadata>
