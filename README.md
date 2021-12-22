@@ -1,5 +1,5 @@
-raiagent ———[ …it is possibly good ]———
-=======================================
+raiagent ——[ …it is possibly good ]——
+=====================================
 
 <!---
 FIXME: Uncomment the following preferred document title, assuming we finally
@@ -98,7 +98,7 @@ Notable Python ebuilds include:
   * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast
     runtime type checker guaranteeing `O(1)` time complexity, coauthored by
     [the author of this overlay](https://github.com/leycec). Unsurprisingly,
-    `raiagent` [officially hosts 
+    `raiagent` [officially hosts
     beartype](https://github.com/beartype/beartype#features) ebuilds.
   * **[typeguard](https://github.com/agronholm/typeguard)**, a
     [*mostly* fully PEP-compliant](https://www.python.org/dev/peps/pep-0484)
@@ -110,6 +110,10 @@ Notable Python ebuilds include:
 
 Notable "enthusiast" ebuilds include:
 
+* **[AntiMicroX](https://github.com/AntiMicroX/antimicrox)**, a cross-platform
+  gamepad->{keyboard,mouse} GUI enabling gamepad support in arbitrary games
+  lacking native gamepad support. `raiagent` unofficially hosts AntiMicroX
+  ebuilds.
 * **[Munt](https://github.com/munt/munt)**, a cross-platform software
   synthesiser emulating pre-GM Roland MIDI devices (e.g.,
   [MT-32](https://en.wikipedia.org/wiki/Roland_MT-32)) commonly supported by
