@@ -3,6 +3,10 @@
 
 EAPI=8
 
+#FIXME: Sadly, rshell is currently incompatible with Python >= 3.10 due to its
+#mandatory dependency on "pyreadline", which is dead and thus fails to support
+#Python >= 3.10. See also this issue:
+#    https://github.com/dhylands/rshell/issues/171
 PYTHON_COMPAT=( python3_{8..9} )
 
 inherit distutils-r1

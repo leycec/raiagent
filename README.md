@@ -106,6 +106,20 @@ Notable Python ebuilds include:
     [typeguard](https://github.com/agronholm/typeguard) ebuilds. [See these
     timings first](https://github.com/beartype/beartype#timings), though.
 
+### (Micro|Circuit)Python
+
+Notable MicroPython and/or CircuitPython ebuilds include:
+
+* Remote CLI-based controllers, REPLs, and shells – including:
+  * **[mpremote](https://docs.micropython.org/en/latest/reference/mpremote.html)**,
+    MicroPython's official first-party remote controller that also
+    transparently supports CircuitPython. `raiagent` unofficially hosts
+    `mpremote` ebuilds.
+  * **[rshell](https://github.com/dhylands/rshell)**, a once-popular
+    MicroPython-specific remote shell largely superseded by
+    [`mpremote`](https://docs.micropython.org/en/latest/reference/mpremote.html).
+    Nonetheless, `raiagent` unofficially hosts `rshell` ebuilds.
+
 ### Retro
 
 Notable "enthusiast" ebuilds include:
