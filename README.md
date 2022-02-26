@@ -105,6 +105,11 @@ Notable Python ebuilds include:
     runtime type checker. `raiagent` unofficially hosts
     [typeguard](https://github.com/agronholm/typeguard) ebuilds. [See these
     timings first](https://github.com/beartype/beartype#timings), though.
+* **[Bluetooth Low Energy platform Agnostic Klient
+  (BLEAK)](https://github.com/hbldh/bleak)**, a popular `asyncio`-based
+  Bluetooth Low Energy (BLE) framework with extensive platform-portable native
+  support for both mobile and non-mobile app stacks. `raiagent` unofficially
+  hosts BLEAK ebuilds.
 
 ### (Micro|Circuit)Python
 
