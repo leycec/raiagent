@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<stabilize-allarches/>
+	<upstream>
+		<remote-id type="pypi">Kivy</remote-id>
+		<remote-id type="github">kivy/kivy</remote-id>
+	</upstream>
+	<use>
+		<flag name="egl">Enable EGL support</flag>
+		<flag name="gles2">Enable GLES2 support</flag>
+		<flag name="highlight">Enable syntax highlighting support via dev-python/pygments</flag>
+		<flag name="imaging">Enable image manipulation support via dev-python/pillow (recommended)</flag>
+		<flag name="pango">Enable support for x11-libs/pango</flag>
+		<flag name="pygame">Enable SDL2 support via dev-python/pygame</flag>
+		<flag name="rst">Enable reStructuredText (reST) support via dev-python/docutils</flag>
+	</use>
+</pkgmetadata>

@@ -110,6 +110,10 @@ Notable Python ebuilds include:
   Bluetooth Low Energy (BLE) framework with extensive platform-portable native
   support for both mobile and non-mobile app stacks. `raiagent` unofficially
   hosts BLEAK ebuilds.
+* **[Kivy](https://kivy.org)**, a popular user interface (UI) framework with
+  extensive platform-portable support for both desktop and mobile devices.
+  Thanks to Portage sadly last-riting Kivy several years ago, `raiagent`
+  unofficially hosts Kivy ebuilds.
 
 ### (Micro|Circuit)Python
 

@@ -17,7 +17,7 @@ SLOT="0"
 
 # Technically, "fastrlock" only optionally requires Cython. Pragmatically, an
 # uncythonized "fastrlock" is slower than "threading.RLock" and thus pointless.
-BEPEND=">=dev-python/cython[${PYTHON_USEDEP}]"
+BEPEND="dev-python/cython[${PYTHON_USEDEP}]"
 
 # TODO: Tests currently fail due to Cython build path issues:
 #    E   ImportError: cannot import name 'rlock' from 'fastrlock'
