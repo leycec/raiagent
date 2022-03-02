@@ -12,7 +12,9 @@
 		<remote-id type="github">kivy/kivy</remote-id>
 	</upstream>
 	<use>
+		<flag name="cython">Compile Kivy from Python to C via dev-python/cython (recommended)</flag>
 		<flag name="egl">Enable EGL support</flag>
+		<flag name="examples">Build and install example Kivy apps</flag>
 		<flag name="gles2">Enable GLES2 support</flag>
 		<flag name="highlight">Enable syntax highlighting support via dev-python/pygments</flag>
 		<flag name="imaging">Enable image manipulation support via dev-python/pillow (recommended)</flag>

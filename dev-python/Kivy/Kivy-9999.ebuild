@@ -13,8 +13,8 @@ HOMEPAGE="https://kivy.org"
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-	X doc egl examples gles2 highlight +imaging opengl pango pygame gstreamer
-	rst +sdl spell wayland
+	X +cython doc egl examples gles2 highlight +imaging opengl pango pygame
+	gstreamer rst +sdl spell wayland
 "
 REQUIRED_USE="
 	egl? ( opengl )
@@ -22,9 +22,15 @@ REQUIRED_USE="
 	pygame? ( sdl )
 "
 
-BEPEND="dev-python/cython[${PYTHON_USEDEP}]"
+BEPEND="
+	virtual/pkgconfig
+	cython? ( >=dev-python/cython-0.24.0[${PYTHON_USEDEP}] )
+"
 RDEPEND="
-	X? ( x11-libs/libX11 )
+	X? (
+		x11-libs/libX11
+		x11-libs/libXrender
+	)
 	gstreamer? ( dev-python/gst-python:1.0[${PYTHON_USEDEP}] )
 	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
 	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
@@ -45,9 +51,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
-#FIXME: Excise if unneeded.
-# S="${WORKDIR}/${P,,}"
-# DISTUTILS_IN_SOURCE_BUILD=1
+DISTUTILS_IN_SOURCE_BUILD=
 
 distutils_enable_tests pytest
 distutils_enable_sphinx docs
@@ -60,9 +64,28 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+	# Strip all underscores from this package's version (e.g., reduce
+	# "2.3.0_rc3" to "2.3.0rc3").
+	MY_PV=${PV//_}
+	MY_P=${PN}-${MY_PV}
+
+	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${MY_P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
+
+	S="${WORKDIR}/${MY_P}"
 fi
+
+python_prepare_all() {
+	# If disabling Cython support, patch away a relevant boolean in "setup.py".
+	# See also this open issue: https://github.com/kivy/kivy/issues/7823
+	if ! use cython; then
+		sed -i -e \
+			's~\(can_use_cython = \)True~\1False~' \
+			setup.py || die '"sed" failed.'
+	fi
+
+	distutils-r1_python_prepare_all
+}
 
 python_compile() {
 	# Export environment variables expected by this package's "setup.py"
@@ -73,14 +96,14 @@ python_compile() {
 	# * The values of these variables *MUST* be either:
 	#   * "1" to signify a "True" boolean value.
 	#   * "0" to signify a "False" boolean value.
-	export USE_EGL=$(usex egl 1 0)
-	export USE_OPENGL_ES2=$(usex gles2 1 0)
-	export USE_SDL2=$(usex sdl 1 0)
-	export USE_PANGOFT2=$(usex pango 1 0)
-	export USE_MESAGL=$(usex opengl 1 0)
-	export USE_X11=$(usex X 1 0)
-	export USE_WAYLAND=$(usex wayland 1 0)
-	export USE_GSTREAMER=$(usex gstreamer 1 0)
-
-	distutils-r1_python_compile
+	USE_EGL=$(usex egl 1 0) \
+	USE_OPENGL_ES2=$(usex gles2 1 0) \
+	USE_SDL2=$(usex sdl 1 0) \
+	USE_PANGOFT2=$(usex pango 1 0) \
+	USE_MESAGL=$(usex opengl 1 0) \
+	USE_X11=$(usex X 1 0) \
+	USE_WAYLAND=$(usex wayland 1 0) \
+	USE_GSTREAMER=$(usex gstreamer 1 0) \
+	KIVY_BUILD_EXAMPLES=$(usex examples 1 0) \
+		distutils-r1_python_compile
 }
