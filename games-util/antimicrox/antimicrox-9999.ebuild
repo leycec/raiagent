@@ -64,6 +64,7 @@ src_configure() {
 		-DWITH_UINPUT=$(usex uinput ON OFF)
 		-DWITH_X11=$(usex X ON OFF)
 		-DWITH_XTEST=$(usex xtest ON OFF)
+		-DCHECK_FOR_UPDATES=OFF
 	)
 
 	cmake_src_configure
