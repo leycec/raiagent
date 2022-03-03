@@ -26,7 +26,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 # the most recent unstable package tagged in Portage for this package, we
 # necessarily package this minimum commit ourselves. (It is bad, guys.)
 #
-# Note that "autotools" is *NOT* a dependency of "coincurve", despite being 
+# Note that "autotools" is *NOT* a dependency of "coincurve", despite being
 # prominently listed at the above URL. "coincurve" only requires "autotools"
 # when manually downloading and recompiling "libsecp256k1", which we avoid.
 BDEPEND="

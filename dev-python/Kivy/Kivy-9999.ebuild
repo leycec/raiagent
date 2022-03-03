@@ -88,6 +88,10 @@ python_prepare_all() {
 }
 
 python_compile() {
+	#FIXME: Add the following back below *AFTER* upstream resolves this issue:
+	#    https://github.com/kivy/kivy/issues/7824
+	# USE_MESAGL=$(usex opengl 1 0) \
+
 	# Export environment variables expected by this package's "setup.py"
 	# (listed in the same order for maintainability). However, note that:
 	# * These variables are almost entirely undocumented. It is what it is.
@@ -100,7 +104,6 @@ python_compile() {
 	USE_OPENGL_ES2=$(usex gles2 1 0) \
 	USE_SDL2=$(usex sdl 1 0) \
 	USE_PANGOFT2=$(usex pango 1 0) \
-	USE_MESAGL=$(usex opengl 1 0) \
 	USE_X11=$(usex X 1 0) \
 	USE_WAYLAND=$(usex wayland 1 0) \
 	USE_GSTREAMER=$(usex gstreamer 1 0) \
