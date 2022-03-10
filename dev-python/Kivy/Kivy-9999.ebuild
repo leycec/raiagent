@@ -3,6 +3,9 @@
 
 EAPI=8
 
+#FIXME: Migrate to the new "DISTUTILS_USE_PEP517=setuptools" mode. See also:
+#    https://projects.gentoo.org/python/guide/distutils.html
+
 PYTHON_COMPAT=( python3_{8..10} )
 
 inherit distutils-r1
@@ -14,7 +17,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 	X +cython doc egl examples gles2 highlight +imaging opengl pango pygame
-	gstreamer rst +sdl spell wayland
+	gstreamer rst +sdl spell vim-syntax wayland
 "
 REQUIRED_USE="
 	egl? ( opengl )
@@ -22,20 +25,26 @@ REQUIRED_USE="
 	pygame? ( sdl )
 "
 
+# All Kivy dependencies (except those enabling "USE_*" environment variables
+# exported by the python_compile() phase) are runtime-only.
 BEPEND="
 	virtual/pkgconfig
 	cython? ( >=dev-python/cython-0.24.0[${PYTHON_USEDEP}] )
 "
-RDEPEND="
+DEPEND="
 	X? (
 		x11-libs/libX11
 		x11-libs/libXrender
 	)
 	gstreamer? ( dev-python/gst-python:1.0[${PYTHON_USEDEP}] )
-	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
-	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	opengl? ( media-libs/mesa[X?,egl?,gles2?,wayland?] )
 	pango? ( x11-libs/pango[X?] )
+	wayland? ( dev-libs/wayland )
+"
+RDEPEND="${DEPEND}
+	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
+	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
+	rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 	sdl? (
 		pygame? ( dev-python/pygame[X?,opengl?,${PYTHON_USEDEP}] )
 		!pygame? (
@@ -45,11 +54,8 @@ RDEPEND="
 			media-libs/sdl2-ttf
 		)
 	)
-	rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 	spell? ( dev-python/pyenchant[${PYTHON_USEDEP}] )
-	wayland? ( dev-libs/wayland )
 "
-DEPEND="${RDEPEND}"
 
 DISTUTILS_IN_SOURCE_BUILD=
 
@@ -79,9 +85,13 @@ python_prepare_all() {
 	# If disabling Cython support, patch away a relevant boolean in "setup.py".
 	# See also this open issue: https://github.com/kivy/kivy/issues/7823
 	if ! use cython; then
-		sed -i -e \
-			's~\(can_use_cython = \)True~\1False~' \
-			setup.py || die '"sed" failed.'
+		sed -i -e 's~\(can_use_cython = \)True~\1False~' setup.py || die
+	fi
+
+	# If enabling Vim integration, strip all Windows-specific carriage return
+	# characters from files subsequently installed by this USE flag.
+	if use vim-syntax; then
+		sed -i -e 's~'$'\r''~~g' kivy/tools/highlight/kivy.vim || die
 	fi
 
 	distutils-r1_python_prepare_all
@@ -109,4 +119,13 @@ python_compile() {
 	USE_GSTREAMER=$(usex gstreamer 1 0) \
 	KIVY_BUILD_EXAMPLES=$(usex examples 1 0) \
 		distutils-r1_python_compile
+}
+
+python_install_all() {
+	if use vim-syntax; then
+		insinto /usr/share/vim/vimfiles/syntax
+		doins kivy/tools/highlight/kivy.vim
+	fi
+
+	distutils-r1_python_install_all
 }
