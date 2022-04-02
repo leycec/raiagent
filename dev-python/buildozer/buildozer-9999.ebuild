@@ -4,31 +4,21 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..10} pypy3 )
 
 inherit distutils-r1
 
-DESCRIPTION="Collection of Material Design-compliant widgets for use with Kivy"
-HOMEPAGE="https://kivymd.readthedocs.io"
+DESCRIPTION="Generic Python packager for Android and iOS"
+HOMEPAGE="https://buildozer.readthedocs.io"
 
 LICENSE="MIT"
 SLOT="0"
 
 # Dependencies derive from "setup.py", as expected.
-BEPEND="
-	doc? (
-		>=dev-python/sphinx-autoapi-1.4.0[${PYTHON_USEDEP}]
-		dev-python/sphinx-notfound-page[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)
-	test? (
-		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-	)
-"
 DEPEND="
-	>=dev-python/Kivy-2.0.0[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	dev-python/pexpect[${PYTHON_USEDEP}]
+	dev-python/sh[${PYTHON_USEDEP}]
+	dev-python/virtualenv[${PYTHON_USEDEP}]
 "
 RDEPEND="${DEPEND}"
 
@@ -39,7 +29,7 @@ distutils_enable_sphinx docs
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="https://github.com/kivymd/KivyMD.git"
+	EGIT_REPO_URI="https://github.com/kivy/buildozer.git"
 	EGIT_BRANCH="master"
 	SRC_URI=""
 	KEYWORDS=""

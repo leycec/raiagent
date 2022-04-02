@@ -3,9 +3,7 @@
 
 EAPI=8
 
-#FIXME: Migrate to the new "DISTUTILS_USE_PEP517=setuptools" mode. See also:
-#    https://projects.gentoo.org/python/guide/distutils.html
-
+DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..10} )
 
 inherit distutils-r1
@@ -16,8 +14,8 @@ HOMEPAGE="https://kivy.org"
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-	X +cython doc egl examples gles2 highlight +imaging opengl pango pygame
-	gstreamer rst +sdl spell vim-syntax wayland
+	X +buildozer +cython doc egl examples gles2 highlight +imaging opengl pango
+	pygame gstreamer rst +sdl spell vim-syntax wayland
 "
 REQUIRED_USE="
 	egl? ( opengl )
@@ -26,7 +24,8 @@ REQUIRED_USE="
 "
 
 # All Kivy dependencies (except those enabling "USE_*" environment variables
-# exported by the python_compile() phase) are runtime-only.
+# exported by the python_compile() phase) are runtime-only. Note that pygame
+# and SDL2 are mutually incompatible, as the former assumes SDL1.
 BEPEND="
 	virtual/pkgconfig
 	cython? ( >=dev-python/cython-0.24.0[${PYTHON_USEDEP}] )
@@ -42,6 +41,7 @@ DEPEND="
 	wayland? ( dev-libs/wayland )
 "
 RDEPEND="${DEPEND}
+	buildozer? ( dev-python/buildozer[${PYTHON_USEDEP}] )
 	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
 	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
@@ -59,7 +59,8 @@ RDEPEND="${DEPEND}
 
 DISTUTILS_IN_SOURCE_BUILD=
 
-distutils_enable_tests pytest
+#FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
+# distutils_enable_tests pytest
 distutils_enable_sphinx docs
 
 if [[ ${PV} == 9999 ]]; then
