@@ -8,11 +8,7 @@
 	</maintainer>
 	<stabilize-allarches/>
 	<upstream>
-		<remote-id type="pypi">buildozer</remote-id>
-		<remote-id type="github">kivy/buildozer</remote-id>
+		<remote-id type="pypi">python-for-android</remote-id>
+		<remote-id type="github">kivy/python-for-android</remote-id>
 	</upstream>
-	<use>
-		<flag name="android">Package for Android via dev-python/python-for-android (recommended)</flag>
-		<flag name="ios">Package for iOS via dev-python/kivy-ios (recommended)</flag>
-    </use>
 </pkgmetadata>

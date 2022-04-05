@@ -8,11 +8,12 @@ PYTHON_COMPAT=( python3_{8..10} pypy3 )
 
 inherit distutils-r1
 
-DESCRIPTION="Generic Python packager for Android and iOS"
+DESCRIPTION="Kivy-friendly tool for packaging Python to mobile and desktop"
 HOMEPAGE="https://buildozer.readthedocs.io"
 
 LICENSE="MIT"
 SLOT="0"
+IUSE="android ios"
 
 # Dependencies derive from "setup.py", as expected.
 DEPEND="
@@ -20,7 +21,10 @@ DEPEND="
 	dev-python/sh[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
 "
-RDEPEND="${DEPEND}"
+RDEPEND="${DEPEND}
+	android? ( dev-python/python-for-android[${PYTHON_USEDEP}] )
+	ios? ( dev-python/kivy-ios[${PYTHON_USEDEP}] )
+"
 
 #FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
 # distutils_enable_tests pytest

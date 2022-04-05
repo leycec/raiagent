@@ -115,12 +115,16 @@ Notable Python ebuilds include:
     framework with extensive platform-portable support for both desktop and
     mobile devices. Thanks to Portage sadly last-riting Kivy several years ago,
     `raiagent` unofficially hosts Kivy ebuilds.
-  * **[Buildozer](https://buildozer.readthedocs.io)**, Kivy's officially
-    supported utility for cross-compiling self-contained executable apps.
-    `raiagent` unofficially hosts Buildozer ebuilds.
   * **[KivyMD](https://github.com/kivymd/KivyMD)**, an aesthetically pleasing
     suite of Google Material Design (MD)-compliant Kivy widgets. `raiagent`
     unofficially hosts KivyMD ebuilds.
+  * **[Buildozer](https://buildozer.readthedocs.io)**, Kivy's officially
+    supported toolchain for cross-compiling self-contained executable apps.
+    `raiagent` unofficially hosts Buildozer ebuilds *and* ebuilds for optional
+    runtime dependencies of Buildozer for popular mobile platforms – including:
+    * **[`python-for-android`](https://python-for-android.readthedocs.io)**, a
+      toolchain for cross-compiling self-contained executable apps as Android
+      APKs and Android App Bundles (AABs).
 
 ### (Micro|Circuit)Python
 
