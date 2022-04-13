@@ -14,20 +14,28 @@ HOMEPAGE="https://python-for-android.readthedocs.io"
 LICENSE="MIT"
 SLOT="0"
 
+#FIXME: Buildozer defaults to internally fetching appropriate versions of the
+#Android NDK and SDK. It's probably best to let it do so. Nonetheless, note
+#that "buildozer.spec" files can technically be configured to point to
+#system-wide Android NDK installations. That said, since there appears to be
+#little point in doing so, we currently disable this requirement.
+# # Ideally, we would depend upon the same minimum version of the Android NDK and
+# # SDK advised by that documentation. Since Portage fails to package
+# # sufficiently recent versions of the Android NDK, however, that's infeasible.
+# # Instead, we advise users to install both from a third-party overlay. Since
+# # packaging either is extremely non-trivial, we defer to this other overlays.
+# # As of this writing, we prefer @msva's high-quality mva overlay residing at:
+# #     https://github.com/msva/mva-overlay
+# #
+# # Lastly, note that the "android-ndk" ebuild implicitly requires the
+# # "android-sdk-update-manager" ebuild. Ergo, we list only the former.
+# RDEPEND="${DEPEND}
+# 	dev-util/android-ndk
+# "
+
 # Build-time dependencies derive from the "install_reqs" global variable in
 # "setup.py". Runtime dependencies derive from online documentation at:
 #     https://python-for-android.readthedocs.io/en/latest/quickstart/#installation
-#
-# Ideally, we would depend upon the same minimum version of the Android NDK and
-# SDK advised by that documentation. Since Portage fails to package
-# sufficiently recent versions of the Android NDK, however, that's infeasible.
-# Instead, we advise users to install both from a third-party overlay. Since
-# packaging either is extremely non-trivial, we defer to this other overlays.
-# As of this writing, we prefer @msva's high-quality mva overlay residing at:
-#     https://github.com/msva/mva-overlay
-#
-# Lastly, note that the "android-ndk" ebuild implicitly requires the
-# "android-sdk-update-manager" ebuild. Ergo, we list only the former.
 DEPEND="
 	dev-python/appdirs[${PYTHON_USEDEP}]
 	dev-python/pep517[${PYTHON_USEDEP}]
@@ -37,9 +45,7 @@ DEPEND="
 	>=dev-python/jinja-2.0.0[${PYTHON_USEDEP}]
 	>=dev-python/sh-1.10.0[${PYTHON_USEDEP}]
 "
-RDEPEND="${DEPEND}
-	dev-util/android-ndk
-"
+RDEPEND="${DEPEND}"
 
 #FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
 # distutils_enable_tests pytest
