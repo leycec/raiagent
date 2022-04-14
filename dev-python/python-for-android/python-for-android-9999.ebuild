@@ -32,6 +32,14 @@ SLOT="0"
 # RDEPEND="${DEPEND}
 # 	dev-util/android-ndk
 # "
+#FIXME: Actually, we should probably emit a post-installation message noting
+#that Android Studio installs the Android SDK to "~/Android". Ergo,
+#"buildozer.spec" can be configured to point to that rather than refetching and
+#reinstalling the SDK elsewhere.
+#FIXME: Actually, it appears that may *NOT* necessarily work -- at least, not
+#as of a decade ago, which is admittedly ancient. According to this 2014 issue
+#thread, Buildozer requires write access to the SDK directory: *facepalm*
+#    https://github.com/kivy/buildozer/issues/169#issuecomment-68239361
 
 # Build-time dependencies derive from the "install_reqs" global variable in
 # "setup.py". Runtime dependencies derive from online documentation at:

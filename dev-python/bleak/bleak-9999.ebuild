@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..10} pypy3 )
 
 inherit distutils-r1
@@ -17,6 +18,7 @@ BDEPEND="test? ( dev-python/pytest-asyncio[${PYTHON_USEDEP}] )"
 RDEPEND="dev-python/dbus_next[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
 
+distutils_enable_sphinx docs dev-python/sphinx_rtd_theme
 distutils_enable_tests pytest
 
 if [[ ${PV} == 9999 ]]; then
@@ -30,3 +32,9 @@ else
 	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 fi
+
+python_install_all() {
+	[[ -d examples ]] && dodoc -r examples
+
+	distutils-r1_python_install_all
+}
