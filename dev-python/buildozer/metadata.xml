@@ -13,6 +13,6 @@
 	</upstream>
 	<use>
 		<flag name="android">Package for Android via dev-python/python-for-android (recommended)</flag>
-		<flag name="ios">Package for iOS via dev-python/kivy-ios (recommended)</flag>
+		<flag name="ios">Package for iOS via dev-python/kivy-ios (currently broken)</flag>
     </use>
 </pkgmetadata>

@@ -9,7 +9,7 @@ EAPI=8
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..10} pypy3 )
 
-inherit distutils-r1
+inherit readme.gentoo-r1 distutils-r1
 
 DESCRIPTION="Kivy-friendly tool for packaging Python to Android"
 HOMEPAGE="https://python-for-android.readthedocs.io"
@@ -56,47 +56,36 @@ DEPEND="
 	>=dev-python/sh-1.10.0[${PYTHON_USEDEP}]
 "
 
+#FIXME: List all remaining dependencies listed at the URL below, please.
 # Runtime dependencies derive from online documentation at:
-#     https://python-for-android.readthedocs.io/en/latest/quickstart/#installation
-# Sadly, that documentation fails to list all requisite runtime dependencies,
-# which we manually harvested by inspection of standard output emitted by the
-# "buildozer android debug" command on a local toy project. Notably:
-#     $ buildozer android debug
-#     # Check configuration tokens
-#     # Ensure build layout
-#     # Check configuration tokens
-#     # Read available permissions from api-versions.xml
-#     # Preparing build
-#     # Check requirements for android
-#     # Run 'dpkg --version'
-#     # Cwd None
-#     /bin/sh: line 1: dpkg: command not found
-#     # Search for Git (git)
-#     #  -> found at /usr/bin/git
-#     # Search for Cython (cython)
-#     #  -> found at /usr/lib/python-exec/python-exec2
-#     # Search for Java compiler (javac)
-#     #  -> found at /usr/libexec/eselect-java/run-java-tool.bash
-#     # Search for Java keytool (keytool)
-#     #  -> found at /usr/libexec/eselect-java/run-java-tool.bash
-#     # Install platform
-#     # Run 'git clone -b master --single-branch https://github.com/kivy/python-for-android.git python-for-android'
-#     Cloning into 'python-for-android'...
-#     # Run '/usr/lib/python-exec/python3.8/python3 -m pip install -q --user \'appdirs\' \'colorama>=0.3.3\' \'jinja2\' \'six\' \'enum34; python_version<"3.4"\' \'sh>=1.10; sys_platform!="nt"\' \'pep517<0.7.0\' \'toml\''
-#     # Cwd None
+#     https://python-for-android.readthedocs.io/en/latest/quickstart/#installing-dependencies
 #
-# Note that "python-for-android" ignores numerous system-wide runtime
-# dependencies by default, including Java Ant and the Android NDK and SDK.
-# Instructing "python-for-android" to accept these system-wide runtime
-# dependencies requires modifying the project-specific "buildozer.spec" file
-# for the current app being built. Since an ebuild clearly has no means of
-# safely performing those modifications, we ignore those dependencies and let
+# Note that Buildozer ignores numerous system-wide runtime dependencies by
+# default, including Java Ant and the Android NDK and SDK. Instructing
+# "python-for-android" to accept these system-wide runtime dependencies
+# requires modifying the project-specific "buildozer.spec" file for the current
+# app being built. Since an ebuild clearly has no means of safely performing
+# those modifications, we ignore those dependencies and let
 # "python-for-android" locally download and extract duplicate copies into the
 # "~/.buildozer/android/" subdirectory. *facepalm*
 RDEPEND="${DEPEND}
+	sys-devel/automake
+	sys-devel/autoconf
+	dev-util/cmake
+	dev-util/ninja
 	dev-python/cython[${PYTHON_USEDEP}]
-	dev-python/pip[${PYTHON_USEDEP}]
+	sys-devel/gcc
 	dev-vcs/git
+	sys-libs/ncurses[abi_x86_32(-)]
+	sys-devel/libtool
+	dev-libs/openssl
+	virtual/jdk
+	sys-devel/patch
+	app-arch/unzip
+	dev-python/virtualenv[${PYTHON_USEDEP}]
+	sys-libs/zlib[abi_x86_32(-)]
+	app-arch/zip
+	dev-python/pip[${PYTHON_USEDEP}]
 "
 
 #FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
