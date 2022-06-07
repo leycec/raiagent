@@ -14,7 +14,7 @@ HOMEPAGE="https://kivymd.readthedocs.io"
 LICENSE="MIT"
 SLOT="0"
 
-# Dependencies derive from "setup.py", as expected.
+# Dependencies derive from "setup.py" despite the existence of "pyproject.toml".
 BEPEND="
 	doc? (
 		>=dev-python/sphinx-autoapi-1.4.0[${PYTHON_USEDEP}]

@@ -14,11 +14,10 @@ HOMEPAGE="https://kivy.org"
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-	X +buildozer +cython doc egl examples gles2 highlight +imaging opengl pango
+	X +buildozer +cython doc examples gles2 highlight +imaging opengl pango
 	pygame gstreamer rst +sdl spell vim-syntax wayland
 "
 REQUIRED_USE="
-	egl? ( opengl )
 	gles2? ( opengl )
 	pygame? ( sdl )
 "
@@ -36,7 +35,7 @@ DEPEND="
 		x11-libs/libXrender
 	)
 	gstreamer? ( dev-python/gst-python:1.0[${PYTHON_USEDEP}] )
-	opengl? ( media-libs/mesa[X?,egl?,gles2?,wayland?] )
+	opengl? ( media-libs/mesa[X?,gles2?,wayland?] )
 	pango? ( x11-libs/pango[X?] )
 	wayland? ( dev-libs/wayland )
 "
@@ -111,7 +110,7 @@ python_compile() {
 	# * The values of these variables *MUST* be either:
 	#   * "1" to signify a "True" boolean value.
 	#   * "0" to signify a "False" boolean value.
-	USE_EGL=$(usex egl 1 0) \
+	USE_EGL=$(usex opengl 1 0) \
 	USE_OPENGL_ES2=$(usex gles2 1 0) \
 	USE_SDL2=$(usex sdl 1 0) \
 	USE_PANGOFT2=$(usex pango 1 0) \
