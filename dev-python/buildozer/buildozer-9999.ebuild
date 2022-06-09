@@ -23,8 +23,10 @@ DEPEND="
 "
 RDEPEND="${DEPEND}
 	android? ( dev-python/python-for-android[${PYTHON_USEDEP}] )
-	ios? ( dev-python/kivy-ios[${PYTHON_USEDEP}] )
 "
+
+#FIXME: Add this line to "RDEPEND" above *AFTER* we actually create that ebuild.
+	# ios? ( dev-python/kivy-ios[${PYTHON_USEDEP}] )
 
 #FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
 # distutils_enable_tests pytest
