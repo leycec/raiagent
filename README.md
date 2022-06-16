@@ -100,6 +100,12 @@ Notable Python ebuilds include:
     [the author of this overlay](https://github.com/leycec). Unsurprisingly,
     `raiagent` [officially hosts
     beartype](https://github.com/beartype/beartype#features) ebuilds.
+  * **[pyright](https://github.com/microsoft/pyright)**, Microsoft's
+    permissively licensed open-source static type checker. Due to its strong
+    performance guarantees, `pyright` is typically the default static
+    type-checking solution for Python in Interactive Development Environments
+    (IDEs) as diverse as VSCode and Vim. `raiagent` unofficially hosts pyright
+    ebuilds.
   * **[typeguard](https://github.com/agronholm/typeguard)**, a
     [*mostly* fully PEP-compliant](https://www.python.org/dev/peps/pep-0484)
     runtime type checker. `raiagent` unofficially hosts
