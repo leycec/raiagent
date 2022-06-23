@@ -20,6 +20,7 @@
 		<flag name="imaging">Enable image manipulation support via dev-python/pillow (recommended)</flag>
 		<flag name="pango">Enable support for x11-libs/pango</flag>
 		<flag name="pygame">Enable SDL2 support via dev-python/pygame</flag>
+		<flag name="pytest">Enable downstream "kivy.tests" Kivy app testing via dev-python/pytest</flag>
 		<flag name="rst">Enable reStructuredText (reST) support via dev-python/docutils</flag>
 	</use>
 </pkgmetadata>

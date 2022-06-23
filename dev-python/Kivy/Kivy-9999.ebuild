@@ -15,7 +15,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 	X +buildozer +cython doc examples gles2 highlight +imaging opengl pango
-	pygame gstreamer rst +sdl spell vim-syntax wayland
+	pygame pytest gstreamer rst +sdl spell vim-syntax wayland
 "
 REQUIRED_USE="
 	gles2? ( opengl )
@@ -43,6 +43,10 @@ RDEPEND="${DEPEND}
 	buildozer? ( dev-python/buildozer[${PYTHON_USEDEP}] )
 	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
 	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
+	pytest? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
+	)
 	rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 	sdl? (
 		pygame? ( dev-python/pygame[X?,opengl?,${PYTHON_USEDEP}] )
