@@ -25,6 +25,29 @@ REQUIRED_USE="
 # All Kivy dependencies (except those enabling "USE_*" environment variables
 # exported by the python_compile() phase) are runtime-only. Note that pygame
 # and SDL2 are mutually incompatible, as the former assumes SDL1.
+#
+# However, note that Kivy's "setup.cfg" file lists numerous *OPTIONAL RUNTIME*
+# dependencies as *MANDATORY BUILD-TIME* dependencies, including:
+#     install_requires =
+#         Kivy-Garden>=0.1.4
+#         docutils
+#         pygments
+#
+# Technically, we *COULD* omit those dependencies below. Why? Because Portage's
+# PEP 517-compliant integration with "setuptools" ignores "setup.cfg".
+# Pragmatically, doing so would erroneously attempt to install one or more of
+# those dependencies when a downstream user editably installs their Kivy app:
+#     # This will attempt to install those dependencies.
+#     $ sudo python3.10 -m pip install -e .
+#
+# Ergo, we defer to Kivy's erroneous "setup.cfg" and list those dependencies.
+# When Kivy removes those dependencies from "setup.cfg":
+# * The "highlight" USE flag will still require an optional runtime dependency
+#   on "pygments": e.g., 
+#       highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
+# * The "rst" USE flag will still require an optional runtime dependency on
+#   "docutils": e.g., 
+#       rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 BEPEND="
 	virtual/pkgconfig
 	cython? ( >=dev-python/cython-0.24.0[${PYTHON_USEDEP}] )
@@ -40,14 +63,15 @@ DEPEND="
 	wayland? ( dev-libs/wayland )
 "
 RDEPEND="${DEPEND}
+	dev-python/Kivy-Garden[${PYTHON_USEDEP}]
+	dev-python/docutils[${PYTHON_USEDEP}]
+	dev-python/pygments[${PYTHON_USEDEP}]
 	buildozer? ( dev-python/buildozer[${PYTHON_USEDEP}] )
-	highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
 	imaging? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	pytest? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 	)
-	rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 	sdl? (
 		pygame? ( dev-python/pygame[X?,opengl?,${PYTHON_USEDEP}] )
 		!pygame? (
