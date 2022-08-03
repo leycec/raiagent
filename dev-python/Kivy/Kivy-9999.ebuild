@@ -14,8 +14,8 @@ HOMEPAGE="https://kivy.org"
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-	X +buildozer +cython doc examples gles2 highlight +imaging opengl pango
-	pygame pytest gstreamer rst +sdl spell vim-syntax wayland
+	X +buildozer doc examples gles2 highlight +imaging opengl pango pygame
+	pytest gstreamer rst +sdl spell vim-syntax wayland
 "
 REQUIRED_USE="
 	gles2? ( opengl )
@@ -23,11 +23,11 @@ REQUIRED_USE="
 "
 
 # All Kivy dependencies (except those enabling "USE_*" environment variables
-# exported by the python_compile() phase) are runtime-only. Note that pygame
-# and SDL2 are mutually incompatible, as the former assumes SDL1.
-#
-# However, note that Kivy's "setup.cfg" file lists numerous *OPTIONAL RUNTIME*
-# dependencies as *MANDATORY BUILD-TIME* dependencies, including:
+# exported by the python_compile() phase) are runtime-only. Note that:
+# * Cython is mandatory, despite "setup.py" containing a "can_use_cython" bool.
+# * Pygame and SDL2 are mutually incompatible, as the former assumes SDL1.
+# * "setup.cfg" lists numerous *OPTIONAL RUNTIME* dependencies as *MANDATORY
+#   BUILD-TIME* dependencies, including:
 #     install_requires =
 #         Kivy-Garden>=0.1.4
 #         docutils
@@ -43,14 +43,14 @@ REQUIRED_USE="
 # Ergo, we defer to Kivy's erroneous "setup.cfg" and list those dependencies.
 # When Kivy removes those dependencies from "setup.cfg":
 # * The "highlight" USE flag will still require an optional runtime dependency
-#   on "pygments": e.g., 
+#   on "pygments": e.g.,
 #       highlight? ( dev-python/pygments[${PYTHON_USEDEP}] )
 # * The "rst" USE flag will still require an optional runtime dependency on
-#   "docutils": e.g., 
+#   "docutils": e.g.,
 #       rst? ( dev-python/docutils[${PYTHON_USEDEP}] )
 BEPEND="
 	virtual/pkgconfig
-	cython? ( >=dev-python/cython-0.24.0[${PYTHON_USEDEP}] )
+	>=dev-python/cython-0.24.0[${PYTHON_USEDEP}]
 "
 DEPEND="
 	X? (
@@ -110,12 +110,6 @@ else
 fi
 
 python_prepare_all() {
-	# If disabling Cython support, patch away a relevant boolean in "setup.py".
-	# See also this open issue: https://github.com/kivy/kivy/issues/7823
-	if ! use cython; then
-		sed -i -e 's~\(can_use_cython = \)True~\1False~' setup.py || die
-	fi
-
 	# If enabling Vim integration, strip all Windows-specific carriage return
 	# characters from files subsequently installed by this USE flag.
 	if use vim-syntax; then
@@ -129,6 +123,8 @@ python_compile() {
 	#FIXME: Add the following back below *AFTER* upstream resolves this issue:
 	#    https://github.com/kivy/kivy/issues/7824
 	# USE_MESAGL=$(usex opengl 1 0) \
+	#FIXME: Additionally add support for "KIVY_SPLIT_EXAMPLES". Since we're
+	#unsure what exactly that does, we choose to conveniently ignore that.
 
 	# Export environment variables expected by this package's "setup.py"
 	# (listed in the same order for maintainability). However, note that:
@@ -138,6 +134,18 @@ python_compile() {
 	# * The values of these variables *MUST* be either:
 	#   * "1" to signify a "True" boolean value.
 	#   * "0" to signify a "False" boolean value.
+	# * The "KIVY_BUILD_EXAMPLES" environment variable (and corresponding
+	#   "--build-examples" option) should *NEVER* be enabled. For unknown
+	#   reasons, Kivy reuses the same "setup.py" script to install either Kivy
+	#   *OR* the external "Kivy-examples" package. That's not the insane part.
+	#   The insane part is that these two installation targets are mutually
+	#   exclusive. You can either install Kivy *OR* you can install
+	#   "Kivy-examples". Pick one. Obviously, anyone installing Kivy wants Kivy
+	#   to be installed. If they wanted a separate "Kivy-examples" package, they
+	#   should have just packaged "Kivy-examples" as a real honest project.
+	# * The "KIVY_SPLIT_EXAMPLES" environment variable installs examples to an
+	#   unversioned "/usr/share/kivy-examples" directory, which violates Gentoo
+	#   packaging norms. Instead, we simply manually install examples below.
 	USE_EGL=$(usex opengl 1 0) \
 	USE_OPENGL_ES2=$(usex gles2 1 0) \
 	USE_SDL2=$(usex sdl 1 0) \
@@ -145,11 +153,16 @@ python_compile() {
 	USE_X11=$(usex X 1 0) \
 	USE_WAYLAND=$(usex wayland 1 0) \
 	USE_GSTREAMER=$(usex gstreamer 1 0) \
-	KIVY_BUILD_EXAMPLES=$(usex examples 1 0) \
+	KIVY_BUILD_EXAMPLES=0 \
+	KIVY_SPLIT_EXAMPLES=0 \
 		distutils-r1_python_compile
 }
 
 python_install_all() {
+	if use examples; then
+		dodoc -r examples
+	fi
+
 	if use vim-syntax; then
 		insinto /usr/share/vim/vimfiles/syntax
 		doins kivy/tools/highlight/kivy.vim
