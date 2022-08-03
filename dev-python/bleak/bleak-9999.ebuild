@@ -14,8 +14,12 @@ HOMEPAGE="https://bleak.readthedocs.io"
 LICENSE="MIT"
 SLOT="0"
 
+# Dependencies unsurprisingly derive from "setup.py".
 BDEPEND="test? ( dev-python/pytest-asyncio[${PYTHON_USEDEP}] )"
-RDEPEND="dev-python/dbus_next[${PYTHON_USEDEP}]"
+RDEPEND="
+	dev-python/dbus_next[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+"
 DEPEND="${RDEPEND}"
 
 distutils_enable_sphinx docs dev-python/sphinx_rtd_theme
