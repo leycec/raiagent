@@ -18,8 +18,9 @@ SLOT="0"
 BEPEND="
 	doc? (
 		>=dev-python/sphinx-autoapi-1.4.0[${PYTHON_USEDEP}]
+		dev-python/furo[${PYTHON_USEDEP}]
 		dev-python/sphinx-notfound-page[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+		dev-python/sphinx-tabs[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
