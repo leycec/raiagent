@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..10} pypy3 )
+PYTHON_COMPAT=( python3_{8..11} pypy3 )
 
 inherit distutils-r1
 
@@ -17,7 +17,8 @@ SLOT="0"
 # Dependencies unsurprisingly derive from "setup.py".
 BDEPEND="test? ( dev-python/pytest-asyncio[${PYTHON_USEDEP}] )"
 RDEPEND="
-	dev-python/dbus_next[${PYTHON_USEDEP}]
+	dev-python/dbus-next[${PYTHON_USEDEP}]
+	>=dev-python/async-timeout-4.0.1[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}"
@@ -34,7 +35,7 @@ if [[ ${PV} == 9999 ]]; then
 	KEYWORDS=""
 else
 	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 fi
 
 python_install_all() {
