@@ -3,7 +3,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=poetry
+DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..11} pypy3 )
 
 inherit distutils-r1
@@ -14,15 +14,12 @@ HOMEPAGE="https://bleak.readthedocs.io"
 LICENSE="MIT"
 SLOT="0"
 
-# Dependencies unsurprisingly derive from "pyproject.toml".
-BDEPEND="test? (
-	>=dev-python/pytest-7.0.0[${PYTHON_USEDEP}]
-	>=dev-python/pytest-asyncio-0.19.0[${PYTHON_USEDEP}]
-	>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
-)"
+# Dependencies unsurprisingly derive from "setup.py".
+BDEPEND="test? ( dev-python/pytest-asyncio[${PYTHON_USEDEP}] )"
 RDEPEND="
+	dev-python/dbus-next[${PYTHON_USEDEP}]
 	>=dev-python/async-timeout-4.0.1[${PYTHON_USEDEP}]
-	>=dev-python/dbus-next-0.2.2[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}"
 
