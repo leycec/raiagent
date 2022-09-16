@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit distutils-r1
 
@@ -29,7 +29,7 @@ else
 	# hosted at a non-standard host: e.g.,
 	#     https://files.pythonhosted.org/packages/0b/33/9ad8dab579e7c48e95e7de6bf00b5e671c4ee1c0a57df140fb2d145ffe36/Kivy%20Garden-0.1.5.tar.gz
 	SRC_URI="https://github.com/kivy-garden/garden/archive/refs/tags/v${PV}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
 	S="${WORKDIR}/garden-${PV}"
 fi
