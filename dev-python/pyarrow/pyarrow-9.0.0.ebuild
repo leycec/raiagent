@@ -10,13 +10,17 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+#FIXME: PyArrow currently fails at importation time under Python 3.8 with an
+#obscure non-human-readable exception. Until resolved, we blacklist Python 3.8.
+#See also an upstream issue at the Spark overlay:
+#    https://github.com/6-6-6/spark-overlay/issues/19
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit distutils-r1 multiprocessing
 
 DESCRIPTION="Python library for Apache Arrow"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
-HOMEPAGE="https://arrow.apache.org/"
+HOMEPAGE="https://arrow.apache.org"
 
 IUSE="+parquet"
 
