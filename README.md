@@ -135,6 +135,10 @@ Notable Python ebuilds include:
     * **[`python-for-android`](https://python-for-android.readthedocs.io)**, a
       toolchain for cross-compiling self-contained executable apps as Android
       APKs and Android App Bundles (AABs).
+* **[Streamlit](https://streamlit.io)**, a popular web dashboarding framework
+  oriented towards data science and machine learning. `raiagent` [officially
+  hosts Streamlit
+  ebuilds](https://github.com/streamlit/streamlit/discussions/5411).
 
 ### (Micro|Circuit)Python
 
