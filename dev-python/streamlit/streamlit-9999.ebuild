@@ -41,10 +41,10 @@ RDEPEND="
 	>=dev-python/pympler-0.9[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.4[${PYTHON_USEDEP}]
 	>=dev-python/rich-10.11.0[${PYTHON_USEDEP}]
+	>=dev-python/tornado-5.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-3.10.0.0[${PYTHON_USEDEP}]
 	>=dev-python/tzlocal-1.1[${PYTHON_USEDEP}]
 	>=dev-python/validators-0.2[${PYTHON_USEDEP}]
-	>=www-servers/tornado-5.0[${PYTHON_USEDEP}]
 "
 DEPEND="${RDEPEND}"
 

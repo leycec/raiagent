@@ -31,7 +31,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
-distutils_enable_sphinx doc dev-python/sphinx_rtd_theme
+distutils_enable_sphinx doc dev-python/furo dev-python/sphinx-autoapi
 distutils_enable_tests pytest
 
 if [[ ${PV} == 9999 ]]; then

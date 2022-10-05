@@ -17,7 +17,7 @@ SLOT="0"
 IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-RDEPEND=">=www-servers/tornado-2.0[${PYTHON_USEDEP}]"
+RDEPEND=">=dev-python/tornado-2.0[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
 
 #FIXME: Add a new "doc" USE flag that, when enabled, generates and installs the
