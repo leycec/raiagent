@@ -84,10 +84,6 @@ Notable Perl 5 ebuilds include:
 Notable Python ebuilds include:
 
 * Pure-Python profilers, including:
-  * **[SnakeViz](https://jiffyclub.github.io/snakeviz)**, a long-standing
-    browser-based UI for visualizing files produced by deterministic Python
-    profilers (e.g., `cProfile`, [Yappi](https://github.com/sumerc/yappi)).
-    `raiagent` unofficially hosts SnakeViz ebuilds.
   * **[tuna](https://github.com/nschloe/tuna)**, a newer browser-based UI for
     visualizing files produced by deterministic Python profilers. Although
     comparable to SnakeViz, tuna output is more factual than SnakeViz output
@@ -106,11 +102,6 @@ Notable Python ebuilds include:
     type-checking solution for Python in Interactive Development Environments
     (IDEs) as diverse as VSCode and Vim. `raiagent` unofficially hosts pyright
     ebuilds.
-  * **[typeguard](https://github.com/agronholm/typeguard)**, a
-    [*mostly* fully PEP-compliant](https://www.python.org/dev/peps/pep-0484)
-    runtime type checker. `raiagent` unofficially hosts
-    [typeguard](https://github.com/agronholm/typeguard) ebuilds. [See these
-    timings first](https://github.com/beartype/beartype#timings), though.
 * **[Bluetooth Low Energy platform Agnostic Klient
   (BLEAK)](https://github.com/hbldh/bleak)**, a popular `asyncio`-based
   Bluetooth Low Energy (BLE) framework with extensive platform-portable native
