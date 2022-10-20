@@ -19,14 +19,14 @@ IUSE="test"
 BDEPEND="
 	>=dev-python/poetry-core-1.1.0[${PYTHON_USEDEP}]
 	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-3.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-asyncio-0.19.0[${PYTHON_USEDEP}]
 	)"
 RDEPEND=">=dev-python/async-timeout-3.0.0[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
 
-#FIXME: Tests currently fail to run and I can't be bothered to resolve. *sigh*
+#FIXME: Tests currently fail to pass and I can't be bothered to resolve. *sigh*
 # distutils_enable_tests pytest
 
 if [[ ${PV} == 9999 ]]; then
