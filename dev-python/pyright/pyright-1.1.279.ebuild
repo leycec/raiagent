@@ -10,9 +10,9 @@ HOMEPAGE="https://github.com/microsoft/pyright"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
-# Note that this metadata derives from this package's "package.json" file.
+# Note that this metadata derives from the "packages/pyright/package.json" file.
 NODEJS_BINSCRIPTS='
 	index.js:pyright
 	langserver.index.js:pyright-langserver
