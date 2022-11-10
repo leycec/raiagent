@@ -14,7 +14,10 @@ HOMEPAGE="https://streamlit.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 
-# Dependencies derive from "setup.py".
+# Dependencies derive from "lib/setup.py" with the caveat that mandatory runtime
+# dependencies are the union of these two lists defined in that file:
+# * "INSTALL_REQUIRES".
+# * "SNOWPARK_CONDA_EXCLUDED_DEPENDENCIES". (Don't ask. Just don't.)
 #
 # Note that:
 # * Streamlit tarballs currently contain *NO* documentation or tests. /shrug/
@@ -22,8 +25,8 @@ SLOT="0"
 #   Streamlit GitHub repository at:
 #       https://github.com/streamlit/streamlit/tree/develop/lib
 RDEPEND="
+	dev-python/GitPython[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pydeck[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
 	dev-python/semver[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
@@ -36,6 +39,7 @@ RDEPEND="
 	>=dev-python/packaging-14.1[${PYTHON_USEDEP}]
 	>=dev-python/pandas-0.21.0[${PYTHON_USEDEP}]
 	>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]
+	>=dev-python/pydeck-0.1.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.12[${PYTHON_USEDEP}]
 	>=dev-python/pyarrow-4.0[${PYTHON_USEDEP}]
 	>=dev-python/pympler-0.9[${PYTHON_USEDEP}]
