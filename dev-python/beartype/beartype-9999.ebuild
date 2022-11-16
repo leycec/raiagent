@@ -31,7 +31,12 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 
-distutils_enable_sphinx doc dev-python/furo dev-python/sphinx-autoapi
+#FIXME: Portage currently complains that:
+#    doc/src/conf.py not found, distutils_enable_sphinx call wrong
+#But "doc/src/conf.py" *DOES* exist. Since @beartype's Sphinx-based
+#documentation is largely non-existent anyway, let's just quietly sweep this
+#under the mouldy carpet for now. </sigh>
+# distutils_enable_sphinx doc/src dev-python/furo dev-python/sphinx-autoapi
 distutils_enable_tests pytest
 
 if [[ ${PV} == 9999 ]]; then
