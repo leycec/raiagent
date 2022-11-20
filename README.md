@@ -9,7 +9,9 @@ raiagent —————————[ [![Build Status](https://api.travis-ci.org
 ===========
 --->
 
-**Welcome to `raiagent`,** the third-party Gentoo overlay where [Raia](https://en.wikipedia.org/wiki/Raja_%28genus%29) and gentlemanly conduct collide.
+**Welcome to `raiagent`,** the third-party Gentoo overlay where
+[Raia](https://en.wikipedia.org/wiki/Raja_%28genus%29) and gentlemanly conduct
+collide.
 
 <img src="https://cloud.githubusercontent.com/assets/217028/7741975/ce3e814a-ff55-11e4-84d9-7fe8f2fab2f0.png" width="128" height="64"/> **+** <img src="https://cloud.githubusercontent.com/assets/217028/7742504/0d4c7394-ff5e-11e4-9352-9a30362fb37c.png" width="64" height="96"/> **=** `raiagent`
 
@@ -33,9 +35,11 @@ module](https://wiki.gentoo.org/wiki/Eselect/Repository), superseding the
 
 ## Motivation
 
-`raiagent` publishes well-documented ebuilds unabashedly biased toward technological self-empowerment.<sup>1</sup>
+`raiagent` publishes well-documented ebuilds unabashedly biased toward
+technological self-empowerment.<sup>1</sup>
 
-<sup>1. We *actually* believe most of the specious doggerel tastelessly defibrillating that sentence.</sup>
+<sup>1. We *actually* believe most of the specious doggerel tastelessly
+defibrillating that sentence.</sup>
 
 ### CLI
 
@@ -53,6 +57,15 @@ Notable command-line interface (CLI) ebuilds include:
   support (e.g., CSS, Objective-C). `raiagent` unofficially hosts live ctags
   ebuilds in lieu of an official release.
 
+### Japan
+
+Notable Japanese-centric ebuilds include:
+
+* **[`mangal`](https://github.com/metafates/mangal),** a low-level terminal user
+  interface (TUI) for finding, fetching, and locally reading Japanese manga –
+  complete with Vi[M]-like key bindings. `raiagent` unofficially hosts `mangal`
+  ebuilds.
+
 ### P2P
 
 Notable peer-to-peer (P2P) ebuilds include:
@@ -68,16 +81,6 @@ Notable peer-to-peer (P2P) ebuilds include:
   someone sufficiently young and idealistic creates a well-maintained friendly
   fork supporting the modern Python ecosystem, we have *no* choice but to
   remove all traces of ZeroNet from `::raiagent`.
-
-### Perl 5
-
-Notable Perl 5 ebuilds include:
-
-* **[Minilla](https://metacpan.org/pod/Minilla)**, a command automating the
-  production and distribution of CPAN modules. Minilla is a lightweight drop-in
-  replacement for [Dist::Milla](https://metacpan.org/pod/Dist::Milla), the
-  heavyweight older brother that should probably start hitting his local gym.
-  `raiagent` unofficially hosts ebuilds installing the full Minilla stack.
 
 ### Python
 
