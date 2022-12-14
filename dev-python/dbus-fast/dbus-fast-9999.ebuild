@@ -15,15 +15,21 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="test"
 
+#FIXME: Test dependencies are almost certainly insufficient. "pyproject.toml"
+#suggests an extreme number of these dependencies, which saddens us. 
 # Dependencies unsurprisingly derive from "pyproject.toml".
 BDEPEND="
-	>=dev-python/poetry-core-1.1.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-3.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-asyncio-0.19.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 	)"
-RDEPEND=">=dev-python/async-timeout-3.0.0[${PYTHON_USEDEP}]"
+RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/async-timeout-3.0.0[${PYTHON_USEDEP}]
+	' python3_{8..10})
+"
 DEPEND="${RDEPEND}"
 
 #FIXME: Tests currently fail to pass and I can't be bothered to resolve. *sigh*
