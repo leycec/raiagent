@@ -22,8 +22,10 @@ BDEPEND="test? (
 	>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
 )"
 RDEPEND="
-	>=dev-python/async-timeout-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/dbus-fast-1.22.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/async-timeout-3.0.0[${PYTHON_USEDEP}]
+	' python3_{8..10})
 "
 DEPEND="${RDEPEND}"
 
