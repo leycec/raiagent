@@ -1,0 +1,13 @@
+diff --git a/cpp/src/parquet/properties.h b/cpp/src/parquet/properties.h
+index 1d5c360cc..1a7780946 100644
+--- a/src/parquet/properties.h
++++ b/src/parquet/properties.h
+@@ -53,7 +53,7 @@ constexpr int32_t kDefaultThriftStringSizeLimit = 100 * 1000 * 1000;
+ // Structs in the thrift definition are relatively large (at least 300 bytes).
+ // This limits total memory to the same order of magnitude as
+ // kDefaultStringSizeLimit.
+-constexpr int32_t kDefaultThriftContainerSizeLimit = 1000 * 1000;
++constexpr int32_t kDefaultThriftContainerSizeLimit = 10 * 1000 * 1000;
+ 
+ class PARQUET_EXPORT ReaderProperties {
+  public:

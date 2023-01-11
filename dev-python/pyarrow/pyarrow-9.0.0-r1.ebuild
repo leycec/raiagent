@@ -1,28 +1,18 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# CAUTION: Synchronize with upstream changes in the Spark overlay at:
-#     https://github.com/gentoo-mirror/spark-overlay/tree/master/dev-python/pyarrow
-# This package is a mandatory reverse dependency of PyArrow and thus Streamlit,
-# copied as is from the Spark overlay into this overlay to streamline building.
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 EAPI=8
 
-#FIXME: PyArrow currently fails at importation time under Python 3.8 with an
-#obscure non-human-readable exception. Until resolved, we blacklist Python 3.8.
-#See also an upstream issue at the Spark overlay:
-#    https://github.com/6-6-6/spark-overlay/issues/19
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{9..10} )
 
 inherit distutils-r1 multiprocessing
 
 DESCRIPTION="Python library for Apache Arrow"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
-HOMEPAGE="https://arrow.apache.org"
+HOMEPAGE="https://arrow.apache.org/"
 
-IUSE="+parquet"
+IUSE="+parquet +dataset"
+REQUIRED_USE="dataset? ( parquet )"
 
 LICENSE="Apache-2.0"
 SLOT="0"
@@ -47,6 +37,7 @@ src_prepare() {
 
 src_compile() {
 	export PYARROW_WITH_PARQUET=$(usex parquet "ON" "")
+	export PYARROW_WITH_DATASET=$(usex dataset "ON" "")
 	local jobs=$(makeopts_jobs "${MAKEOPTS}" INF)
 	export PYARROW_PARALLEL="${jobs}"
 	export PYARROW_BUILD_VERBOSE="1"
