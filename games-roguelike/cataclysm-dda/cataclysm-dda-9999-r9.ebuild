@@ -138,10 +138,37 @@ src_prepare() {
 			{tests/,}Makefile || die
 	fi
 
-	# If compiling with g++, remove the Clang-specific
-	# "-Wno-unknown-warning-option" option unsupported by g++ from makefiles.
+	#FIXME: Report the "-fpermissive" issue upstream, please.
+	# If compiling with g++:
+	# * Remove the Clang-specific "-Wno-unknown-warning-option" flag unsupported
+	#   by g++ from makefiles.
+	# * Add the g++-specific "-fpermissive" flag supported *ONLY* by gcc+ from
+	#   makefiles. Enabling this flag is *ALMOST* always the wrong thing to do,
+	#   as doing so forces g++ to accept ill-formed code (e.g., improper casts)
+	#   it would otherwise reject as invalid. This is why Clang intentionally
+	#   refuses to support this flag. Nonetheless, at least the stable release
+	#   (and possibly the live version) of C:DDA currently fails to compile
+	#   under certain systems under certain USE flag combinations "-fpermissive"
+	#   is disabled with this non-human-readable fatal compile-time error:
+	#       c++  -DRELEASE -DTILES -DBACKTRACE -DLOCALIZE -DPREFIX="/usr" -DDATA_DIR_PREFIX -DUSE_HOME_DIR -march=skylake -O2 -pipe -ffast-math -Wodr -Werror -Wall -Wextra -Wformat-signedness -Wlogical-op -Wmissing-declarations -Wmissing-noreturn -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual -Wpedantic -Wsuggest-override -Wunused-macros -Wzero-as-null-pointer-constant -Wredundant-decls -g -fsigned-char -std=c++14 -MMD -MP -m64 -I/usr/include/SDL2 -D_REENTRANT -DSDL_SOUND -I/usr/include/SDL2 -D_REENTRANT -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/glib-2.0 -I/usr/lib64/glib-2.0/include  -c src/sdl_font.cpp -o obj/tiles/sdl_font.o
+	#       [01m[Ksrc/sdl_font.cpp:[m[K In function ‘[01m[Kint test_face_size(const string&, int, int)[m[K’:
+	#       [01m[Ksrc/sdl_font.cpp:25:44:[m[K [01;31m[Kerror: [m[Kinvalid conversion from ‘[01m[Kconst char*[m[K’ to ‘[01m[Kchar*[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+	#          25 |         char *style = [01;31m[KTTF_FontFaceStyleName( fnt.get() )[m[K;
+	#             |                       [01;31m[K~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~[m[K
+	#             |                                            [01;31m[K|[m[K
+	#             |                                            [01;31m[Kconst char*[m[K
+	#       [01m[Ksrc/sdl_font.cpp:32:64:[m[K [01;31m[Kerror: [m[Kinvalid conversion from ‘[01m[Kconst char*[m[K’ to ‘[01m[Kchar*[m[K’ [[01;31m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-fpermissive-fpermissive]8;;[m[K]
+	#          32 |                     if( nullptr != ( ts = [01;31m[KTTF_FontFaceStyleName( tf.get() )[m[K ) ) {
+	#             |                                           [01;31m[K~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~[m[K
+	#             |                                                                [01;31m[K|[m[K
+	#             |                                                                [01;31m[Kconst char*[m[K
+	#       make: *** [Makefile:962: obj/tiles/sdl_font.o] Error 1
+	#
+	#   See also this overlay issue:
+	#       https://github.com/leycec/raiagent/issues/106
 	if ! use clang; then
-		sed -i -e 's~-Wno-unknown-warning-option~~' {tests/,}Makefile || die
+		sed -i -e 's~-Wno-unknown-warning-option\b~-fpermissive~' \
+			{tests/,}Makefile || die
 	fi
 
 	# The makefile assumes subdirectories "obj" and "obj/tiles" both exist,
