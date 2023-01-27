@@ -140,6 +140,7 @@ src_prepare() {
 		cp data/json/LOADING_ORDER.md doc/JSON_LOADING_ORDER.md || die
 	fi
 
+	#FIXME: Consider removing this block on the next stable bump.
 	# If installing a stable release...
 	if [[ "${PV}" != 9999* ]]; then
 		#FIXME: Report the "-Werror" issue upstream, please.
@@ -181,7 +182,7 @@ src_prepare() {
 		#       https://github.com/leycec/raiagent/issues/106
 		sed -i \
 			-e 's~$(shell git [^)]*)~not-true~' \
-			-e 's~-Werror~~' \
+			-e 's~-Werror~-fpermissive~' \
 			{tests/,}Makefile || die
 	fi
 
