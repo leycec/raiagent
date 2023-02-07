@@ -1,10 +1,10 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 DISTUTILS_USE_PEP517=poetry
-PYTHON_COMPAT=( python3_{8..11} pypy3 )
+PYTHON_COMPAT=( python3_{9..11} pypy3 )
 
 inherit distutils-r1
 
@@ -16,7 +16,7 @@ SLOT="0"
 IUSE="test"
 
 #FIXME: Test dependencies are almost certainly insufficient. "pyproject.toml"
-#suggests an extreme number of these dependencies, which saddens us. 
+#suggests an extreme number of these dependencies, which saddens us.
 # Dependencies unsurprisingly derive from "pyproject.toml".
 BDEPEND="
 	test? (
