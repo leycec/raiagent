@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>leycec@gmail.com</email>
+		<name>leycec</name>
+		<description>Courtesy the third-party "raiagent" overlay.</description>
+	</maintainer>
+	<stabilize-allarches/>
+	<upstream>
+		<remote-id type="pypi">multimethod</remote-id>
+		<remote-id type="github">coady/multimethod</remote-id>
+	</upstream>
+</pkgmetadata>
