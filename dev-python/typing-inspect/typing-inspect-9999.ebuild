@@ -21,6 +21,7 @@ RDEPEND="
 	>=dev-python/mypy_extensions-0.3.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-3.7.4[${PYTHON_USEDEP}]
 "
+DEPEND="${RDEPEND}"
 
 distutils_enable_tests pytest
 
