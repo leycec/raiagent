@@ -1,1 +1,0 @@
-python-bitcoinlib-9999.ebuild
