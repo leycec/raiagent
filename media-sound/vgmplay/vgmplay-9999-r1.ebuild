@@ -1,19 +1,30 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+#FIXME: VGMPlay 0.40.9 (i.e., the most recent stable release of VGMPlay) no
+#longer compiles under modern compilers. Thankfully, the live version of VGMPlay
+#still compiles. See also this open issue:
+#    https://github.com/vgmrips/vgmplay/issues/95
+#FIXME: VGMPlay has been obsoleted by "vgmplay-libvgm", a modular rewrite of
+#VGMPlay by the same author... in theory, anyway. In practice, VGMPlay has
+#recently begun to receive git commits while "vgmplay-libvgm" has gone moribund.
+#In short, we have *NO* idea there the state of VGMPlay is. See also:
+#    https://github.com/vgmrips/vgmplay
+#    https://github.com/ValleyBell/vgmplay-libvgm
 
-inherit readme.gentoo-r1
+EAPI="8"
+
+inherit readme.gentoo-r1 xdg
 
 DESCRIPTION="Video game music (VGM) file command-line player"
 HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 
 # VGMPlay licensing can only be referred to as "extreme." Frankly, the authors
 # themselves do not appear to particularly care about licensing or even know
-# which licenses apply and when to VGMPlay. The "VGMPlay/licenses/List.txt"
-# file purports to be the canonical list of all licenses associated with
-# third-party VGMPlay components but nonetheless lists three components for
-# which the license is literally unknown:
+# which licenses apply and when to VGMPlay. The "VGMPlay/licenses/List.txt" file
+# purports to be the canonical list of all licenses associated with third-party
+# VGMPlay components but nonetheless lists three components for which the
+# license is literally unknown:
 #
 #     Ootake - ?
 #     MEKA - ?
@@ -23,10 +34,10 @@ HOMEPAGE="http://vgmrips.net/forum/viewtopic.php?t=112"
 #
 # I've never encountered a licensing scenario this painfully disfunctional. If
 # even the principal developers of VGMPlay cannot be bothered to either license
-# their software *OR* attribute third-party software embedded in their
-# software, we certainly cannot be expected to do so. We instead note that,
-# since numerous VGMPlay components are GPL 2-licensed, the infectious virality
-# of the GPL requires extending that license to VGMPlay itself. Ergo, GPL 2.
+# their software *OR* attribute third-party software embedded in their software,
+# we certainly cannot be expected to do so. We instead note that, since numerous
+# VGMPlay components are GPL 2-licensed, the infectious virality of the GPL
+# requires extending that license to VGMPlay itself. Ergo, GPL 2.
 #
 # See also the following outstanding VGMPlay issue:
 #     https://github.com/vgmrips/vgmplay/issues/47
@@ -72,13 +83,18 @@ DISABLE_AUTOFORMATTING=1
 
 src_prepare() {
 	default
+	xdg_environment_reset
 
 	# Remove the bundled "zlib" directory.
-	rm -r VGMPlay/zlib || die '"rm" failed.'
+	rm -r VGMPlay/zlib || die
 
-	# Strip hardcoded ${CFLAGS}.
+	# Munge the makefile as follows:
+	# * Strip hardcoded ${CFLAGS}.
+	# * Strip execution of "xdg-"-prefixed installation commands (e.g.,
+	#   "xdg-icon-resource") in favour of "xdg" eclass utilities.
 	sed -e '/CFLAGS := -O3/s~ -O3~~' \
-		-i VGMPlay/Makefile || die '"sed" failed.'
+		-e '/\(xdg-desktop-menu\|xdg-icon-resource\|xdg-mime\)/d' \
+		-i VGMPlay/Makefile || die
 }
 
 src_compile() {
@@ -118,6 +134,16 @@ src_install() {
 	# Install all remaining documentation.
 	dodoc VGMPlay/VGMPlay*.txt
 
+	# Install all XDG-managed files to standard system directories. Note that
+	# the xdg_pkg_preinst() function subsequently inspects these directories for
+	# these files.
+	insinto usr/share/applications
+	doins VGMPlay/xdg/vgmplay.desktop
+	insinto usr/share/icons
+	doins VGMPlay/xdg/icons/*.png
+	insinto usr/share/mime
+	doins VGMPlay/xdg/vgmplay-mime.xml
+
 	# Contents of the "/usr/share/doc/${P}/README.gentoo" file to be installed.
 	DOC_CONTENTS="VGMPlay supports audio files of filetype \"vgm\" and \"vgz\"
 (gzip-compressed \"vgm\") and \"m3u\" playlists of these files, available for
@@ -149,6 +175,8 @@ VGMPlay is configurable via the system-wide \"${VGMPLAY_CFG_FILE}\" file."
 }
 
 pkg_postinst() {
+	xdg_pkg_postinst
+
 	# Print the "README.gentoo" file installed above on first installation.
 	readme.gentoo_print_elog
 }
