@@ -1,17 +1,15 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{6..9} pypy3 )
-
-# This package requires setuptools at runtime.
-DISTUTILS_USE_SETUPTOOLS=rdepend
+PYTHON_COMPAT=( python3_{10..11} pypy3 )
+DISTUTILS_USE_PEP517=setuptools
 
 inherit distutils-r1
 
 DESCRIPTION="Bioelectric Tissue Simulation Engine (BETSE)"
-HOMEPAGE="https://gitlab.com/betse/betse"
+HOMEPAGE="https://github.com/betsee/betse"
 
 LICENSE="BSD-2"
 SLOT="0"
@@ -37,7 +35,14 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 #   mandatory.
 # * This package requires setuptools >= 38.2.0, which the "distutils-r1" eclass
 #   implicitly guarantees and is thus omitted here.
-COMMON_DEPEND="${PYTHON_DEPS}
+# * The list of multicore-aware BLAS implementations required by the "smp" USE
+#   flag derives directly from the docstring of the
+#   "betse.lib.numpy.numpys._OPTIMIZED_BLAS_OPT_INFO_LIBRARY_REGEX" (admittedly,
+#   a non-ideal home for critical documentation).
+# * The remaining list of optional dependencies derives directly from the
+#   "betse.metadata.DEPENDENCIES_RUNTIME_OPTIONAL" list, which is enforced at
+#   BETSE runtime and hence guaranteed to be authorative.
+DEPEND="
 	>=dev-python/dill-0.2.3[${PYTHON_USEDEP}]
 	>=dev-python/distro-1.0.4[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-1.5.0[${PYTHON_USEDEP}]
@@ -48,41 +53,25 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	>=dev-python/setuptools-38.2.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
 "
-
-# Note that we intentionally prefer manually defining test-time dependencies as
-# well as the python_test() function below rather than calling the
-# distutils_enable_tests() function, as the latter's implementation is too
-# generic to usefully apply to this package.
-DEPEND="${DEPEND} ${COMMON_DEPEND}
-	test? ( >=dev-python/pytest-5.4.0[${PYTHON_USEDEP}] )
-"
-
-# The list of multicore-aware BLAS implementations required by the "smp" USE
-# flag derives directly from the docstring of the
-# "betse.lib.numpy.numpys._OPTIMIZED_BLAS_OPT_INFO_LIBRARY_REGEX" (admittedly,
-# a non-ideal home for critical documentation).
-#
-# The remaining list of optional dependencies derives directly from the
-# "betse.metadata.DEPENDENCIES_RUNTIME_OPTIONAL" list, which is enforced at
-# BETSE runtime and hence guaranteed to be authorative.
-RDEPEND="${RDEPEND} ${COMMON_DEPEND}
-	ffmpeg? ( virtual/ffmpeg )
+RDEPEND="${DEPEND}
+	ffmpeg? ( media-video/ffmpeg )
 	graph? (
 		>=dev-python/pydot-1.2.3[${PYTHON_USEDEP}]
 		>=dev-python/networkx-2.1[${PYTHON_USEDEP}]
 	)
 	profile? ( >=dev-python/pympler-0.4.2[${PYTHON_USEDEP}] )
 	smp? ( || (
-		sci-libs/openblas[eselect-ldso]
 		sci-libs/blis[eselect-ldso]
-		sci-libs/mkl-rt[eselect-ldso]
+		sci-libs/openblas[eselect-ldso]
 	) )
 "
+
+distutils_enable_tests pytest
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
-	EGIT_REPO_URI="https://gitlab.com/betse/betse.git"
+	EGIT_REPO_URI="https://github.com/betsee/betse.git"
 	EGIT_BRANCH="master"
 	SRC_URI=""
 	KEYWORDS=""
@@ -90,11 +79,6 @@ else
 	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
 fi
-
-# Run tests with verbose output failing on the first failing test.
-python_test() {
-	py.test -vvx || die "Tests fail under ${EPYTHON}."
-}
 
 python_install_all() {
 	distutils-r1_python_install_all
