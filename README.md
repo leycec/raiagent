@@ -92,6 +92,11 @@ Notable Python ebuilds include:
     comparable to SnakeViz, tuna output is more factual than SnakeViz output
     and thus recommended for modern profiling workflows. `raiagent`
     unofficially hosts tuna ebuilds.
+* Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0621) build
+  systems, including:
+  * **[Hatch](https://hatch.pypa.io)**, the increasingly popular project
+    management toolchain recently embraced by the Python Packaging Authority
+    (PyPA). `raiagent` unofficially hosts Hatch ebuilds.
 * Pure-Python [PEP-compliant](https://www.python.org/dev/peps/pep-0484) runtime
   type checkers, including:
   * **[beartype](https://github.com/beartype/beartype)**, the un:bear:ably fast
