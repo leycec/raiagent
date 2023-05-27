@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 #FIXME: Submit an upstream Kivy issue (and possible PR) referencing "raiagent"
@@ -7,21 +7,25 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..11} pypy3 )
+PYTHON_COMPAT=( python3_{10..11} pypy3 )
 
 inherit readme.gentoo-r1 distutils-r1
 
 DESCRIPTION="Kivy-friendly tool for packaging Python to Android"
-HOMEPAGE="https://python-for-android.readthedocs.io"
+HOMEPAGE="
+	https://python-for-android.readthedocs.io
+	https://pypi.org/project/python-for-android
+	https://github.com/kivy/python-for-android
+"
 
 LICENSE="MIT"
 SLOT="0"
 
 #FIXME: Buildozer defaults to internally fetching appropriate versions of the
-#Android NDK and SDK. It's probably best to let it do so. Nonetheless, note
-#that "buildozer.spec" files can technically be configured to point to
-#system-wide Android NDK installations. That said, since there appears to be
-#little point in doing so, we currently disable this requirement.
+#Android NDK and SDK. It's probably best to let it do so. Nonetheless, note that
+#"buildozer.spec" files can technically be configured to point to system-wide
+#Android NDK installations. Since there appears to be little point in doing so,
+#we currently disable this requirement.
 # # Ideally, we would depend upon the same minimum version of the Android NDK and
 # # SDK advised by that documentation. Since Portage fails to package
 # # sufficiently recent versions of the Android NDK, however, that's infeasible.
@@ -39,8 +43,8 @@ SLOT="0"
 #that Android Studio installs the Android SDK to "~/Android". Ergo,
 #"buildozer.spec" can be configured to point to that rather than refetching and
 #reinstalling the SDK elsewhere.
-#FIXME: Actually, it appears that may *NOT* necessarily work -- at least, not
-#as of a decade ago, which is admittedly ancient. According to this 2014 issue
+#FIXME: Actually, it appears that may *NOT* necessarily work -- at least, not as
+#of a decade ago, which is admittedly ancient. According to this 2014 issue
 #thread, Buildozer requires write access to the SDK directory: *facepalm*
 #    https://github.com/kivy/buildozer/issues/169#issuecomment-68239361
 
@@ -48,6 +52,7 @@ SLOT="0"
 # "setup.py".
 DEPEND="
 	dev-python/appdirs[${PYTHON_USEDEP}]
+	dev-python/packaging[${PYTHON_USEDEP}]
 	dev-python/pep517[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
@@ -56,7 +61,6 @@ DEPEND="
 	>=dev-python/sh-1.10.0[${PYTHON_USEDEP}]
 "
 
-#FIXME: List all remaining dependencies listed at the URL below, please.
 # Runtime dependencies derive from online documentation at:
 #     https://python-for-android.readthedocs.io/en/latest/quickstart/#installing-dependencies
 #
@@ -69,10 +73,10 @@ DEPEND="
 # "python-for-android" locally download and extract duplicate copies into the
 # "~/.buildozer/android/" subdirectory. *facepalm*
 RDEPEND="${DEPEND}
-	sys-devel/automake
+	dev-java/ant
 	sys-devel/autoconf
+	sys-devel/automake
 	dev-util/cmake
-	dev-util/ninja
 	dev-python/cython[${PYTHON_USEDEP}]
 	sys-devel/gcc
 	dev-vcs/git
@@ -86,6 +90,7 @@ RDEPEND="${DEPEND}
 	sys-libs/zlib[abi_x86_32(-)]
 	app-arch/zip
 	dev-python/pip[${PYTHON_USEDEP}]
+	dev-util/ninja
 "
 
 #FIXME: Upstream fails to bundle the "tests/" directory with source tarballs.
@@ -100,7 +105,8 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+	SRC_URI="https://github.com/kivy/${PN}/archive/refs/tags/v${PV}.tar.gz ->
+		${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 fi
 
@@ -108,7 +114,7 @@ python_prepare_all() {
 	# Circumvent a dependency constraint on obsolete "pep517" versions.
 	# "setup.py" requires "pep517<0.7.0". See also this unresolved issue:
 	#     https://github.com/kivy/python-for-android/issues/2573
-	sed -i -e 's~pep517<0\.7\.0~pep517~' setup.py || die '"sed" failed.'
+	sed -i -e 's~pep517<0\.7\.0~pep517~' setup.py || die
 
 	distutils-r1_python_prepare_all
 }
