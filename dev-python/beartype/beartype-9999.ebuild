@@ -3,8 +3,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} pypy3 )
 DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 
 inherit distutils-r1
 
@@ -32,7 +32,9 @@ BDEPEND="
 	test? (
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pandera[${PYTHON_USEDEP}]
 		dev-python/pyright[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-3.10.0.0[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND="
@@ -64,6 +66,7 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+	inherit pypi
+
 	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 fi
