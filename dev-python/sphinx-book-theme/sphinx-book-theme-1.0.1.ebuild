@@ -45,7 +45,6 @@ RDEPEND="
 	>=dev-python/sphinx-4.0.0[${PYTHON_USEDEP}]
 	!>=dev-python/sphinx-7.0.0[${PYTHON_USEDEP}]
 "
-DEPEND="${RDEPEND}"
 
 python_compile() {
 	distutils_wheel_install "${BUILD_DIR}/install" \
