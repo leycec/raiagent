@@ -106,10 +106,10 @@ unset -f _nodejs-r1_set_globals
 # version.
 
 if [[ -z ${NODEJS_MIN_VERSION} ]]; then
-	BDEPEND="net-libs/nodejs[npm]"
+	BDEPEND="net-libs/nodejs"
 	RDEPEND="net-libs/nodejs"
 else
-	BDEPEND=">=net-libs/nodejs-${NODEJS_MIN_VERSION}[npm]"
+	BDEPEND=">=net-libs/nodejs-${NODEJS_MIN_VERSION}"
 	RDEPEND=">=net-libs/nodejs-${NODEJS_MIN_VERSION}"
 fi
 
@@ -155,7 +155,7 @@ nodejs-r1_src_install() {
 	# # * Installs one symlink from each runnable Node.js script bundled with this
 	# #   Node.js package into /usr/bin.
 	# # * Runs the "install" command defined by the "package.json" file bundled
-	# #   with this Node.js package (if any). 
+	# #   with this Node.js package (if any).
 	# npm \
 	# 	--audit false \
 	# 	--color false \
