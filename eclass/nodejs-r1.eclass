@@ -10,8 +10,8 @@
 # @BLURB: Eclass for easy installation of Node.js packages.
 # @DESCRIPTION:
 # This eclass automates the fetching, compilation, and installation of Node.js
-# node.js packages and dependencies hosted online with the official node package
-# manager (npm) registry at http://registry.npmjs.org.
+# packages and dependencies hosted online with the official node package manager
+# (npm) registry at http://registry.npmjs.org.
 #
 # This eclass automatically defines these global variables on your behalf:
 # * "RDEPEND". No "BDEPEND" or "DEPEND" are typically required for Node.js.
