@@ -3,10 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} pypy3 )
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 DISTUTILS_USE_PEP517=setuptools
 
-inherit distutils-r1
+inherit distutils-r1 pypi
 
 DESCRIPTION=""
 HOMEPAGE="
@@ -17,6 +17,7 @@ HOMEPAGE="
 
 LICENSE="MIT"
 SLOT="0"
+RESTRICT="test"  # <-- can't be bothered at the moment *sigh*
 
 # Dependencies derive from "setup.py", surprisingly. "pyproject.toml" is empty.
 RDEPEND="
@@ -25,6 +26,8 @@ RDEPEND="
 	>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.2.0[${PYTHON_USEDEP}]
 	dev-python/pydantic[${PYTHON_USEDEP}]
+	>=dev-python/typeguard-3.0.2[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-3.7.4.3[${PYTHON_USEDEP}]
 	>=dev-python/typing-inspect-0.6.0[${PYTHON_USEDEP}]
 	dev-python/wrapt[${PYTHON_USEDEP}]
 "
@@ -41,7 +44,6 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 fi
 
