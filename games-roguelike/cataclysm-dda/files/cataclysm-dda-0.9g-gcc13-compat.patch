@@ -1,0 +1,12 @@
+diff --git a/src/translation_document.h b/src/translation_document.h
+index 1e20f6629a09e..71ebb499a9ab5 100644
+--- a/src/translation_document.h
++++ b/src/translation_document.h
+@@ -4,6 +4,7 @@
+ 
+ #if defined(LOCALIZE)
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>

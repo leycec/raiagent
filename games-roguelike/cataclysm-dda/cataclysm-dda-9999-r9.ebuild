@@ -94,6 +94,14 @@ else
 	KEYWORDS="~amd64 ~x86"
 
 	S="${WORKDIR}/Cataclysm-DDA-${MY_PV}"
+
+	# Fixed upstream for next release, but GCC13 still breaks in this one.
+	# cf. https://github.com/CleverRaven/Cataclysm-DDA/pull/66195
+	if [[ ${PV} == "0.9g" ]]; then
+		PATCHES=(
+			"${FILESDIR}/${PN}-0.9g-gcc13-compat.patch"
+		)
+	fi
 fi
 
 src_prepare() {
