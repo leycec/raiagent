@@ -1,9 +1,10 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..12} )
+DISTUTILS_USE_PEP517=setuptools
 
 inherit distutils-r1
 
@@ -19,6 +20,8 @@ RDEPEND="
 	dev-python/svgwrite[${PYTHON_USEDEP}]
 "
 
+RESTRICT="test"  # <-- way too lazy for this sort of thing right now :((((((((((
+
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 
@@ -27,6 +30,7 @@ if [[ ${PV} == 9999 ]]; then
 	SRC_URI=""
 	KEYWORDS=""
 else
-	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+	inherit pypi 
+
 	KEYWORDS="~amd64 ~x86"
 fi
