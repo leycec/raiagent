@@ -179,7 +179,7 @@ mechanic) ebuilds include:
 
 * **[Cataclysm: Dark Days Ahead (C:DDA)](https://cataclysmdda.org)**, a
   post-apocalyptic survival horror roguelike. `raiagent` [officially
-  hosts](https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo)
+  hosts](https://web.archive.org/web/20220127170234/https://cddawiki.chezzo.com/cdda_wiki/index.php?title=How_to_compile#Gentoo)
   C:DDA ebuilds.
 * **[The Slimy Lichmummy
   (TSL)](http://www.happyponyland.net/the-slimy-lichmummy)**, a classic
